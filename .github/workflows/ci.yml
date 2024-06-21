@@ -96,10 +96,10 @@ jobs:
           INPUT_FALSE_VALUES: 'service-false,environment-false,test-false,env-false,branch-false'
         run: |
           docker run \
-            --env INPUT_CONDITIONS=${{ env.INPUT_CONDITIONS }} \
-            --env INPUT_TRUE_VALUES=${{ env.INPUT_TRUE_VALUES }} \
-            --env INPUT_FALSE_VALUES=${{ env.INPUT_FALSE_VALUES }} \
-            --volume ${{ github.workspace }}:/usr/src \
+            --env INPUT_CONDITIONS="${{ env.INPUT_CONDITIONS }}" \
+            --env INPUT_TRUE_VALUES="${{ env.INPUT_TRUE_VALUES }}" \
+            --env INPUT_FALSE_VALUES="${{ env.INPUT_FALSE_VALUES }}" \
+            --volume "${{ github.workspace }}:/usr/src" \
             --rm ${{ env.TEST_TAG }}
 
     outputs:
