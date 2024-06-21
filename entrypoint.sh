@@ -1,13 +1,8 @@
 #!/bin/bash
 
-# # Allow git operations in the current directory
-# git config --global --add safe.directory /usr/src
-
-# # Explicitly set safe directory for git operations
-# git config --global --add safe.directory /github/workspace
-
 echo "Debug: Starting script execution."
 
+# Read conditions and corresponding results into arrays
 IFS=',' read -ra conditions <<<"$INPUT_CONDITIONS"
 IFS=',' read -ra true_values <<<"$INPUT_TRUE_VALUES"
 IFS=',' read -ra false_values <<<"$INPUT_FALSE_VALUES"
@@ -17,13 +12,13 @@ function replace_placeholders {
 	local condition="$1"
 	for varname in $(echo "$condition" | grep -oE '\b[A-Z_]+\b'); do
 		local value="${!varname}"
-		# Escaping special characters in value that might affect direct replacement
-		local escaped_value="${value//\//\\/}"  # Escape slashes for safe usage in replacement
-		escaped_value="${escaped_value//&/\\&}" # Escape ampersands which have special meaning in replacement
 
-		# Directly replace the variable name with its value, ensuring complete variable names are matched
-		# This approach simplifies the matching process by eliminating the need for word boundary checks
-		condition="${condition//"$varname"/$escaped_value}"
+		# Handle escaping of characters that could interfere with sed
+		local escaped_value="${value//\//\\/}"  # Escape slashes for safe usage in sed
+		escaped_value="${escaped_value//&/\\&}" # Escape ampersands due to their special meaning in sed
+
+		# Replace the placeholder with the actual value using sed for better pattern matching
+		condition=$(echo "$condition" | sed "s/\b$varname\b/$escaped_value/g")
 	done
 	echo "$condition"
 }
@@ -34,6 +29,7 @@ for i in "${!conditions[@]}"; do
 
 	# Replace placeholders and form the correct conditional expression
 	dynamic_condition=$(replace_placeholders "${conditions[i]}")
+	echo "Evaluated condition: $dynamic_condition"
 
 	# Evaluate the condition
 	if eval "[[ $dynamic_condition ]]"; then
