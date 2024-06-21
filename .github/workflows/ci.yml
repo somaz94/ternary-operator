@@ -79,16 +79,16 @@ jobs:
 
       - name: Run the Container
         env:
-          INPUT_CONDITIONS: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == qa'
-          INPUT_TRUE_VALUES: 'game-service,dev-environment,test-true,env-true,branch-true'
-          INPUT_FALSE_VALUES: 'batch-service,false-environment,test-false,env-false,branch-false'
+          INPUT_CONDITIONS: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
+          INPUT_TRUE_VALUES: 'service-true,environment-true,test-true,env-true,branch-true'
+          INPUT_FALSE_VALUES: 'service-false,environment-false,test-false,env-false,branch-false'
         run: |
           docker run \
           --env INPUT_CONDITIONS="${{ env.INPUT_CONDITIONS }}" \
           --env INPUT_TRUE_VALUES="${{ env.INPUT_TRUE_VALUES }}" \
           --env INPUT_FALSE_VALUES="${{ env.INPUT_FALSE_VALUES }}" \
           --volume ${{ github.workspace }}:/usr/src \
-          --rm ${{ secrets.TEST_TAG }}
+          --rm ${{ env.TEST_TAG }}
 
   test-action:
     name: Test Extract Commit Action
@@ -110,9 +110,9 @@ jobs:
         id: ternary
         uses: ./
         with:
-          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == ${{ inputs.BRANCH }}'
-          true_values: 'game-service,dev-environment,test-true,env-true,branch-true'
-          false_values: 'batch-service,false-environment,test-false,env-false,branch-false'
+          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
+          true_values: 'service-true,environment-true,test-true,env-true,branch-true'
+          false_values: 'service-false,environment-false,test-false,env-false,branch-false'
 
       - name: Print Output
         run: |

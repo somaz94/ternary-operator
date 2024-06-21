@@ -60,9 +60,9 @@ jobs:
         uses: somaz94/ternary-operator@v1
         id: ternary
         with:
-          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == qa'
-          true_values: 'game-service,dev-environment,test-true,env-true,branch-true'
-          false_values: 'batch-service,false-environment,test-false,env-false,branch-false'
+          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
+          true_values: 'service-true,environment-true,test-true,env-true,branch-true'
+          false_values: 'service-false,environment-false,test-false,env-false,branch-false'
 
       - name: Print Output
         run: |
