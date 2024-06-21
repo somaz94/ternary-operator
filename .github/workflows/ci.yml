@@ -61,19 +61,19 @@ jobs:
         run: |
           # shellcheck disable=SC2086
           {
-            echo "service=${{ github.event.inputs.service || 'game' }}"
-            echo "environment=${{ github.event.inputs.environment || 'qa' }}"
-            echo "test=${{ github.event.inputs.test || 'prod' }}"
-            echo "env=${{ github.event.inputs.env || 'xov' }}"
-            echo "branch=${{ github.event.inputs.branch || 'qa' }}"
+            echo "SERVICE=${{ github.event.inputs.service || 'game' }}"
+            echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}"
+            echo "TEST=${{ github.event.inputs.test || 'prod' }}"
+            echo "ENV=${{ github.event.inputs.env || 'xov' }}"
+            echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}"
           } >> $GITHUB_ENV # Grouping commands to address SC2129
           # shellcheck disable=SC2086
           {
-            echo "service=${{ github.event.inputs.service || 'game' }}"
-            echo "environment=${{ github.event.inputs.environment || 'qa' }}"
-            echo "test=${{ github.event.inputs.test || 'prod' }}"
-            echo "env=${{ github.event.inputs.env || 'xov' }}"
-            echo "branch=${{ github.event.inputs.branch || 'qa' }}"
+            echo "SERVICE=${{ github.event.inputs.service || 'game' }}"
+            echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}"
+            echo "TEST=${{ github.event.inputs.test || 'prod' }}"
+            echo "ENV=${{ github.event.inputs.env || 'xov' }}"
+            echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}"
           } >> $GITHUB_OUTPUT # Grouping commands to address SC2129
 
       - name: Setup Docker BuildX
@@ -103,11 +103,11 @@ jobs:
             --rm ${{ env.TEST_TAG }}
 
     outputs:
-      service: ${{ steps.set_vars.outputs.service }}
-      environment: ${{ steps.set_vars.outputs.environment }}
-      test: ${{ steps.set_vars.outputs.test }}
-      env: ${{ steps.set_vars.outputs.env }}
-      branch: ${{ steps.set_vars.outputs.branch }}
+      service: ${{ steps.set_vars.outputs.SERVICE}}
+      environment: ${{ steps.set_vars.outputs.ENVIRONMENT }}
+      test: ${{ steps.set_vars.outputs.TEST }}
+      env: ${{ steps.set_vars.outputs.ENV }}
+      branch: ${{ steps.set_vars.outputs.BRANCH }}
 
   test-action:
     name: Test Extract Commit Action
