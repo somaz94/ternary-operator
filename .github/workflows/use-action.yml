@@ -63,12 +63,6 @@ jobs:
           conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
           true_values: 'service-true,environment-true,test-true,env-true,branch-true'
           false_values: 'service-false,environment-false,test-false,env-false,branch-false'
-        env:
-          SERVICE: ${{ env.service }}
-          ENVIRONMENT: ${{ env.environment }}
-          TEST: ${{ env.test }}
-          ENV: ${{ env.env }}
-          BRANCH: ${{ env.branch }}
 
       - name: Print Output
         run: |

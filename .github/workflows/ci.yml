@@ -94,11 +94,6 @@ jobs:
           INPUT_CONDITIONS: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
           INPUT_TRUE_VALUES: 'service-true,environment-true,test-true,env-true,branch-true'
           INPUT_FALSE_VALUES: 'service-false,environment-false,test-false,env-false,branch-false'
-          SERVICE: ${{ env.service }}
-          ENVIRONMENT: ${{ env.environment }}
-          TEST: ${{ env.test }}
-          ENV: ${{ env.env }}
-          BRANCH: ${{ env.branch }}
         run: |
           docker run \
             --env INPUT_CONDITIONS="${{ env.INPUT_CONDITIONS }}" \
