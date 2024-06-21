@@ -12,17 +12,18 @@ function replace_placeholders {
 	for varname in $(echo "$condition" | grep -oE '\b[A-Z_]+\b'); do
 		local value="${!varname}"
 
-		# Comment out or properly handle debug to not interfere
-		# echo "Debug: Variable $varname has value $value"  # For debugging, not to be included in eval
+		# Debugging the variable's value
+		echo "Debug: Variable $varname has value $value" >&2 # Redirect to stderr to avoid interfering with eval
 
 		# Escaping special characters in value that might affect direct replacement
 		local escaped_value="${value//\//\\/}"  # Escape slashes for safe usage in replacements
 		escaped_value="${escaped_value//&/\\&}" # Escape ampersands which have special meaning in replacements
 
 		# Replace the variable name with its value in the condition
-		condition="${condition//"$varname"/$escaped_value}"
+		condition="${condition//$varname/$escaped_value}"
 	done
-	echo "$condition" # Return the modified condition string without any debug information
+	# Return the modified condition string without any debug information
+	echo "$condition"
 }
 
 # Loop through the conditions and evaluate them
@@ -31,7 +32,7 @@ for i in "${!conditions[@]}"; do
 
 	# Replace placeholders and form the correct conditional expression
 	dynamic_condition=$(replace_placeholders "${conditions[i]}")
-	echo "Debug: Evaluated dynamic condition - $dynamic_condition" # For debugging
+	echo "Debug: Evaluated dynamic condition - $dynamic_condition" >&2 # Redirect to stderr to avoid interfering with eval
 
 	# Evaluate the condition
 	if eval "[[ $dynamic_condition ]]"; then
@@ -44,6 +45,7 @@ for i in "${!conditions[@]}"; do
 
 	echo "Debug: Result for condition $i - $result"
 	echo "::set-output name=output_$((i + 1))::$result"
+  echo "output_$((i + 1))=$result"
 done
 
 echo "Debug: Script execution completed."
