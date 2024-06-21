@@ -1,4 +1,4 @@
-name: 'Ternary Operator'
+name: 'Ternary Operator Action'
 description: 'Generates outputs based on dynamic conditions, directly sets environment variables'
 author: 'somaz94'
 inputs:
