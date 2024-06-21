@@ -60,19 +60,19 @@ jobs:
         id: set_vars
         run: |
           {
-            echo "service=\"${{ github.event.inputs.service || 'game' }}\"" 
-            echo "environment=\"${{ github.event.inputs.environment || 'qa' }}\"" 
-            echo "test=\"${{ github.event.inputs.test || 'prod' }}\"" 
-            echo "env=\"${{ github.event.inputs.env || 'xov' }}\"" 
-            echo "branch=\"${{ github.event.inputs.branch || 'qa' }}\""
+            echo "service=${{ github.event.inputs.service || 'game' }}"
+            echo "environment=${{ github.event.inputs.environment || 'qa' }}"
+            echo "test=${{ github.event.inputs.test || 'prod' }}"
+            echo "env=${{ github.event.inputs.env || 'xov' }}"
+            echo "branch=${{ github.event.inputs.branch || 'qa' }}"
           } >> $GITHUB_ENV # Grouping commands to address SC2129
 
           {
-            echo "service=\"${{ github.event.inputs.service || 'game' }}\"" 
-            echo "environment=\"${{ github.event.inputs.environment || 'qa' }}\"" 
-            echo "test=\"${{ github.event.inputs.test || 'prod' }}\"" 
-            echo "env=\"${{ github.event.inputs.env || 'xov' }}\"" 
-            echo "branch=\"${{ github.event.inputs.branch || 'qa' }}\""
+            echo "service=${{ github.event.inputs.service || 'game' }}"
+            echo "environment=${{ github.event.inputs.environment || 'qa' }}"
+            echo "test=${{ github.event.inputs.test || 'prod' }}"
+            echo "env=${{ github.event.inputs.env || 'xov' }}"
+            echo "branch=${{ github.event.inputs.branch || 'qa' }}"
           } >> $GITHUB_OUTPUT # Grouping commands to address SC2129
 
       - name: Setup Docker BuildX
@@ -119,11 +119,11 @@ jobs:
       - name: Set Variables from Outputs
         run: |
           {
-            echo "SERVICE=\"${{ needs.build-and-push-docker.outputs.service }}\"" 
-            echo "ENVIRONMENT=\"${{ needs.build-and-push-docker.outputs.environment }}\"" 
-            echo "TEST=\"${{ needs.build-and-push-docker.outputs.test }}\"" 
-            echo "ENV=\"${{ needs.build-and-push-docker.outputs.env }}\"" 
-            echo "BRANCH=\"${{ needs.build-and-push-docker.outputs.branch }}\""
+            echo "SERVICE=${{ needs.build-and-push-docker.outputs.service }}"
+            echo "ENVIRONMENT=${{ needs.build-and-push-docker.outputs.environment }}"
+            echo "TEST=${{ needs.build-and-push-docker.outputs.test }}"
+            echo "ENV=${{ needs.build-and-push-docker.outputs.env }}"
+            echo "BRANCH=${{ needs.build-and-push-docker.outputs.branch }}"
           } >> $GITHUB_ENV # Grouping commands to address SC2129
 
       - name: Test Local Action
