@@ -43,7 +43,7 @@ for i in "${!conditions[@]}"; do
 	fi
 
 	echo "Debug: Result for condition $i - $result"
-	echo "output_$((i + 1))=$result"
+	echo "::set-output name=output_$((i + 1))::$result"
 done
 
 echo "Debug: Script execution completed."
