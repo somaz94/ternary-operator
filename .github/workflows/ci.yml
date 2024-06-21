@@ -59,17 +59,22 @@ jobs:
       - name: Set Variable
         id: set_vars
         run: |
-          echo "service=${{ github.event.inputs.service || 'game' }}" >> $GITHUB_ENV
-          echo "environment=${{ github.event.inputs.environment || 'qa' }}" >> $GITHUB_ENV
-          echo "test=${{ github.event.inputs.test || 'prod' }}" >> $GITHUB_ENV
-          echo "env=${{ github.event.inputs.env || 'xov' }}" >> $GITHUB_ENV
-          echo "branch=${{ github.event.inputs.branch || 'qa' }}" >> $GITHUB_ENV
+          # Correctly quote the entire echo output for each line SC2089
+          {
+            echo "service=\"${{ github.event.inputs.service || 'game' }}\""
+            echo "environment=\"${{ github.event.inputs.environment || 'qa' }}\""
+            echo "test=\"${{ github.event.inputs.test || 'prod' }}\""
+            echo "env=\"${{ github.event.inputs.env || 'xov' }}\""
+            echo "branch=\"${{ github.event.inputs.branch || 'qa' }}\""
+          } >> $GITHUB_ENV # Grouping commands to address SC2129
 
-          echo "service=${{ github.event.inputs.service || 'game' }}" >> $GITHUB_OUTPUT
-          echo "environment=${{ github.event.inputs.environment || 'qa' }}" >> $GITHUB_OUTPUT
-          echo "test=${{ github.event.inputs.test || 'prod' }}" >> $GITHUB_OUTPUT
-          echo "env=${{ github.event.inputs.env || 'xov' }}" >> $GITHUB_OUTPUT
-          echo "branch=${{ github.event.inputs.branch || 'qa' }}" >> $GITHUB_OUTPUT
+          {
+            echo "service=\"${{ github.event.inputs.service || 'game' }}\""
+            echo "environment=\"${{ github.event.inputs.environment || 'qa' }}\""
+            echo "test=\"${{ github.event.inputs.test || 'prod' }}\""
+            echo "env=\"${{ github.event.inputs.env || 'xov' }}\""
+            echo "branch=\"${{ github.event.inputs.branch || 'qa' }}\""
+          } >> $GITHUB_OUTPUT # Grouping commands to address SC2129
 
       - name: Setup Docker BuildX
         uses: docker/setup-buildx-action@v3
@@ -114,11 +119,14 @@ jobs:
 
       - name: Set Variables from Outputs
         run: |
-          echo "SERVICE=${{ needs.build-and-push-docker.outputs.service }}" >> $GITHUB_ENV
-          echo "ENVIRONMENT=${{ needs.build-and-push-docker.outputs.environment }}" >> $GITHUB_ENV
-          echo "TEST=${{ needs.build-and-push-docker.outputs.test }}" >> $GITHUB_ENV
-          echo "ENV=${{ needs.build-and-push-docker.outputs.env }}" >> $GITHUB_ENV
-          echo "BRANCH=${{ needs.build-and-push-docker.outputs.branch }}" >> $GITHUB_ENV
+          # Correctly quote the entire echo output for each line SC2089
+          {
+            echo "SERVICE=\"${{ needs.build-and-push-docker.outputs.service }}\""
+            echo "ENVIRONMENT=\"${{ needs.build-and-push-docker.outputs.environment }}\""
+            echo "TEST=\"${{ needs.build-and-push-docker.outputs.test }}\""
+            echo "ENV=\"${{ needs.build-and-push-docker.outputs.env }}\""
+            echo "BRANCH=\"${{ needs.build-and-push-docker.outputs.branch }}\""
+          } >> $GITHUB_ENV # Grouping commands to address SC2129
 
       - name: Test Local Action
         id: ternary

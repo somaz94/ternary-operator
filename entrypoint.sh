@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Allow git operations in the current directory
-git config --global --add safe.directory /usr/src
+# # Allow git operations in the current directory
+# git config --global --add safe.directory /usr/src
 
-# Explicitly set safe directory for git operations
-git config --global --add safe.directory /github/workspace
+# # Explicitly set safe directory for git operations
+# git config --global --add safe.directory /github/workspace
 
 echo "Debug: Starting script execution."
 
@@ -18,7 +18,8 @@ function replace_placeholders {
 	for varname in $(echo "$condition" | grep -oE '\b[A-Z_]+\b'); do
 		local value="${!varname}"
 		# Escaping special characters in value that might affect sed
-		local escaped_value=$(echo "$value" | sed 's/[&/\]/\\&/g')
+		local escaped_value
+		escaped_value=$(echo "$value" | sed 's/[&/\]/\\&/g')
 		# Use sed for substitution to handle complex replacements
 		condition=$(echo "$condition" | sed "s/\b$varname\b/$escaped_value/g")
 	done
