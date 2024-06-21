@@ -17,11 +17,13 @@ function replace_placeholders {
 	local condition="$1"
 	for varname in $(echo "$condition" | grep -oE '\b[A-Z_]+\b'); do
 		local value="${!varname}"
-		# Escaping special characters in value that might affect sed
-		local escaped_value
-		escaped_value=$(echo "$value" | sed 's/[&/\]/\\&/g')
-		# Use sed for substitution to handle complex replacements
-		condition=$(echo "$condition" | sed "s/\b$varname\b/$escaped_value/g")
+		# Escaping special characters in value that might affect direct replacement
+		local escaped_value="${value//\//\\/}"  # Escape slashes for safe usage in replacement
+		escaped_value="${escaped_value//&/\\&}" # Escape ampersands which have special meaning in replacement
+
+		# Directly replace the variable name with its value, ensuring complete variable names are matched
+		# This approach simplifies the matching process by eliminating the need for word boundary checks
+		condition="${condition//"$varname"/$escaped_value}"
 	done
 	echo "$condition"
 }
