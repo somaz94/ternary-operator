@@ -101,8 +101,7 @@ jobs:
           --env SERVICE="${{ env.service }}" \
           --env ENVIRONMENT "${{ env.environment }}" \
           --env TEST="${{ env.test }}" \
-          --env ENV="${{ env.env }}" \
-          --env BRANCH="${{ env.branch }}" \
+          --env ENV="${{ env.env }}" \\
           --volume ${{ github.workspace }}:/usr/src \
           --rm ${{ env.TEST_TAG }}
 
