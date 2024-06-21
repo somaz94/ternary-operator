@@ -39,7 +39,7 @@ for i in "${!conditions[@]}"; do
 	fi
 
 	echo "output_$((i + 1))=$result"
-	echo "output_$((i + 1))=$result" >>$GITHUB_OUTPUT # Adjust as per latest GitHub Actions guidelines if `set-output` is deprecated
+	echo "output_$((i + 1))=$result" >>"$GITHUB_OUTPUT" # Adjust as per latest GitHub Actions guidelines if `set-output` is deprecated
 done
 
 echo "Debug: Script execution completed."
