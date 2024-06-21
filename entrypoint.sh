@@ -9,17 +9,20 @@ IFS=',' read -ra false_values <<<"$INPUT_FALSE_VALUES"
 # Function to replace variable placeholders with their actual values
 function replace_placeholders {
 	local condition="$1"
-	for varname in $(echo "$condition" | grep -oE '\b[A-Z]+\b'); do
+	for varname in $(echo "$condition" | grep -oE '\b[A-Z_]+\b'); do
 		local value="${!varname}"
+
+		# Comment out or properly handle debug to not interfere
+		# echo "Debug: Variable $varname has value $value"  # For debugging, not to be included in eval
+
 		# Escaping special characters in value that might affect direct replacement
 		local escaped_value="${value//\//\\/}"  # Escape slashes for safe usage in replacements
 		escaped_value="${escaped_value//&/\\&}" # Escape ampersands which have special meaning in replacements
 
-		# Directly replace the variable name with its value, ensuring complete variable names are matched
-		# The previous method might not have been effective due to incorrect regex or shell parameter expansion behavior
-		condition="${condition//\b$varname\b/$escaped_value}"
+		# Replace the variable name with its value in the condition
+		condition="${condition//"$varname"/$escaped_value}"
 	done
-	echo "$condition"
+	echo "$condition" # Return the modified condition string without any debug information
 }
 
 # Loop through the conditions and evaluate them
@@ -28,6 +31,7 @@ for i in "${!conditions[@]}"; do
 
 	# Replace placeholders and form the correct conditional expression
 	dynamic_condition=$(replace_placeholders "${conditions[i]}")
+	echo "Debug: Evaluated dynamic condition - $dynamic_condition" # For debugging
 
 	# Evaluate the condition
 	if eval "[[ $dynamic_condition ]]"; then
