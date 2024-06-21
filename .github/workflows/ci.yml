@@ -98,11 +98,11 @@ jobs:
           --env INPUT_CONDITIONS="${{ env.INPUT_CONDITIONS }}" \
           --env INPUT_TRUE_VALUES="${{ env.INPUT_TRUE_VALUES }}" \
           --env INPUT_FALSE_VALUES="${{ env.INPUT_FALSE_VALUES }}" \
-          --env SERVICE= "${{ env.service }}" \
-          --env ENVIRONMENT= "${{ env.environment }}" \
-          --env TEST= "${{ env.test }}" \
-          --env ENV= "${{ env.env }}" \
-          --env BRANCH= "${{ env.branch }}" \
+          --env SERVICE="${{ env.service }}" \
+          --env ENVIRONMENT "${{ env.environment }}" \
+          --env TEST="${{ env.test }}" \
+          --env ENV="${{ env.env }}" \
+          --env BRANCH="${{ env.branch }}" \
           --volume ${{ github.workspace }}:/usr/src \
           --rm ${{ env.TEST_TAG }}
 
