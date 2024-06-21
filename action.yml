@@ -29,6 +29,6 @@ runs:
     - ${{ inputs.conditions }}
     - ${{ inputs.true_values }}
     - ${{ inputs.false_values }}
-# branding:
-#   icon: 'check-circle'
-#   color: 'yellow'
+branding:
+  icon: 'award'
+  color: 'blue'
