@@ -50,11 +50,14 @@ jobs:
 
       - name: Set Variable
         run: |
-          echo "SERVICE=${{ github.event.inputs.service || 'game' }}" >> $GITHUB_ENV
-          echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}" >> $GITHUB_ENV
-          echo "TEST=${{ github.event.inputs.test || 'prod' }}" >> $GITHUB_ENV
-          echo "ENV=${{ github.event.inputs.env || 'xov' }}" >> $GITHUB_ENV
-          echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}" >> $GITHUB_ENV
+          # shellcheck disable=SC2086
+          {
+            echo "service=${{ github.event.inputs.service || 'game' }}"
+            echo "environment=${{ github.event.inputs.environment || 'qa' }}"
+            echo "test=${{ github.event.inputs.test || 'prod' }}"
+            echo "env=${{ github.event.inputs.env || 'xov' }}"
+            echo "branch=${{ github.event.inputs.branch || 'qa' }}"
+          } >> $GITHUB_ENV # Grouping commands to address SC2129
 
       - name: Evaluate Conditions
         uses: somaz94/ternary-operator@v1
