@@ -8,7 +8,6 @@ git config --global --add safe.directory /github/workspace
 
 echo "Debug: Starting script execution."
 
-# Directly assign the variables instead of using unnecessary echo
 IFS=',' read -ra conditions <<<"$INPUT_CONDITIONS"
 IFS=',' read -ra true_values <<<"$INPUT_TRUE_VALUES"
 IFS=',' read -ra false_values <<<"$INPUT_FALSE_VALUES"
@@ -18,8 +17,10 @@ function replace_placeholders {
 	local condition="$1"
 	for varname in $(echo "$condition" | grep -oE '\b[A-Z_]+\b'); do
 		local value="${!varname}"
-		# Use Bash parameter expansion for replacement instead of sed
-		condition="${condition//\b$varname\b/$value}"
+		# Escaping special characters in value that might affect sed
+		local escaped_value=$(echo "$value" | sed 's/[&/\]/\\&/g')
+		# Use sed for substitution to handle complex replacements
+		condition=$(echo "$condition" | sed "s/\b$varname\b/$escaped_value/g")
 	done
 	echo "$condition"
 }
