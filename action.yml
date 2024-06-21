@@ -1,21 +1,34 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
-
-# Define your inputs here.
+name: 'Ternary Operator'
+description: 'Generates outputs based on dynamic conditions, directly sets environment variables'
+author: 'somaz94'
 inputs:
-  who-to-greet:
-    description: 'Your input description here'
+  conditions:
+    description: 'Comma-separated conditions to evaluate'
     required: true
-    default: 'World'
-
-# Define your outputs here.
+  true_values:
+    description: 'Comma-separated values if conditions are true'
+    required: true
+  false_values:
+    description: 'Comma-separated values if conditions are false'
+    required: true
 outputs:
-  greeting:
-    description: 'Your output description here'
-
+  output_1:
+    description: 'Output for the first condition'
+  output_2:
+    description: 'Output for the second condition'
+  output_3:
+    description: 'Output for the third condition'
+  output_4:
+    description: 'Output for the fourth condition'
+  output_5:
+    description: 'Output for the fifth condition'
 runs:
-  using: docker
-  image: Dockerfile
-  env:
-    INPUT_WHO_TO_GREET: ${{ inputs.who-to-greet }}
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.conditions }}
+    - ${{ inputs.true_values }}
+    - ${{ inputs.false_values }}
+# branding:
+#   icon: 'check-circle'
+#   color: 'yellow'

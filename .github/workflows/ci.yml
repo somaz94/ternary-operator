@@ -5,16 +5,44 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+        description: Select the environment
+        required: false
+      branch:
+        type: choice
+        options:
+          - qa
+          - dev
+        description: Select the branch
+        required: false
+        default: qa
+      test:
+        type: string
+        description: Select the test
+        required: false
+      service:
+        description: Which service to be built. game or batch or etc...
+        required: false
+        type: choice
+        options:
+          - game
+          - batch
+      env:
+        type: string
+        description: Select the env
+        required: false
+
 
 permissions:
   contents: read
 
 jobs:
-  test-docker:
-    name: Docker Tests
+  build-and-push-docker:
+    name: Build and Push Docker
     runs-on: ubuntu-latest
-
-    # Run a local registry to push to
     services:
       registry:
         image: registry:2
@@ -22,22 +50,27 @@ jobs:
           - 5001:5000
 
     env:
-      TEST_TAG: localhost:5001/actions/container-action:latest
+      TEST_TAG: localhost:5001/actions/ternary-operator:latest
 
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
 
+      - name: Set Variable
+        run: |
+          echo "SERVICE=${{ github.event.inputs.service || 'game' }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}" >> $GITHUB_ENV
+          echo "TEST=${{ github.event.inputs.test || 'prod' }}" >> $GITHUB_ENV
+          echo "ENV=${{ github.event.inputs.env || 'xov' }}" >> $GITHUB_ENV
+          echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}" >> $GITHUB_ENV
+
       - name: Setup Docker BuildX
-        id: setup-buildx
         uses: docker/setup-buildx-action@v3
         with:
           install: true
           driver-opts: network=host
 
       - name: Build the Container
-        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -45,29 +78,46 @@ jobs:
           tags: ${{ env.TEST_TAG }}
 
       - name: Run the Container
-        id: run
         env:
-          INPUT_WHO_TO_GREET: Mona Lisa Octocat
+          INPUT_CONDITIONS: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == qa'
+          INPUT_TRUE_VALUES: 'game-service,dev-environment,test-true,env-true,branch-true'
+          INPUT_FALSE_VALUES: 'batch-service,false-environment,test-false,env-false,branch-false'
         run: |
           docker run \
-            --env INPUT_WHO_TO_GREET="${{ env.INPUT_WHO_TO_GREET }}" \
-            --rm ${{ env.TEST_TAG }}
+          --env INPUT_CONDITIONS="${{ env.INPUT_CONDITIONS }}" \
+          --env INPUT_TRUE_VALUES="${{ env.INPUT_TRUE_VALUES }}" \
+          --env INPUT_FALSE_VALUES="${{ env.INPUT_FALSE_VALUES }}" \
+          --volume ${{ github.workspace }}:/usr/src \
+          --rm ${{ secrets.TEST_TAG }}
 
   test-action:
-    name: GitHub Actions Test
+    name: Test Extract Commit Action
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
 
+      - name: Set Variable
+        run: |
+          echo "SERVICE=${{ github.event.inputs.service || 'game' }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}" >> $GITHUB_ENV
+          echo "TEST=${{ github.event.inputs.test || 'prod' }}" >> $GITHUB_ENV
+          echo "ENV=${{ github.event.inputs.env || 'xov' }}" >> $GITHUB_ENV
+          echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}" >> $GITHUB_ENV
+
       - name: Test Local Action
-        id: test-action
+        id: ternary
         uses: ./
         with:
-          who-to-greet: Mona Lisa Octocat
+          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == ${{ inputs.BRANCH }}'
+          true_values: 'game-service,dev-environment,test-true,env-true,branch-true'
+          false_values: 'batch-service,false-environment,test-false,env-false,branch-false'
 
       - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.greeting }}"
+        run: |
+          echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"
+          echo "Second condition result: ${{ steps.ternary.outputs.output_2 }}"
+          echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
+          echo "Fourth condition result: ${{ steps.ternary.outputs.output_4 }}"
+          echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
