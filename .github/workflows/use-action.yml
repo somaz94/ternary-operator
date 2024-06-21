@@ -1,0 +1,79 @@
+name: Example Workflow using Ternary Operator Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      run:
+        description: "workflow run"
+        required: true
+        default: "true"
+      environment:
+        type: environment
+        description: Select the environment
+        required: false
+      branch:
+        type: choice
+        options:
+          - qa
+          - dev
+        description: Select the branch
+        required: false
+        default: qa
+      test:
+        type: string
+        description: Select the test
+        required: false
+      service:
+        description: Which service to be built. game or batch or etc...
+        required: false
+        type: choice
+        options:
+          - game
+          - batch
+      env:
+        type: string
+        description: Select the env
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  action-module:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Variable
+        run: |
+          # shellcheck disable=SC2086
+          {
+            echo "service=${{ github.event.inputs.service || 'game' }}"
+            echo "environment=${{ github.event.inputs.environment || 'qa' }}"
+            echo "test=${{ github.event.inputs.test || 'prod' }}"
+            echo "env=${{ github.event.inputs.env || 'xov' }}"
+            echo "branch=${{ github.event.inputs.branch || 'qa' }}"
+          } >> $GITHUB_ENV # Grouping commands to address SC2129
+
+      - name: Evaluate Conditions
+        uses: somaz94/ternary-operator@v1
+        id: ternary
+        with:
+          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
+          true_values: 'service-true,environment-true,test-true,env-true,branch-true'
+          false_values: 'service-false,environment-false,test-false,env-false,branch-false'
+        env:
+          SERVICE: ${{ env.service }}
+          ENVIRONMENT: ${{ env.environment }}
+          TEST: ${{ env.test }}
+          ENV: ${{ env.env }}
+          BRANCH: ${{ env.branch }}
+
+      - name: Print Output
+        run: |
+          echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"
+          echo "Second condition result: ${{ steps.ternary.outputs.output_2 }}"
+          echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
+          echo "Fourth condition result: ${{ steps.ternary.outputs.output_4 }}"
+          echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"      
