@@ -67,6 +67,7 @@ jobs:
             echo "env=${{ github.event.inputs.env || 'xov' }}"
             echo "branch=${{ github.event.inputs.branch || 'qa' }}"
           } >> $GITHUB_ENV # Grouping commands to address SC2129
+          # shellcheck disable=SC2086
           {
             echo "service=${{ github.event.inputs.service || 'game' }}"
             echo "environment=${{ github.event.inputs.environment || 'qa' }}"
