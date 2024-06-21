@@ -21,7 +21,9 @@ function replace_placeholders {
 		local escaped_value
 		escaped_value=$(echo "$value" | sed 's/[&/\]/\\&/g')
 		# Use sed for substitution to handle complex replacements
-		condition=$(echo "$condition" | sed "s/\b$varname\b/$escaped_value/g")
+		# condition=$(echo "$condition" | sed "s/\b$varname\b/$escaped_value/g")
+    # https://www.shellcheck.net/wiki/SC2001
+    condition="${condition//\b$varname\b/$escaped_value}"
 	done
 	echo "$condition"
 }
