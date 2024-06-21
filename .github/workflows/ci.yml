@@ -90,7 +90,7 @@ jobs:
 
       - name: Run the Container
         env:
-          INPUT_CONDITIONS: 'service == game || service == batch, environment == dev, test == prod, env == xov, branch == dev'
+          INPUT_CONDITIONS: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
           INPUT_TRUE_VALUES: 'service-true,environment-true,test-true,env-true,branch-true'
           INPUT_FALSE_VALUES: 'service-false,environment-false,test-false,env-false,branch-false'
         run: |
@@ -98,6 +98,11 @@ jobs:
           --env INPUT_CONDITIONS="${{ env.INPUT_CONDITIONS }}" \
           --env INPUT_TRUE_VALUES="${{ env.INPUT_TRUE_VALUES }}" \
           --env INPUT_FALSE_VALUES="${{ env.INPUT_FALSE_VALUES }}" \
+          --env SERVICE= "${{ env.service }}" \
+          --env ENVIRONMENT= "${{ env.environment }}" \
+          --env TEST= "${{ env.test }}" \
+          --env ENV= "${{ env.env }}" \
+          --env BRANCH= "${{ env.branch }}" \
           --volume ${{ github.workspace }}:/usr/src \
           --rm ${{ env.TEST_TAG }}
 
