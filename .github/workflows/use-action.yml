@@ -49,11 +49,11 @@ jobs:
         run: |
           # shellcheck disable=SC2086
           {
-            echo "service=${{ github.event.inputs.service || 'game' }}"
-            echo "environment=${{ github.event.inputs.environment || 'qa' }}"
-            echo "test=${{ github.event.inputs.test || 'prod' }}"
-            echo "env=${{ github.event.inputs.env || 'xov' }}"
-            echo "branch=${{ github.event.inputs.branch || 'qa' }}"
+            echo "SERVICE=${{ github.event.inputs.service || 'game' }}"
+            echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}"
+            echo "TEST=${{ github.event.inputs.test || 'prod' }}"
+            echo "ENV=${{ github.event.inputs.env || 'xov' }}"
+            echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}"
           } >> $GITHUB_ENV # Grouping commands to address SC2129
 
       - name: Evaluate Conditions
