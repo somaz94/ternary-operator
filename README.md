@@ -76,6 +76,6 @@ jobs:
           echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
 ```
 
-### License
+## License
 
 This project is licensed under the [MIT License](LICENSE) file for details.
