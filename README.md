@@ -1,7 +1,10 @@
 # Tenary Operator
 
-[![GitHub Super-Linter](https://github.com/actions/container-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/actions/container-action/actions/workflows/ci.yml/badge.svg)
+[![GitHub Super-Linter](https://github.com/somaz94/ternary-operator/actions/workflows/linter.yml/badge.svg)](https://github.com/somaz94/ternary-operator)
+![CI](https://github.com/somaz94/ternary-operator/actions/workflows/ci.yml/badge.svg)
+[![License](https://img.shields.io/github/license/somaz94/ternary-operator)](https://github.com/somaz94/container-action)
+![Latest Tag](https://img.shields.io/github/v/tag/somaz94/ternary-operator)
+![Top Language](https://img.shields.io/github/languages/top/somaz94/ternary-operator?color=green&logo=terraform&logoColor=blue)
 
 ## Description
 
