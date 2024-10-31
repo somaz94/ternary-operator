@@ -35,7 +35,6 @@ on:
         description: Select the env
         required: false
 
-
 permissions:
   contents: read
 
@@ -91,7 +90,9 @@ jobs:
 
       - name: Run the Container
         env:
-          INPUT_CONDITIONS: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
+          INPUT_CONDITIONS:
+            'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST ==
+            prod, ENV == xov, BRANCH == dev'
           INPUT_TRUE_VALUES: 'service-true,environment-true,test-true,env-true,branch-true'
           INPUT_FALSE_VALUES: 'service-false,environment-false,test-false,env-false,branch-false'
         run: |
@@ -132,7 +133,9 @@ jobs:
         id: ternary
         uses: ./
         with:
-          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
+          conditions:
+            'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST ==
+            prod, ENV == xov, BRANCH == dev'
           true_values: 'service-true,environment-true,test-true,env-true,branch-true'
           false_values: 'service-false,environment-false,test-false,env-false,branch-false'
 

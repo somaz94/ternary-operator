@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       run:
-        description: "workflow run"
+        description: 'workflow run'
         required: true
-        default: "true"
+        default: 'true'
       environment:
         type: environment
         description: Select the environment
@@ -60,7 +60,9 @@ jobs:
         uses: somaz94/ternary-operator@v1
         id: ternary
         with:
-          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
+          conditions:
+            'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST ==
+            prod, ENV == xov, BRANCH == dev'
           true_values: 'service-true,environment-true,test-true,env-true,branch-true'
           false_values: 'service-false,environment-false,test-false,env-false,branch-false'
 
@@ -70,4 +72,4 @@ jobs:
           echo "Second condition result: ${{ steps.ternary.outputs.output_2 }}"
           echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
           echo "Fourth condition result: ${{ steps.ternary.outputs.output_4 }}"
-          echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"      
+          echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
