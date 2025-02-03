@@ -2,8 +2,8 @@ FROM alpine:3.21
 
 # Install necessary packages
 RUN apk add --no-cache \
-    git=2.47.1-r0 \
-    bash=5.2.37-r0
+    git \
+    bash
 
 # Set the working directory inside the container
 WORKDIR /usr/src
