@@ -1,8 +1,8 @@
 # Changelog
 
-## [v1](https://github.com/somaz94/ternary-operator/tree/v1) (2025-02-03)
+## [v1.0.2](https://github.com/somaz94/ternary-operator/tree/v1.0.2) (2025-02-07)
 
-[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1...v1)
+[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.0.1...v1.0.2)
 
 **Merged pull requests:**
 
@@ -10,9 +10,9 @@
 - build\(deps\): bump alpine from 3.20 to 3.21 in the docker-minor group [\#2](https://github.com/somaz94/ternary-operator/pull/2) ([dependabot[bot]](https://github.com/apps/dependabot))
 - build\(deps\): bump super-linter/super-linter from 6 to 7 [\#1](https://github.com/somaz94/ternary-operator/pull/1) ([dependabot[bot]](https://github.com/apps/dependabot))
 
-## [v1](https://github.com/somaz94/ternary-operator/tree/v1) (2024-06-24)
+## [v1.0.1](https://github.com/somaz94/ternary-operator/tree/v1.0.1) (2024-06-24)
 
-[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.0.1...v1)
+[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.0.0...v1.0.1)
 
 
 
