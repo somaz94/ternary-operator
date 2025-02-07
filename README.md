@@ -16,33 +16,33 @@ environment or previous steps in a GitHub Actions workflow.
 
 ## Features
 
-- **Dynamic Evaluation**: Flexibly evaluate conditions provided as inputs.
-- **Customizable Outputs**: Outputs can be used later in the workflow for
-  further steps.
-- **Easy Integration**: Simple to integrate into existing workflows with minimal
-  setup.
+- 🔄 **Dynamic Evaluation**: Flexibly evaluate multiple conditions in a single step
+- 🎯 **Conditional Logic**: Support for complex conditions with AND/OR operators
+- 🔍 **Variable Substitution**: Automatically replaces environment variables in conditions
+- 📤 **Multiple Outputs**: Support for up to 5 different condition evaluations
+- 🚀 **Easy Integration**: Simple to integrate into existing workflows
+- 📝 **Detailed Logging**: Clear debug output for troubleshooting
+- ⚡ **Performance Optimized**: Fast evaluation of multiple conditions
 
 ## Inputs
 
-| Input          | Description                                       | Required |
-| -------------- | ------------------------------------------------- | -------- |
-| `conditions`   | Comma-separated conditions to evaluate.           | Yes      |
-| `true_values`  | Values to return if conditions evaluate to true.  | Yes      |
-| `false_values` | Values to return if conditions evaluate to false. | Yes      |
+| Input          | Description                                       | Required | Example |
+| -------------- | ------------------------------------------------- | -------- | ------- |
+| `conditions`   | Comma-separated conditions to evaluate            | Yes      | `SERVICE == game, ENVIRONMENT == dev` |
+| `true_values`  | Values to return if conditions are true           | Yes      | `service-true,env-true` |
+| `false_values` | Values to return if conditions are false          | Yes      | `service-false,env-false` |
 
 ## Outputs
 
-| Output     | Description                                |
-| ---------- | ------------------------------------------ |
-| `output_1` | Result of evaluating the first condition.  |
-| `output_2` | Result of evaluating the second condition. |
-| `output_3` | Result of evaluating the third condition.  |
-| `output_4` | Result of evaluating the fourth condition. |
-| `output_5` | Result of evaluating the fifth condition.  |
+| Output     | Description                                | Example Value |
+| ---------- | ------------------------------------------ | ------------- |
+| `output_1` | Result of evaluating the first condition   | `service-true` |
+| `output_2` | Result of evaluating the second condition  | `env-false` |
+| `output_3` | Result of evaluating the third condition   | `test-true` |
+| `output_4` | Result of evaluating the fourth condition  | `env-true` |
+| `output_5` | Result of evaluating the fifth condition   | `branch-false` |
 
-## Usage
-
-### Workflow Configuration
+## Example Use Cases
 
 Add the following step to your GitHub Actions workflow to use this action:
 
@@ -84,6 +84,41 @@ jobs:
           echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
 ```
 
+## Best Practices
+
+1. **Condition Format**
+   - Use clear, simple conditions
+   - Properly quote string values
+   - Use environment variables consistently
+
+2. **Error Handling**
+   - Always check output values
+   - Provide meaningful true/false values
+   - Use descriptive variable names
+
+3. **Debugging**
+   - Check action logs for evaluation details
+   - Verify environment variable values
+   - Test conditions independently
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Condition Not Evaluating as Expected**
+   - Verify environment variables are set correctly
+   - Check for proper spacing in conditions
+   - Ensure proper quoting of string values
+
+2. **Missing Outputs**
+   - Verify the number of conditions matches true/false values
+   - Check for syntax errors in conditions
+   - Ensure all required inputs are provided
+
 ## License
 
-This project is licensed under the [MIT License](LICENSE) file for details.
+This project is licensed under the [MIT License](LICENSE).
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
