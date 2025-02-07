@@ -74,7 +74,7 @@ evaluate_conditions() {
     # Validate array lengths match
     if [[ ${#conditions[@]} -ne ${#true_values[@]} ]] || [[ ${#conditions[@]} -ne ${#false_values[@]} ]]; then
         print_error "Number of conditions, true values, and false values must match"
-    }
+    fi
     
     print_debug "Processing ${#conditions[@]} conditions"
     
