@@ -35,7 +35,7 @@ on:
         description: Select the env
         required: false
   workflow_run:
-    workflows: ["Create release"]  # release.yml의 name과 일치해야 함
+    workflows: ["Create release"]
     types:
       - completed
 
@@ -50,23 +50,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Variable
-        run: |
-          # shellcheck disable=SC2086
-          {
-            echo "SERVICE=${{ github.event.inputs.service || 'game' }}"
-            echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}"
-            echo "TEST=${{ github.event.inputs.test || 'prod' }}"
-            echo "ENV=${{ github.event.inputs.env || 'xov' }}"
-            echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}"
-          } >> $GITHUB_ENV # Grouping commands to address SC2129
+        id: set_vars
+        uses: somaz94/env-output-setter@v1
+        with:
+          env_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
+          env_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }},${{ github.event.inputs.test || ''prod'' }},${{ github.event.inputs.env || ''xov'' }},${{ github.event.inputs.branch || ''qa'' }}'
+          output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
+          output_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }},${{ github.event.inputs.test || ''prod'' }},${{ github.event.inputs.env || ''xov'' }},${{ github.event.inputs.branch || ''qa'' }}'
 
       - name: Evaluate Conditions
         uses: somaz94/ternary-operator@v1
         id: ternary
         with:
-          conditions:
-            'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST ==
-            prod, ENV == xov, BRANCH == dev'
+          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
           true_values: 'service-true,environment-true,test-true,env-true,branch-true'
           false_values: 'service-false,environment-false,test-false,env-false,branch-false'
 

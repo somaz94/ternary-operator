@@ -20,7 +20,7 @@ environment or previous steps in a GitHub Actions workflow.
 - 🎯 **Conditional Logic**: Support for complex conditions with AND/OR operators
 - 🔍 **Variable Substitution**: Automatically replaces environment variables in conditions
 - 📤 **Multiple Outputs**: Support for up to 5 different condition evaluations
-- 🚀 **Easy Integration**: Simple to integrate into existing workflows
+- 🚀 **Easy Integration**: Simple to integrate with env-output-setter
 - 📝 **Detailed Logging**: Clear debug output for troubleshooting
 - ⚡ **Performance Optimized**: Fast evaluation of multiple conditions
 
@@ -42,75 +42,120 @@ environment or previous steps in a GitHub Actions workflow.
 | `output_4` | Result of evaluating the fourth condition  | `env-true` |
 | `output_5` | Result of evaluating the fifth condition   | `branch-false` |
 
-## Example Use Cases
+## Usage
 
-Add the following step to your GitHub Actions workflow to use this action:
+### Basic Workflow Example
 
 ```yaml
+name: Conditional Workflow
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service name'
+        required: true
+        default: 'game'
+        type: choice
+        options:
+          - game
+          - batch
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'qa'
+        type: environment
+
 jobs:
-  example_job:
+  evaluate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set Variable
-        run: |
-          # shellcheck disable=SC2086
-          {
-            echo "SERVICE=${{ github.event.inputs.service || 'game' }}"
-            echo "ENVIRONMENT=${{ github.event.inputs.environment || 'qa' }}"
-            echo "TEST=${{ github.event.inputs.test || 'prod' }}"
-            echo "ENV=${{ github.event.inputs.env || 'xov' }}"
-            echo "BRANCH=${{ github.event.inputs.branch || 'qa' }}"
-          } >> $GITHUB_ENV # Grouping commands to address SC2129
+      - name: Set Variables
+        id: set_vars
+        uses: somaz94/env-output-setter@v1
+        with:
+          env_key: 'SERVICE,ENVIRONMENT'
+          env_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }}'
+          output_key: 'SERVICE,ENVIRONMENT'
+          output_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }}'
 
       - name: Evaluate Conditions
         uses: somaz94/ternary-operator@v1
         id: ternary
         with:
-          conditions:
-            'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST ==
-            prod, ENV == xov, BRANCH == dev'
+          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev'
+          true_values: 'service-true,env-true'
+          false_values: 'service-false,env-false'
+
+      - name: Use Results
+        run: |
+          echo "Service condition: ${{ steps.ternary.outputs.output_1 }}"
+          echo "Environment condition: ${{ steps.ternary.outputs.output_2 }}"
+```
+
+### Advanced Example
+
+```yaml
+name: Advanced Conditional Workflow
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set Multiple Variables
+        id: set_vars
+        uses: somaz94/env-output-setter@v1
+        with:
+          env_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
+          env_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }},${{ github.event.inputs.test || ''prod'' }},${{ github.event.inputs.env || ''xov'' }},${{ github.event.inputs.branch || ''qa'' }}'
+          output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
+          output_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }},${{ github.event.inputs.test || ''prod'' }},${{ github.event.inputs.env || ''xov'' }},${{ github.event.inputs.branch || ''qa'' }}'
+
+      - name: Evaluate Multiple Conditions
+        uses: somaz94/ternary-operator@v1
+        id: ternary
+        with:
+          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
           true_values: 'service-true,environment-true,test-true,env-true,branch-true'
           false_values: 'service-false,environment-false,test-false,env-false,branch-false'
-
-      - name: Print Output
-        run: |
-          echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"
-          echo "Second condition result: ${{ steps.ternary.outputs.output_2 }}"
-          echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
-          echo "Fourth condition result: ${{ steps.ternary.outputs.output_4 }}"
-          echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
 ```
 
 ## Best Practices
 
-1. **Condition Format**
+1. **Variable Setting**
+   - Use env-output-setter for consistent variable management
+   - Group related variables together
+   - Provide default values for all variables
+
+2. **Condition Format**
    - Use clear, simple conditions
    - Properly quote string values
    - Use environment variables consistently
 
-2. **Error Handling**
+3. **Error Handling**
    - Always check output values
    - Provide meaningful true/false values
    - Use descriptive variable names
-
-3. **Debugging**
-   - Check action logs for evaluation details
-   - Verify environment variable values
-   - Test conditions independently
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Condition Not Evaluating as Expected**
+1. **Variable Not Set Correctly**
+   - Verify env-output-setter configuration
+   - Check variable names and values
+   - Ensure proper escaping of special characters
+
+2. **Condition Not Evaluating as Expected**
    - Verify environment variables are set correctly
    - Check for proper spacing in conditions
    - Ensure proper quoting of string values
 
-2. **Missing Outputs**
+3. **Missing Outputs**
    - Verify the number of conditions matches true/false values
    - Check for syntax errors in conditions
    - Ensure all required inputs are provided
