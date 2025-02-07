@@ -23,7 +23,7 @@ print_error() {
 
 # Function to print success messages
 print_success() {
-    printf "✅ %s\n" "$1"
+    printf "✅ Success: %s\n" "$1"
 }
 
 # Function to safely write output
@@ -77,24 +77,25 @@ evaluate_conditions() {
         printf "\n📋 Evaluating Condition %d: %s\n" "$((i + 1))" "$condition"
         
         # Replace variables in condition
+        local processed_condition="$condition"
         for varname in $(echo "$condition" | grep -oE '\b[A-Z_]+\b'); do
             local value=$(get_var_value "$varname")
             if [[ -n "$value" ]]; then
                 print_debug "Variable $varname = $value"
-                condition="${condition//$varname/\"$value\"}"
+                processed_condition="${processed_condition//$varname/\"$value\"}"
             fi
         done
         
-        print_debug "Processed condition: $condition"
+        print_debug "Processed condition: $processed_condition"
         
         # Evaluate the condition
         local result
-        if eval "test $condition" 2>/dev/null; then
+        if eval "test $processed_condition" 2>/dev/null; then
             result="${true_values[i]}"
-            print_success "Condition evaluated to true"
+            print_success "Condition $((i + 1)) is TRUE"
         else
             result="${false_values[i]}"
-            print_debug "Condition evaluated to false"
+            print_debug "Condition $((i + 1)) is FALSE"
         fi
         
         safe_write_output "output_$((i + 1))" "$result"
