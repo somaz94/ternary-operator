@@ -7,12 +7,16 @@
 ![Top Language](https://img.shields.io/github/languages/top/somaz94/ternary-operator?color=green&logo=shell&logoColor=b)
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Ternary%20Operator-blue?logo=github)](https://github.com/marketplace/actions/ternary-operator-action)
 
+<br/>
+
 ## Description
 
 This GitHub Action evaluates a series of conditional expressions and sets output
 variables based on the results. It's designed to facilitate dynamic workflows
 that need to respond differently based on the conditions derived from the
 environment or previous steps in a GitHub Actions workflow.
+
+<br/>
 
 ## Features
 
@@ -24,6 +28,8 @@ environment or previous steps in a GitHub Actions workflow.
 - 📝 **Detailed Logging**: Clear debug output for troubleshooting
 - ⚡ **Performance Optimized**: Fast evaluation of multiple conditions
 
+<br/>
+
 ## Inputs
 
 | Input          | Description                                       | Required | Example |
@@ -31,6 +37,8 @@ environment or previous steps in a GitHub Actions workflow.
 | `conditions`   | Comma-separated conditions to evaluate            | Yes      | `SERVICE == game, ENVIRONMENT == dev` |
 | `true_values`  | Values to return if conditions are true           | Yes      | `service-true,env-true` |
 | `false_values` | Values to return if conditions are false          | Yes      | `service-false,env-false` |
+
+<br/>
 
 ## Outputs
 
@@ -42,7 +50,11 @@ environment or previous steps in a GitHub Actions workflow.
 | `output_4` | Result of evaluating the fourth condition  | `env-true` |
 | `output_5` | Result of evaluating the fifth condition   | `branch-false` |
 
+<br/>
+
 ## Usage
+
+<br/>
 
 ### Basic Workflow Example
 
@@ -95,6 +107,8 @@ jobs:
           echo "Environment condition: ${{ steps.ternary.outputs.output_2 }}"
 ```
 
+<br/>
+
 ### Advanced Example
 
 ```yaml
@@ -124,6 +138,8 @@ jobs:
           false_values: 'service-false,environment-false,test-false,env-false,branch-false'
 ```
 
+<br/>
+
 ## Best Practices
 
 1. **Variable Setting**
@@ -141,7 +157,11 @@ jobs:
    - Provide meaningful true/false values
    - Use descriptive variable names
 
+<br/>
+
 ## Troubleshooting
+
+<br/>
 
 ### Common Issues
 
@@ -160,9 +180,13 @@ jobs:
    - Check for syntax errors in conditions
    - Ensure all required inputs are provided
 
+<br/>
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+<br/>
 
 ## Contributing
 
