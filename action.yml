@@ -24,6 +24,16 @@ outputs:
     description: 'Output for the fourth condition'
   output_5:
     description: 'Output for the fifth condition'
+  output_6:
+    description: 'Output for the sixth condition'
+  output_7:
+    description: 'Output for the seventh condition'
+  output_8:
+    description: 'Output for the eighth condition'
+  output_9:
+    description: 'Output for the ninth condition'
+  output_10:
+    description: 'Output for the tenth condition'
 runs:
   using: 'docker'
   image: 'Dockerfile'

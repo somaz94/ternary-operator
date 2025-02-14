@@ -46,6 +46,12 @@ validate_inputs() {
     if [[ ${#missing_inputs[@]} -gt 0 ]]; then
         print_error "Missing required inputs: ${missing_inputs[*]}"
     fi
+
+    # Add maximum condition check
+    IFS=',' read -ra conditions <<< "$INPUT_CONDITIONS"
+    if [[ ${#conditions[@]} -gt 10 ]]; then
+        print_error "Maximum number of conditions (10) exceeded. Found ${#conditions[@]} conditions"
+    fi
 }
 
 # Function to get variable value

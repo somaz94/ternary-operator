@@ -82,11 +82,23 @@ jobs:
 
       - name: Run the Container
         env:
-          INPUT_CONDITIONS:
-            'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST ==
-            prod, ENV == xov, BRANCH == dev'
-          INPUT_TRUE_VALUES: 'service-true,environment-true,test-true,env-true,branch-true'
-          INPUT_FALSE_VALUES: 'service-false,environment-false,test-false,env-false,branch-false'
+          INPUT_CONDITIONS: >-
+            SERVICE == game || SERVICE == batch,
+            ENVIRONMENT == dev,
+            TEST == prod,
+            ENV == xov,
+            BRANCH == dev,
+            SERVICE == game,
+            ENVIRONMENT == qa,
+            TEST == stage,
+            ENV == dev,
+            BRANCH == main
+          INPUT_TRUE_VALUES: >-
+            service-true,environment-true,test-true,env-true,branch-true,
+            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2
+          INPUT_FALSE_VALUES: >-
+            service-false,environment-false,test-false,env-false,branch-false,
+            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
         run: |
           docker run \
             --env INPUT_CONDITIONS="${{ env.INPUT_CONDITIONS }}" \
@@ -125,11 +137,23 @@ jobs:
         id: ternary
         uses: ./
         with:
-          conditions:
-            'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST ==
-            prod, ENV == xov, BRANCH == dev'
-          true_values: 'service-true,environment-true,test-true,env-true,branch-true'
-          false_values: 'service-false,environment-false,test-false,env-false,branch-false'
+          conditions: >-
+            SERVICE == game || SERVICE == batch,
+            ENVIRONMENT == dev,
+            TEST == prod,
+            ENV == xov,
+            BRANCH == dev,
+            SERVICE == game,
+            ENVIRONMENT == qa,
+            TEST == stage,
+            ENV == dev,
+            BRANCH == main
+          true_values: >-
+            service-true,environment-true,test-true,env-true,branch-true,
+            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2
+          false_values: >-
+            service-false,environment-false,test-false,env-false,branch-false,
+            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
 
       - name: Print Output
         run: |
@@ -138,3 +162,8 @@ jobs:
           echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
           echo "Fourth condition result: ${{ steps.ternary.outputs.output_4 }}"
           echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
+          echo "Sixth condition result: ${{ steps.ternary.outputs.output_6 }}"
+          echo "Seventh condition result: ${{ steps.ternary.outputs.output_7 }}"
+          echo "Eighth condition result: ${{ steps.ternary.outputs.output_8 }}"
+          echo "Ninth condition result: ${{ steps.ternary.outputs.output_9 }}"
+          echo "Tenth condition result: ${{ steps.ternary.outputs.output_10 }}"
