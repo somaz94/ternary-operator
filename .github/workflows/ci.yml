@@ -155,6 +155,41 @@ jobs:
             service-false,environment-false,test-false,env-false,branch-false,
             service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
 
+      - name: Test Error Case (Exceeding Maximum Conditions)
+        id: ternary_error
+        continue-on-error: true  # Allow the workflow to continue even if this step fails
+        uses: ./
+        with:
+          conditions: >-
+            SERVICE == game || SERVICE == batch,
+            ENVIRONMENT == dev,
+            TEST == prod,
+            ENV == xov,
+            BRANCH == dev,
+            SERVICE == game,
+            ENVIRONMENT == qa,
+            TEST == stage,
+            ENV == dev,
+            BRANCH == main,
+            EXTRA == test
+          true_values: >-
+            service-true,environment-true,test-true,env-true,branch-true,
+            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2,
+            extra-true
+          false_values: >-
+            service-false,environment-false,test-false,env-false,branch-false,
+            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2,
+            extra-false
+
+      - name: Check Error Output
+        run: |
+          if [[ "${{ steps.ternary_error.outcome }}" == "failure" ]]; then
+            echo "✅ Error test passed: Action failed as expected when exceeding maximum conditions"
+          else
+            echo "❌ Error test failed: Action should have failed when exceeding maximum conditions"
+            exit 1
+          fi
+
       - name: Print Output
         run: |
           echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"
