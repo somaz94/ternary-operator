@@ -89,9 +89,9 @@ jobs:
         uses: somaz94/env-output-setter@v1
         with:
           env_key: 'SERVICE,ENVIRONMENT'
-          env_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }}'
+          env_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }}"
           output_key: 'SERVICE,ENVIRONMENT'
-          output_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }}'
+          output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }}"
 
       - name: Evaluate Conditions
         uses: somaz94/ternary-operator@v1
@@ -125,9 +125,9 @@ jobs:
         uses: somaz94/env-output-setter@v1
         with:
           env_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          env_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }},${{ github.event.inputs.test || ''prod'' }},${{ github.event.inputs.env || ''xov'' }},${{ github.event.inputs.branch || ''qa'' }}'
+          env_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
           output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          output_value: '${{ github.event.inputs.service || ''game'' }},${{ github.event.inputs.environment || ''qa'' }},${{ github.event.inputs.test || ''prod'' }},${{ github.event.inputs.env || ''xov'' }},${{ github.event.inputs.branch || ''qa'' }}'
+          output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
 
       - name: Evaluate Multiple Conditions
         uses: somaz94/ternary-operator@v1
