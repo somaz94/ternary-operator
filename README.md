@@ -23,7 +23,7 @@ environment or previous steps in a GitHub Actions workflow.
 - 🔄 **Dynamic Evaluation**: Flexibly evaluate multiple conditions in a single step
 - 🎯 **Conditional Logic**: Support for complex conditions with AND/OR operators
 - 🔍 **Variable Substitution**: Automatically replaces environment variables in conditions
-- 📤 **Multiple Outputs**: Support for up to 5 different condition evaluations
+- 📤 **Multiple Outputs**: Support for up to 10 different condition evaluations
 - 🚀 **Easy Integration**: Simple to integrate with env-output-setter
 - 📝 **Detailed Logging**: Clear debug output for troubleshooting
 - ⚡ **Performance Optimized**: Fast evaluation of multiple conditions
@@ -42,13 +42,18 @@ environment or previous steps in a GitHub Actions workflow.
 
 ## Outputs
 
-| Output     | Description                                | Example Value |
-| ---------- | ------------------------------------------ | ------------- |
-| `output_1` | Result of evaluating the first condition   | `service-true` |
-| `output_2` | Result of evaluating the second condition  | `env-false` |
-| `output_3` | Result of evaluating the third condition   | `test-true` |
-| `output_4` | Result of evaluating the fourth condition  | `env-true` |
-| `output_5` | Result of evaluating the fifth condition   | `branch-false` |
+| Output      | Description                                | Example Value |
+| ----------- | ------------------------------------------ | ------------- |
+| `output_1`  | Result of evaluating the first condition   | `service-true` |
+| `output_2`  | Result of evaluating the second condition  | `env-false` |
+| `output_3`  | Result of evaluating the third condition   | `test-true` |
+| `output_4`  | Result of evaluating the fourth condition  | `env-true` |
+| `output_5`  | Result of evaluating the fifth condition   | `branch-false` |
+| `output_6`  | Result of evaluating the sixth condition   | `service-true-2` |
+| `output_7`  | Result of evaluating the seventh condition | `env-false-2` |
+| `output_8`  | Result of evaluating the eighth condition  | `test-true-2` |
+| `output_9`  | Result of evaluating the ninth condition   | `env-true-2` |
+| `output_10` | Result of evaluating the tenth condition   | `branch-false-2` |
 
 <br/>
 
@@ -88,23 +93,45 @@ jobs:
         id: set_vars
         uses: somaz94/env-output-setter@v1
         with:
-          env_key: 'SERVICE,ENVIRONMENT'
-          env_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }}"
-          output_key: 'SERVICE,ENVIRONMENT'
-          output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }}"
+          env_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
+          env_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
+          output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
+          output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
 
       - name: Evaluate Conditions
         uses: somaz94/ternary-operator@v1
         id: ternary
         with:
-          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev'
-          true_values: 'service-true,env-true'
-          false_values: 'service-false,env-false'
+          conditions: >-
+            SERVICE == game || SERVICE == batch,
+            ENVIRONMENT == dev,
+            TEST == prod,
+            ENV == xov,
+            BRANCH == dev,
+            SERVICE == game,
+            ENVIRONMENT == qa,
+            TEST == stage,
+            ENV == dev,
+            BRANCH == main
+          true_values: >-
+            service-true,environment-true,test-true,env-true,branch-true,
+            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2
+          false_values: >-
+            service-false,environment-false,test-false,env-false,branch-false,
+            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
 
       - name: Use Results
         run: |
-          echo "Service condition: ${{ steps.ternary.outputs.output_1 }}"
-          echo "Environment condition: ${{ steps.ternary.outputs.output_2 }}"
+          echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"
+          echo "Second condition result: ${{ steps.ternary.outputs.output_2 }}"
+          echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
+          echo "Fourth condition result: ${{ steps.ternary.outputs.output_4 }}"
+          echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
+          echo "Sixth condition result: ${{ steps.ternary.outputs.output_6 }}"
+          echo "Seventh condition result: ${{ steps.ternary.outputs.output_7 }}"
+          echo "Eighth condition result: ${{ steps.ternary.outputs.output_8 }}"
+          echo "Ninth condition result: ${{ steps.ternary.outputs.output_9 }}"
+          echo "Tenth condition result: ${{ steps.ternary.outputs.output_10 }}"
 ```
 
 <br/>
@@ -133,9 +160,23 @@ jobs:
         uses: somaz94/ternary-operator@v1
         id: ternary
         with:
-          conditions: 'SERVICE == game || SERVICE == batch, ENVIRONMENT == dev, TEST == prod, ENV == xov, BRANCH == dev'
-          true_values: 'service-true,environment-true,test-true,env-true,branch-true'
-          false_values: 'service-false,environment-false,test-false,env-false,branch-false'
+          conditions: >-
+            SERVICE == game || SERVICE == batch,
+            ENVIRONMENT == dev,
+            TEST == prod,
+            ENV == xov,
+            BRANCH == dev,
+            SERVICE == game,
+            ENVIRONMENT == qa,
+            TEST == stage,
+            ENV == dev,
+            BRANCH == main
+          true_values: >-
+            service-true,environment-true,test-true,env-true,branch-true,
+            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2
+          false_values: >-
+            service-false,environment-false,test-false,env-false,branch-false,
+            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
 ```
 
 <br/>
