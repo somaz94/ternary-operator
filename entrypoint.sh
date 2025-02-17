@@ -52,7 +52,7 @@ validate_inputs() {
     # Validate debug_mode if provided
     if [[ -n "${INPUT_DEBUG_MODE:-}" ]] && [[ "${INPUT_DEBUG_MODE,,}" != "true" ]] && [[ "${INPUT_DEBUG_MODE,,}" != "false" ]]; then
         print_error "DEBUG_MODE must be either 'true' or 'false'"
-    }
+    fi
 
     # Add maximum condition check
     IFS=',' read -ra conditions <<< "$INPUT_CONDITIONS"
