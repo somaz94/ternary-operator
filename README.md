@@ -32,11 +32,12 @@ environment or previous steps in a GitHub Actions workflow.
 
 ## Inputs
 
-| Input          | Description                                       | Required | Example |
-| -------------- | ------------------------------------------------- | -------- | ------- |
-| `conditions`   | Comma-separated conditions to evaluate            | Yes      | `SERVICE == game, ENVIRONMENT == dev` |
-| `true_values`  | Values to return if conditions are true           | Yes      | `service-true,env-true` |
-| `false_values` | Values to return if conditions are false          | Yes      | `service-false,env-false` |
+| Input          | Description                                       | Required | Default | Example |
+| -------------- | ------------------------------------------------- | -------- | ------- | ------- |
+| `conditions`   | Comma-separated conditions to evaluate (max 10)    | Yes      | -       | `SERVICE == game, ENVIRONMENT == dev` |
+| `true_values`  | Values to return if conditions are true           | Yes      | -       | `service-true,env-true` |
+| `false_values` | Values to return if conditions are false          | Yes      | -       | `service-false,env-false` |
+| `debug_mode`   | Enable detailed debug logging                     | No       | false   | `true` |
 
 <br/>
 
@@ -200,6 +201,30 @@ jobs:
 
 <br/>
 
+## Debug Mode
+
+The action supports detailed debug logging that can be enabled by setting `debug_mode: true`. When enabled, it provides:
+
+- 🔍 Detailed condition evaluation process
+- 📝 Variable substitution information
+- ⚠️ Warning messages for undefined variables
+- 🔄 Step-by-step execution flow
+
+Example with debug mode:
+
+```yaml
+- name: Evaluate Conditions with Debug
+  uses: somaz94/ternary-operator@v1
+  id: ternary
+  with:
+    conditions: 'SERVICE == game'
+    true_values: 'service-true'
+    false_values: 'service-false'
+    debug_mode: true
+```
+
+<br/>
+
 ## Troubleshooting
 
 <br/>
@@ -220,6 +245,12 @@ jobs:
    - Verify the number of conditions matches true/false values
    - Check for syntax errors in conditions
    - Ensure all required inputs are provided
+
+4. **Debug Mode Usage**
+   - Enable debug_mode for detailed logging
+   - Check variable substitution in conditions
+   - Monitor the evaluation process
+   - Verify environment variable values
 
 <br/>
 
