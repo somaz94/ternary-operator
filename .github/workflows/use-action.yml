@@ -79,7 +79,8 @@ jobs:
           false_values: >-
             service-false,environment-false,test-false,env-false,branch-false,
             service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
-
+          debug_mode: true
+          
       - name: Print Output
         run: |
           echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"

@@ -12,9 +12,7 @@ print_header() {
 
 # Function to print debug messages
 print_debug() {
-    if [[ "${INPUT_DEBUG_MODE,,}" == "true" ]]; then
-        printf "🔍 Debug: %s\n" "$1"
-    fi
+    printf "🔍 Debug: %s\n" "$1"
 }
 
 # Function to print error messages
@@ -48,11 +46,6 @@ validate_inputs() {
     if [[ ${#missing_inputs[@]} -gt 0 ]]; then
         print_error "Missing required inputs: ${missing_inputs[*]}"
     fi
-
-    # Validate debug_mode if provided
-    if [[ -n "${INPUT_DEBUG_MODE:-}" ]] && [[ "${INPUT_DEBUG_MODE,,}" != "true" ]] && [[ "${INPUT_DEBUG_MODE,,}" != "false" ]]; then
-        print_error "DEBUG_MODE must be either 'true' or 'false'"
-    }
 
     # Add maximum condition check
     IFS=',' read -ra conditions <<< "$INPUT_CONDITIONS"

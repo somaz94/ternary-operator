@@ -154,7 +154,7 @@ jobs:
           false_values: >-
             service-false,environment-false,test-false,env-false,branch-false,
             service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
-
+          debug_mode: true
       - name: Test Error Case (Exceeding Maximum Conditions)
         id: ternary_error
         continue-on-error: true  # Allow the workflow to continue even if this step fails

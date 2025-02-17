@@ -5,18 +5,14 @@ description:
 author: 'somaz94'
 inputs:
   conditions:
-    description: 'Comma-separated conditions to evaluate (max 10 conditions)'
+    description: 'Comma-separated conditions to evaluate'
     required: true
   true_values:
-    description: 'Comma-separated values if conditions are true (must match number of conditions)'
+    description: 'Comma-separated values if conditions are true'
     required: true
   false_values:
-    description: 'Comma-separated values if conditions are false (must match number of conditions)'
+    description: 'Comma-separated values if conditions are false'
     required: true
-  debug_mode:
-    description: 'Enable detailed debug logging (true/false)'
-    required: false
-    default: 'false'
 outputs:
   output_1:
     description: 'Output for the first condition'
@@ -45,7 +41,6 @@ runs:
     - ${{ inputs.conditions }}
     - ${{ inputs.true_values }}
     - ${{ inputs.false_values }}
-    - ${{ inputs.debug_mode }}
 branding:
   icon: 'award'
   color: 'blue'
