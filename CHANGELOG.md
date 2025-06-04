@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.1.0](https://github.com/somaz94/ternary-operator/tree/v1.1.0) (2025-06-04)
+
+[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.1.0...v1.1.0)
+
+**Merged pull requests:**
+
+- build\(deps\): bump alpine from 3.21 to 3.22 in the docker-minor group [\#4](https://github.com/somaz94/ternary-operator/pull/4) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.1.0](https://github.com/somaz94/ternary-operator/tree/v1.1.0) (2025-02-17)
 
 [Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.0.4...v1.1.0)
