@@ -87,8 +87,18 @@ class TernaryOperator:
         if debug_input not in ('true', 'false'):
             self.print_error("DEBUG_MODE must be either 'true' or 'false'")
         
+        # DEBUG: Print raw conditions
+        if self.debug_mode:
+            print(f"• Debug: Raw conditions string: '{self.conditions}'")
+        
         # Validate maximum conditions
-        conditions_list = [c.strip() for c in self.conditions.split(',') if c.strip()]
+        conditions_list = self._parse_conditions(self.conditions)
+        
+        if self.debug_mode:
+            print(f"• Debug: Parsed {len(conditions_list)} conditions:")
+            for i, cond in enumerate(conditions_list, 1):
+                print(f"  {i}. {cond}")
+        
         if len(conditions_list) > self.MAX_CONDITIONS:
             self.print_error(
                 f"Maximum number of conditions ({self.MAX_CONDITIONS}) exceeded. "
