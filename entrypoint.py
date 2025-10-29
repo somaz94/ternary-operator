@@ -113,21 +113,36 @@ class TernaryOperator:
         return value
     
     def process_condition(self, condition: str) -> str:
-        """Process a condition by replacing variables and values with quoted strings."""
+        """Process a condition by replacing variables and values with quoted strings or numbers."""
         processed = condition
         
         # First, find and replace all uppercase variable names (environment variables)
-        variables = re.findall(r'\b[A-Z_]+\b', condition)
+        # Pattern: starts with uppercase letter, can contain uppercase letters, numbers, and underscores
+        variables = re.findall(r'\b[A-Z][A-Z0-9_]*\b', condition)
         for varname in variables:
             value = self.get_var_value(varname)
             if value:
                 self.print_debug(f"Variable {varname} = {value}")
-                processed = processed.replace(varname, f'"{value}"')
+                # Check if value is numeric - if so, don't quote it
+                if value.isdigit() or (value.replace('.', '', 1).isdigit() and value.count('.') <= 1):
+                    # It's a number, don't quote
+                    processed = processed.replace(varname, value)
+                else:
+                    # It's a string, quote it
+                    processed = processed.replace(varname, f'"{value}"')
         
         # Then, find all unquoted lowercase/mixed-case words and quote them
         # This handles comparison values like: game, batch, dev, prod, etc.
-        # Pattern matches words that are not already in quotes
-        processed = re.sub(r'(?<!")(?<!\w)([a-z_][a-z0-9_-]*)(?!")(?!\w)', r'"\1"', processed)
+        # But skip numeric values
+        # Pattern matches words that are not already in quotes and not numbers
+        def quote_if_not_number(match):
+            word = match.group(1)
+            # Don't quote if it's a number
+            if word.isdigit() or (word.replace('.', '', 1).isdigit() and word.count('.') <= 1):
+                return word
+            return f'"{word}"'
+        
+        processed = re.sub(r'(?<!")(?<!\w)([a-z_][a-z0-9_.-]*)(?!")(?!\w)', quote_if_not_number, processed)
         
         return processed
     
