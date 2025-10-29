@@ -39,7 +39,7 @@ class TernaryOperator:
     def print_header(self, message: str) -> None:
         """Print a formatted header."""
         print(f"\n{'=' * 50}")
-        print(f"🚀 {message}")
+        print(f"▶️ {message}")
         print(f"{'=' * 50}\n")
     
     def print_debug(self, message: str) -> None:
@@ -103,17 +103,21 @@ class TernaryOperator:
         return value
     
     def process_condition(self, condition: str) -> str:
-        """Process a condition by replacing variables with their values."""
+        """Process a condition by replacing variables and values with quoted strings."""
         processed = condition
-        # Find all uppercase variable names (environment variables)
-        variables = re.findall(r'\b[A-Z_]+\b', condition)
         
+        # First, find and replace all uppercase variable names (environment variables)
+        variables = re.findall(r'\b[A-Z_]+\b', condition)
         for varname in variables:
             value = self.get_var_value(varname)
             if value:
                 self.print_debug(f"Variable {varname} = {value}")
-                # Replace variable with quoted value for string comparison
                 processed = processed.replace(varname, f'"{value}"')
+        
+        # Then, find all unquoted lowercase/mixed-case words and quote them
+        # This handles comparison values like: game, batch, dev, prod, etc.
+        # Pattern matches words that are not already in quotes
+        processed = re.sub(r'(?<!")(?<!\w)([a-z_][a-z0-9_-]*)(?!")(?!\w)', r'"\1"', processed)
         
         return processed
     
