@@ -58,21 +58,31 @@ jobs:
           output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
           output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
 
+      - name: Set Environment Variables
+        run: |
+          {
+            echo "SERVICE=${{ steps.set_vars.outputs.SERVICE }}"
+            echo "ENVIRONMENT=${{ steps.set_vars.outputs.ENVIRONMENT }}"
+            echo "TEST=${{ steps.set_vars.outputs.TEST }}"
+            echo "ENV=${{ steps.set_vars.outputs.ENV }}"
+            echo "BRANCH=${{ steps.set_vars.outputs.BRANCH }}"
+          } >> $GITHUB_ENV
+
       - name: Evaluate Conditions
         uses: somaz94/ternary-operator@v1
         id: ternary
         with:
           conditions: >-
-            SERVICE == game || SERVICE == batch,
+            SERVICE IN game,batch,api,
             ENVIRONMENT == dev,
             TEST == prod,
-            ENV == xov,
+            ENV IN xov,dev,qa,
             BRANCH == dev,
             SERVICE == game,
             ENVIRONMENT == qa,
             TEST == stage,
             ENV == dev,
-            BRANCH == main
+            BRANCH IN main,develop
           true_values: >-
             service-true,environment-true,test-true,env-true,branch-true,
             service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2
@@ -80,9 +90,88 @@ jobs:
             service-false,environment-false,test-false,env-false,branch-false,
             service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
           debug_mode: true
+
+      - name: Test Comparison Operators
+        id: ternary_comparison
+        uses: somaz94/ternary-operator@v1
+        with:
+          conditions: >-
+            SERVICE == game,
+            SERVICE != batch,
+            ENVIRONMENT == qa
+          true_values: >-
+            equal-pass,not-equal-pass,qa-pass
+          false_values: >-
+            equal-fail,not-equal-fail,qa-fail
+          debug_mode: true
+
+      - name: Test Logical Operators
+        id: ternary_logical
+        uses: somaz94/ternary-operator@v1
+        with:
+          conditions: >-
+            SERVICE == game && ENVIRONMENT == qa,
+            SERVICE == game || SERVICE == batch,
+            BRANCH == qa && ENV == xov
+          true_values: >-
+            and-pass,or-pass,both-pass
+          false_values: >-
+            and-fail,or-fail,both-fail
+          debug_mode: true
+
+      - name: Test IN Operator
+        id: ternary_in
+        uses: somaz94/ternary-operator@v1
+        with:
+          conditions: >-
+            SERVICE IN game,batch,api,
+            ENVIRONMENT IN dev,qa,stage,prod,
+            BRANCH IN main,develop,qa
+          true_values: >-
+            service-in-pass,env-in-pass,branch-in-pass
+          false_values: >-
+            service-in-fail,env-in-fail,branch-in-fail
+          debug_mode: true
+
+      - name: Test Mixed Operators
+        id: ternary_mixed
+        uses: somaz94/ternary-operator@v1
+        with:
+          conditions: >-
+            SERVICE IN game,batch && ENVIRONMENT == qa,
+            SERVICE == game || BRANCH IN main,develop,
+            ENV == xov && TEST == prod
+          true_values: >-
+            mixed-1-pass,mixed-2-pass,mixed-3-pass
+          false_values: >-
+            mixed-1-fail,mixed-2-fail,mixed-3-fail
+          debug_mode: true
+
+      - name: Test Error Case (Exceeding Maximum Conditions)
+        id: ternary_error
+        continue-on-error: true
+        uses: somaz94/ternary-operator@v1
+        with:
+          conditions: >-
+            SERVICE == game,
+            ENVIRONMENT == dev,
+            TEST == prod,
+            ENV == xov,
+            BRANCH == dev,
+            SERVICE IN game,batch,
+            ENVIRONMENT == qa,
+            TEST == stage,
+            ENV == dev,
+            BRANCH IN main,develop,
+            EXTRA == test
+          true_values: >-
+            1,2,3,4,5,6,7,8,9,10,11
+          false_values: >-
+            1,2,3,4,5,6,7,8,9,10,11
           
       - name: Print Output
         run: |
+          echo "=== Main Conditions Test ==="
           echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"
           echo "Second condition result: ${{ steps.ternary.outputs.output_2 }}"
           echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
@@ -93,35 +182,33 @@ jobs:
           echo "Eighth condition result: ${{ steps.ternary.outputs.output_8 }}"
           echo "Ninth condition result: ${{ steps.ternary.outputs.output_9 }}"
           echo "Tenth condition result: ${{ steps.ternary.outputs.output_10 }}"
-
-      - name: Test Error Case
-        id: ternary_error
-        continue-on-error: true
-        uses: somaz94/ternary-operator@v1
-        with:
-          conditions: >-
-            SERVICE == game || SERVICE == batch,
-            ENVIRONMENT == dev,
-            TEST == prod,
-            ENV == xov,
-            BRANCH == dev,
-            SERVICE == game,
-            ENVIRONMENT == qa,
-            TEST == stage,
-            ENV == dev,
-            BRANCH == main,
-            EXTRA == test
-          true_values: >-
-            service-true,environment-true,test-true,env-true,branch-true,
-            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2,
-            extra-true
-          false_values: >-
-            service-false,environment-false,test-false,env-false,branch-false,
-            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2,
-            extra-false
-
-      - name: Check Error Output
-        run: |
+          
+          echo ""
+          echo "=== Comparison Operators Test ==="
+          echo "Equal: ${{ steps.ternary_comparison.outputs.output_1 }}"
+          echo "Not Equal: ${{ steps.ternary_comparison.outputs.output_2 }}"
+          echo "QA Check: ${{ steps.ternary_comparison.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== Logical Operators Test ==="
+          echo "AND: ${{ steps.ternary_logical.outputs.output_1 }}"
+          echo "OR: ${{ steps.ternary_logical.outputs.output_2 }}"
+          echo "Both: ${{ steps.ternary_logical.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== IN Operator Test ==="
+          echo "Service IN: ${{ steps.ternary_in.outputs.output_1 }}"
+          echo "Environment IN: ${{ steps.ternary_in.outputs.output_2 }}"
+          echo "Branch IN: ${{ steps.ternary_in.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== Mixed Operators Test ==="
+          echo "Mixed 1: ${{ steps.ternary_mixed.outputs.output_1 }}"
+          echo "Mixed 2: ${{ steps.ternary_mixed.outputs.output_2 }}"
+          echo "Mixed 3: ${{ steps.ternary_mixed.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== Error Test ==="
           if [[ "${{ steps.ternary_error.outcome }}" == "failure" ]]; then
             echo "✅ Error test passed: Action failed as expected when exceeding maximum conditions"
           else

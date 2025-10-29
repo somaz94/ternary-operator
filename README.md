@@ -1,256 +1,333 @@
-# Ternary Operator
+# Ternary Operator Action
 
-<!-- [![GitHub Super-Linter](https://github.com/somaz94/ternary-operator/actions/workflows/linter.yml/badge.svg)](https://github.com/somaz94/ternary-operator) -->
 ![CI](https://github.com/somaz94/ternary-operator/actions/workflows/ci.yml/badge.svg)
-[![License](https://img.shields.io/github/license/somaz94/ternary-operator)](https://github.com/somaz94/container-action)
+[![License](https://img.shields.io/github/license/somaz94/ternary-operator)](LICENSE)
 ![Latest Tag](https://img.shields.io/github/v/tag/somaz94/ternary-operator)
-![Top Language](https://img.shields.io/github/languages/top/somaz94/ternary-operator?color=green&logo=shell&logoColor=b)
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Ternary%20Operator-blue?logo=github)](https://github.com/marketplace/actions/ternary-operator-action)
 
-<br/>
-
-## Description
-
-This GitHub Action evaluates a series of conditional expressions and sets output
-variables based on the results. It's designed to facilitate dynamic workflows
-that need to respond differently based on the conditions derived from the
-environment or previous steps in a GitHub Actions workflow.
+A GitHub Action for evaluating conditional expressions and setting dynamic outputs based on the results. Perfect for creating flexible, condition-driven workflows.
 
 <br/>
 
 ## Features
 
-- 🔄 **Dynamic Evaluation**: Flexibly evaluate multiple conditions in a single step
-- 🎯 **Conditional Logic**: Support for complex conditions with AND/OR operators
-- 🔍 **Variable Substitution**: Automatically replaces environment variables in conditions
-- 📤 **Multiple Outputs**: Support for up to 10 different condition evaluations
-- 🚀 **Easy Integration**: Simple to integrate with env-output-setter
-- 📝 **Detailed Logging**: Clear debug output for troubleshooting
-- ⚡ **Performance Optimized**: Fast evaluation of multiple conditions
+- **Multiple Conditions**: Evaluate up to 10 conditions in a single step
+- **Rich Operators**: Support for comparison (`==`, `!=`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`), and IN operators
+- **Simple Syntax**: Clean, readable condition expressions
+- **Debug Mode**: Detailed logging for troubleshooting
+- **Zero Dependencies**: Lightweight Docker-based action
+- **Fast Execution**: Efficient condition evaluation
 
 <br/>
 
-## Inputs
-
-| Input          | Description                                       | Required | Default | Example |
-| -------------- | ------------------------------------------------- | -------- | ------- | ------- |
-| `conditions`   | Comma-separated conditions to evaluate (max 10)    | Yes      | -       | `SERVICE == game, ENVIRONMENT == dev` |
-| `true_values`  | Values to return if conditions are true           | Yes      | -       | `service-true,env-true` |
-| `false_values` | Values to return if conditions are false          | Yes      | -       | `service-false,env-false` |
-| `debug_mode`   | Enable detailed debug logging                     | No       | false   | `true` |
-
-<br/>
-
-## Outputs
-
-| Output      | Description                                | Example Value |
-| ----------- | ------------------------------------------ | ------------- |
-| `output_1`  | Result of evaluating the first condition   | `service-true` |
-| `output_2`  | Result of evaluating the second condition  | `env-false` |
-| `output_3`  | Result of evaluating the third condition   | `test-true` |
-| `output_4`  | Result of evaluating the fourth condition  | `env-true` |
-| `output_5`  | Result of evaluating the fifth condition   | `branch-false` |
-| `output_6`  | Result of evaluating the sixth condition   | `service-true-2` |
-| `output_7`  | Result of evaluating the seventh condition | `env-false-2` |
-| `output_8`  | Result of evaluating the eighth condition  | `test-true-2` |
-| `output_9`  | Result of evaluating the ninth condition   | `env-true-2` |
-| `output_10` | Result of evaluating the tenth condition   | `branch-false-2` |
-
-<br/>
-
-## Usage
-
-<br/>
-
-### Basic Workflow Example
+## Quick Start
 
 ```yaml
-name: Conditional Workflow
-on:
-  workflow_dispatch:
-    inputs:
-      service:
-        description: 'Service name'
-        required: true
-        default: 'game'
-        type: choice
-        options:
-          - game
-          - batch
-      environment:
-        description: 'Environment'
-        required: true
-        default: 'qa'
-        type: environment
+name: Conditional Deploy
+on: [push]
 
 jobs:
-  evaluate:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
+      # Set environment variables
       - name: Set Variables
-        id: set_vars
-        uses: somaz94/env-output-setter@v1
-        with:
-          env_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          env_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
-          output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
-
-      - name: Evaluate Conditions
-        uses: somaz94/ternary-operator@v1
-        id: ternary
-        with:
-          conditions: >-
-            SERVICE == game || SERVICE == batch,
-            ENVIRONMENT == dev,
-            TEST == prod,
-            ENV == xov,
-            BRANCH == dev,
-            SERVICE == game,
-            ENVIRONMENT == qa,
-            TEST == stage,
-            ENV == dev,
-            BRANCH == main
-          true_values: >-
-            service-true,environment-true,test-true,env-true,branch-true,
-            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2
-          false_values: >-
-            service-false,environment-false,test-false,env-false,branch-false,
-            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
-
-      - name: Use Results
         run: |
-          echo "First condition result: ${{ steps.ternary.outputs.output_1 }}"
-          echo "Second condition result: ${{ steps.ternary.outputs.output_2 }}"
-          echo "Third condition result: ${{ steps.ternary.outputs.output_3 }}"
-          echo "Fourth condition result: ${{ steps.ternary.outputs.output_4 }}"
-          echo "Fifth condition result: ${{ steps.ternary.outputs.output_5 }}"
-          echo "Sixth condition result: ${{ steps.ternary.outputs.output_6 }}"
-          echo "Seventh condition result: ${{ steps.ternary.outputs.output_7 }}"
-          echo "Eighth condition result: ${{ steps.ternary.outputs.output_8 }}"
-          echo "Ninth condition result: ${{ steps.ternary.outputs.output_9 }}"
-          echo "Tenth condition result: ${{ steps.ternary.outputs.output_10 }}"
-```
-
-<br/>
-
-### Advanced Example
-
-```yaml
-name: Advanced Conditional Workflow
-jobs:
-  evaluate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set Multiple Variables
-        id: set_vars
-        uses: somaz94/env-output-setter@v1
-        with:
-          env_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          env_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
-          output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
-
-      - name: Evaluate Multiple Conditions
+          echo "SERVICE=game" >> $GITHUB_ENV
+          echo "ENVIRONMENT=prod" >> $GITHUB_ENV
+      
+      # Evaluate conditions
+      - name: Check Deployment Rules
+        id: check
         uses: somaz94/ternary-operator@v1
-        id: ternary
         with:
-          conditions: >-
-            SERVICE == game || SERVICE == batch,
-            ENVIRONMENT == dev,
-            TEST == prod,
-            ENV == xov,
-            BRANCH == dev,
-            SERVICE == game,
-            ENVIRONMENT == qa,
-            TEST == stage,
-            ENV == dev,
-            BRANCH == main
-          true_values: >-
-            service-true,environment-true,test-true,env-true,branch-true,
-            service-true-2,environment-true-2,test-true-2,env-true-2,branch-true-2
-          false_values: >-
-            service-false,environment-false,test-false,env-false,branch-false,
-            service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
+          conditions: 'SERVICE IN game,batch && ENVIRONMENT == prod'
+          true_values: 'deploy-allowed'
+          false_values: 'deploy-blocked'
+      
+      # Use the result
+      - name: Deploy
+        if: steps.check.outputs.output_1 == 'deploy-allowed'
+        run: ./deploy.sh
 ```
 
 <br/>
 
-## Best Practices
+## Use Cases
 
-1. **Variable Setting**
-   - Use env-output-setter for consistent variable management
-   - Group related variables together
-   - Provide default values for all variables
-
-2. **Condition Format**
-   - Use clear, simple conditions
-   - Properly quote string values
-   - Use environment variables consistently
-
-3. **Error Handling**
-   - Always check output values
-   - Provide meaningful true/false values
-   - Use descriptive variable names
+- **Conditional Deployments**: Deploy based on service, environment, or branch
+- **Dynamic Configuration**: Select configs based on multiple conditions
+- **Feature Flags**: Enable/disable features conditionally
+- **Multi-Environment CI/CD**: Different strategies per environment
+- **Resource Scaling**: Adjust resources based on conditions
 
 <br/>
 
-## Debug Mode
+## Documentation
 
-The action supports detailed debug logging that can be enabled by setting `debug_mode: true`. When enabled, it provides:
+<br/>
 
-- 🔍 Detailed condition evaluation process
-- 📝 Variable substitution information
-- ⚠️ Warning messages for undefined variables
-- 🔄 Step-by-step execution flow
+### Core Documentation
+- **[API Reference](docs/api.md)** - Complete input/output specification
+- **[Operators Guide](docs/operators.md)** - All supported operators with examples
+- **[Usage Examples](docs/usage.md)** - Real-world patterns and scenarios
+- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
+- **[Development Guide](docs/development.md)** - Contributing and local testing
 
-Example with debug mode:
+<br/>
+
+### Operators at a Glance
+
+| Category | Operators | Example |
+|----------|-----------|---------|
+| **Comparison** | `==` `!=` `<` `>` `<=` `>=` | `VERSION >= 1.5` |
+| **Logical** | `&&` `\|\|` | `SERVICE == game && ENV == prod` |
+| **Special** | `IN` | `SERVICE IN game,batch,api` |
+
+[→ See detailed operator documentation](docs/operators.md)
+
+<br/>
+
+## Common Examples
+
+<br/>
+
+### Example 1: Simple Condition
 
 ```yaml
-- name: Evaluate Conditions with Debug
-  uses: somaz94/ternary-operator@v1
-  id: ternary
+- uses: somaz94/ternary-operator@v1
+  id: check
   with:
-    conditions: 'SERVICE == game'
-    true_values: 'service-true'
-    false_values: 'service-false'
+    conditions: 'ENVIRONMENT == prod'
+    true_values: 'production-config'
+    false_values: 'development-config'
+```
+
+<br/>
+
+### Example 2: IN Operator (Simplified OR)
+
+```yaml
+- uses: somaz94/ternary-operator@v1
+  id: check
+  with:
+    # Instead of: SERVICE == game || SERVICE == batch || SERVICE == api
+    conditions: 'SERVICE IN game,batch,api'
+    true_values: 'valid-service'
+    false_values: 'invalid-service'
+```
+
+<br/>
+
+### Example 3: Multiple Conditions
+
+```yaml
+- uses: somaz94/ternary-operator@v1
+  id: checks
+  with:
+    conditions: >-
+      SERVICE IN game,batch,api,
+      ENVIRONMENT == prod,
+      VERSION >= 1.5
+    true_values: 'service-ok,prod-deploy,new-version'
+    false_values: 'service-fail,no-deploy,old-version'
+
+# Use outputs
+- run: echo "Service: ${{ steps.checks.outputs.output_1 }}"
+- run: echo "Environment: ${{ steps.checks.outputs.output_2 }}"
+- run: echo "Version: ${{ steps.checks.outputs.output_3 }}"
+```
+
+<br/>
+
+### Example 4: Complex Logic
+
+```yaml
+- uses: somaz94/ternary-operator@v1
+  id: deploy
+  with:
+    conditions: 'SERVICE IN game,api && ENVIRONMENT == prod || BRANCH == hotfix'
+    true_values: 'deploy'
+    false_values: 'skip'
     debug_mode: true
 ```
+
+[→ See more examples](docs/usage.md)
+
+<br/>
+
+## Local Testing
+
+Test your changes before pushing to GitHub:
+
+```bash
+# Run comprehensive Python test suite (25+ tests)
+python3 tests/test_local.py
+
+# Or use bash script (17 tests, faster)
+./tests/test_local.sh
+```
+
+Both scripts work from any directory and automatically find the project root.
+
+#### Test Coverage:
+- ✅ All comparison operators
+- ✅ Logical operators (AND/OR)
+- ✅ IN operator with multiple values
+- ✅ Mixed operators
+- ✅ Numeric comparisons
+- ✅ Error cases
+
+[→ See testing guide](docs/development.md#testing)
+
+<br/>
+
+## Inputs & Outputs
+
+<br/>
+
+### Inputs
+
+| Input | Required | Description | Example |
+|-------|----------|-------------|---------|
+| `conditions` | Yes | Comma-separated conditions (max 10) | `SERVICE IN game,batch` |
+| `true_values` | Yes | Values when conditions are true | `deploy,skip` |
+| `false_values` | Yes | Values when conditions are false | `skip,deploy` |
+| `debug_mode` | No | Enable debug logging (default: false) | `true` |
+
+<br/>
+
+### Outputs
+
+- `output_1` through `output_10` - Results of evaluated conditions
+
+[→ See complete API reference](docs/api.md)
+
+<br/>
+
+## Tips & Best Practices
+
+1. **Use IN operator** for multiple value checks:
+   ```yaml
+   # ✅ Good
+   SERVICE IN game,batch,api
+   
+   # ❌ Avoid
+   SERVICE == game || SERVICE == batch || SERVICE == api
+   ```
+
+2. **Keep conditions simple** for readability:
+   ```yaml
+   # ✅ Good - split into multiple conditions
+   conditions: 'SERVICE == game, ENVIRONMENT == prod'
+   
+   # ❌ Harder to read
+   conditions: 'SERVICE == game && ENV == prod && BRANCH == main && VERSION >= 1.0'
+   ```
+
+3. **Enable debug mode** when troubleshooting:
+   ```yaml
+   debug_mode: true  # Shows detailed evaluation process
+   ```
+
+4. **Test locally** before pushing:
+   ```bash
+   python3 tests/test_local.py
+   ```
+
+[→ See more best practices](docs/usage.md)
+
+<br/>
+
+## Integration
+
+Works great with:
+- **[env-output-setter](https://github.com/somaz94/env-output-setter)** - Set environment variables and outputs
+- **GitHub Environments** - Environment-specific deployments
+- **Matrix Strategies** - Conditional logic per matrix combination
+
+```yaml
+# Example with env-output-setter
+- name: Set Variables
+  uses: somaz94/env-output-setter@v1
+  with:
+    env_key: 'SERVICE,ENVIRONMENT'
+    env_value: 'game,prod'
+
+- name: Evaluate
+  uses: somaz94/ternary-operator@v1
+  with:
+    conditions: 'SERVICE == game && ENVIRONMENT == prod'
+```
+
+[→ See integration examples](docs/usage.md#integration-examples)
 
 <br/>
 
 ## Troubleshooting
 
+#### Common Issues:
+
+<details>
+<summary>Condition not evaluating as expected?</summary>
+
+1. Check variable is set: `echo "$VARIABLE" >> $GITHUB_ENV`
+2. Enable debug mode: `debug_mode: true`
+3. Check for case sensitivity: `game` ≠ `Game`
+4. Verify operator syntax: [See operators guide](docs/operators.md)
+
+</details>
+
+<details>
+<summary>Array length mismatch error?</summary>
+
+Ensure same number of:
+- Conditions
+- True values
+- False values
+
+```yaml
+# ✅ Correct - all have 2 items
+conditions: 'A == 1, B == 2'
+true_values: 'yes,ok'
+false_values: 'no,fail'
+```
+
+</details>
+
+<details>
+<summary>Maximum conditions exceeded?</summary>
+
+Split into multiple action calls or combine with IN operator:
+
+```yaml
+# Instead of 12 individual conditions
+SERVICE == game, SERVICE == batch, ...
+
+# Use IN operator
+SERVICE IN game,batch,...
+```
+
+</details>
+
+[→ See full troubleshooting guide](docs/troubleshooting.md)
+
 <br/>
 
-### Common Issues
+## Contributing
 
-1. **Variable Not Set Correctly**
-   - Verify env-output-setter configuration
-   - Check variable names and values
-   - Ensure proper escaping of special characters
+Contributions welcome! Please:
 
-2. **Condition Not Evaluating as Expected**
-   - Verify environment variables are set correctly
-   - Check for proper spacing in conditions
-   - Ensure proper quoting of string values
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make your changes
+4. Test locally: `python3 tests/test_local.py`
+5. Commit: `git commit -am "feat: Add new feature"`
+6. Push and create a Pull Request
 
-3. **Missing Outputs**
-   - Verify the number of conditions matches true/false values
-   - Check for syntax errors in conditions
-   - Ensure all required inputs are provided
-
-4. **Debug Mode Usage**
-   - Enable debug_mode for detailed logging
-   - Check variable substitution in conditions
-   - Monitor the evaluation process
-   - Verify environment variable values
+[→ See development guide](docs/development.md)
 
 <br/>
 
@@ -260,6 +337,18 @@ This project is licensed under the [MIT License](LICENSE).
 
 <br/>
 
-## Contributing
+## Support
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- **Issues**: [GitHub Issues](https://github.com/somaz94/ternary-operator/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/somaz94/ternary-operator/discussions)
+- **Documentation**: [Full Documentation](docs/)
+
+---
+
+<div align="center">
+
+**Made with ❤️ for better GitHub Actions workflows**
+
+[Documentation](docs/) | [Examples](docs/usage.md) | [Contributing](docs/development.md)
+
+</div>

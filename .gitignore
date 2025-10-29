@@ -23,3 +23,8 @@ Thumbs.db
 .idea
 .vscode
 *.code-workspace
+
+# Test output files
+/tmp/test_*
+*.pyc
+__pycache__/
