@@ -237,9 +237,17 @@ class TernaryOperator:
         """
         Parse conditions string handling IN operator with commas.
         
-        The IN operator contains commas that should not be treated as condition separators.
-        Example: "SERVICE IN game,batch,api, ENVIRONMENT == dev"
-        Should parse as: ["SERVICE IN game,batch,api", "ENVIRONMENT == dev"]
+        Strategy:
+        1. Find all IN operators and their values (e.g., "VAR IN val1,val2,val3")
+        2. Replace commas within IN values with a placeholder
+        3. Split by comma to get conditions
+        4. Restore the commas in IN values
+        
+        Examples:
+        - "SERVICE IN game,batch,api, ENVIRONMENT == dev"
+          → ["SERVICE IN game,batch,api", "ENVIRONMENT == dev"]
+        - "SERVICE IN game,batch && ENV == qa, TEST == prod"
+          → ["SERVICE IN game,batch && ENV == qa", "TEST == prod"]
         
         Args:
             conditions_str: Raw conditions string
@@ -247,45 +255,41 @@ class TernaryOperator:
         Returns:
             List of individual condition strings
         """
-        conditions = []
-        current = []
-        in_operator = False
+        if not conditions_str:
+            return []
         
-        parts = conditions_str.split(',')
+        # Placeholder for commas inside IN operators
+        COMMA_PLACEHOLDER = "<<<COMMA>>>"
         
-        for part in parts:
-            part = part.strip()
-            if not part:
-                continue
-            
-            # Check if this part contains ' IN '
-            if ' IN ' in part:
-                # If we were building a condition, save it first
-                if current:
-                    conditions.append(','.join(current))
-                    current = []
-                # Start new IN condition
-                current = [part]
-                in_operator = True
-            elif in_operator:
-                # Check if this part looks like a new condition (contains operators)
-                if any(op in part for op in ['==', '!=', '>=', '<=', '>', '<', '&&', '||', ' IN ']):
-                    # This is a new condition, save previous one
-                    conditions.append(','.join(current))
-                    current = [part]
-                    in_operator = ' IN ' in part
-                else:
-                    # This is part of the IN operator values
-                    current.append(part)
-            else:
-                # Regular condition
-                if current:
-                    conditions.append(','.join(current))
-                current = [part]
+        # Pattern to match IN operators with their values
+        # Matches: VAR IN val1,val2,val3 (until we hit &&, ||, or end/comma followed by new condition)
+        # We need to capture until we see a condition separator or logical operator not part of the current condition
         
-        # Don't forget the last condition
-        if current:
-            conditions.append(','.join(current))
+        working_str = conditions_str
+        
+        # Find and protect commas within IN operators
+        # Pattern: word IN word,word,word... (stop at &&, ||, or comma followed by new variable with operator)
+        import re
+        
+        # This regex finds "VAR IN values" where values can contain commas
+        # It stops when it encounters &&, ||, or a comma followed by whitespace and a word with operator
+        pattern = r'(\w+)\s+IN\s+([^,]+(?:,[^,]+)*?)(?=\s*(?:&&|\|\||,\s*\w+\s*(?:==|!=|<=|>=|<|>|IN\s)|$))'
+        
+        def replace_in_commas(match):
+            var_name = match.group(1)
+            values = match.group(2)
+            # Replace commas in the values part with placeholder
+            protected_values = values.replace(',', COMMA_PLACEHOLDER)
+            return f'{var_name} IN {protected_values}'
+        
+        # Protect commas in IN operators
+        working_str = re.sub(pattern, replace_in_commas, working_str, flags=re.IGNORECASE)
+        
+        # Now split by comma to get individual conditions
+        conditions = [c.strip() for c in working_str.split(',') if c.strip()]
+        
+        # Restore commas in IN operators
+        conditions = [c.replace(COMMA_PLACEHOLDER, ',') for c in conditions]
         
         return conditions
     
