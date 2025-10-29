@@ -147,7 +147,17 @@ class TernaryOperator:
         return processed
     
     def evaluate_condition(self, condition: str) -> bool:
-        """Evaluate a single condition with support for ||, &&, ==, !=, <, >, <=, >=, IN operators."""
+        """Evaluate a single condition with support for ||, &&, ==, !=, <, >, <=, >=, IN, CONTAINS, NOT, EMPTY, NOT_EMPTY operators."""
+        # Handle NOT operator first (highest priority)
+        if condition.strip().upper().startswith('NOT '):
+            inner_condition = condition[4:].strip()
+            # Remove surrounding parentheses if present
+            if inner_condition.startswith('(') and inner_condition.endswith(')'):
+                inner_condition = inner_condition[1:-1].strip()
+            result = self.evaluate_condition(inner_condition)
+            self.print_debug(f"NOT operator: negating {result} -> {not result}")
+            return not result
+        
         # Check if condition contains logical operators (|| or &&)
         if '||' in condition or '&&' in condition:
             # Split by logical operators and evaluate each part
@@ -176,6 +186,14 @@ class TernaryOperator:
         # Check for IN operator (no logical operators at this point)
         if ' IN ' in condition.upper():
             return self._evaluate_in_operator(condition)
+        
+        # Check for CONTAINS operator
+        if ' CONTAINS ' in condition.upper():
+            return self._evaluate_contains_operator(condition)
+        
+        # Check for EMPTY/NOT_EMPTY operators
+        if ' EMPTY' in condition.upper() or ' NOT_EMPTY' in condition.upper():
+            return self._evaluate_empty_operator(condition)
         
         # Simple comparison operator
         processed_condition = self.process_condition(condition)
@@ -234,6 +252,98 @@ class TernaryOperator:
             
         except Exception as e:
             self.print_debug(f"Error evaluating IN operator '{condition}': {e}")
+            return False
+    
+    def _evaluate_contains_operator(self, condition: str) -> bool:
+        """
+        Evaluate CONTAINS operator condition (case-sensitive).
+        
+        Examples:
+            'BRANCH_NAME CONTAINS feature' -> checks if BRANCH_NAME contains 'feature'
+            'MESSAGE CONTAINS hotfix' -> checks if MESSAGE contains 'hotfix'
+        
+        Args:
+            condition: Condition string with CONTAINS operator
+            
+        Returns:
+            True if left value contains right value, False otherwise
+        """
+        try:
+            # Split by CONTAINS operator (case-insensitive split)
+            parts = re.split(r'\s+CONTAINS\s+', condition, flags=re.IGNORECASE)
+            if len(parts) != 2:
+                self.print_debug(f"Invalid CONTAINS operator syntax: {condition}")
+                return False
+            
+            left_part = parts[0].strip()
+            right_part = parts[1].strip()
+            
+            # Get variable value for left side
+            left_value = self.get_var_value(left_part)
+            
+            # Get variable value for right side, or use as literal
+            right_value = self.get_var_value(right_part) if right_part.isupper() else right_part
+            
+            self.print_debug(f"Checking if '{left_value}' CONTAINS '{right_value}'")
+            
+            # Check if left contains right (case-sensitive)
+            result = right_value in left_value
+            self.print_debug(f"CONTAINS operator result: {result}")
+            
+            return result
+            
+        except Exception as e:
+            self.print_debug(f"Error evaluating CONTAINS operator '{condition}': {e}")
+            return False
+    
+    def _evaluate_empty_operator(self, condition: str) -> bool:
+        """
+        Evaluate EMPTY or NOT_EMPTY operator condition.
+        
+        Examples:
+            'VAR EMPTY' -> checks if VAR is empty or not set
+            'VAR NOT_EMPTY' -> checks if VAR is not empty
+        
+        Args:
+            condition: Condition string with EMPTY or NOT_EMPTY operator
+            
+        Returns:
+            True if condition is satisfied, False otherwise
+        """
+        try:
+            # Check which operator is used
+            is_not_empty = 'NOT_EMPTY' in condition.upper()
+            
+            if is_not_empty:
+                # Split by NOT_EMPTY
+                parts = re.split(r'\s+NOT_EMPTY\s*', condition, flags=re.IGNORECASE)
+            else:
+                # Split by EMPTY
+                parts = re.split(r'\s+EMPTY\s*', condition, flags=re.IGNORECASE)
+            
+            if len(parts) < 1 or not parts[0].strip():
+                self.print_debug(f"Invalid EMPTY/NOT_EMPTY operator syntax: {condition}")
+                return False
+            
+            var_name = parts[0].strip()
+            
+            # Get variable value
+            var_value = self.get_var_value(var_name)
+            
+            # Check if empty
+            is_empty = not var_value or var_value.strip() == ''
+            
+            if is_not_empty:
+                result = not is_empty
+                self.print_debug(f"Checking if {var_name}='{var_value}' NOT_EMPTY: {result}")
+            else:
+                result = is_empty
+                self.print_debug(f"Checking if {var_name}='{var_value}' EMPTY: {result}")
+            
+            return result
+            
+        except Exception as e:
+            self.print_debug(f"Error evaluating EMPTY/NOT_EMPTY operator '{condition}': {e}")
             return False
     
     def evaluate_conditions(self) -> None:

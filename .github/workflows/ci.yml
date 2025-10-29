@@ -218,6 +218,76 @@ jobs:
             mixed-1-fail,mixed-2-fail,mixed-3-fail
           debug_mode: true
 
+      - name: Test CONTAINS Operator
+        id: ternary_contains
+        uses: ./
+        with:
+          conditions: >-
+            BRANCH CONTAINS qa,
+            SERVICE CONTAINS gam,
+            ENVIRONMENT CONTAINS a
+          true_values: >-
+            contains-1-pass,contains-2-pass,contains-3-pass
+          false_values: >-
+            contains-1-fail,contains-2-fail,contains-3-fail
+          debug_mode: true
+
+      - name: Test NOT Operator
+        id: ternary_not
+        uses: ./
+        with:
+          conditions: >-
+            NOT (SERVICE == batch),
+            NOT (ENVIRONMENT == dev),
+            NOT (BRANCH IN main,develop)
+          true_values: >-
+            not-1-pass,not-2-pass,not-3-pass
+          false_values: >-
+            not-1-fail,not-2-fail,not-3-fail
+          debug_mode: true
+
+      - name: Test EMPTY Operator
+        id: ternary_empty
+        uses: ./
+        with:
+          conditions: >-
+            UNDEFINED_VAR EMPTY,
+            SERVICE EMPTY,
+            BRANCH EMPTY
+          true_values: >-
+            empty-1-pass,empty-2-pass,empty-3-pass
+          false_values: >-
+            empty-1-fail,empty-2-fail,empty-3-fail
+          debug_mode: true
+
+      - name: Test NOT_EMPTY Operator
+        id: ternary_not_empty
+        uses: ./
+        with:
+          conditions: >-
+            SERVICE NOT_EMPTY,
+            ENVIRONMENT NOT_EMPTY,
+            UNDEFINED_VAR NOT_EMPTY
+          true_values: >-
+            not-empty-1-pass,not-empty-2-pass,not-empty-3-pass
+          false_values: >-
+            not-empty-1-fail,not-empty-2-fail,not-empty-3-fail
+          debug_mode: true
+
+      - name: Test Combined New Operators
+        id: ternary_combined
+        uses: ./
+        with:
+          conditions: >-
+            BRANCH CONTAINS qa && SERVICE NOT_EMPTY,
+            NOT (SERVICE IN batch,api) && ENVIRONMENT == qa,
+            SERVICE NOT_EMPTY || UNDEFINED_VAR EMPTY
+          true_values: >-
+            combined-1-pass,combined-2-pass,combined-3-pass
+          false_values: >-
+            combined-1-fail,combined-2-fail,combined-3-fail
+          debug_mode: true
+
       - name: Test Error Case (Exceeding Maximum Conditions)
         id: ternary_error
         continue-on-error: true
@@ -264,6 +334,36 @@ jobs:
           echo "Mixed 1: ${{ steps.ternary_mixed.outputs.output_1 }}"
           echo "Mixed 2: ${{ steps.ternary_mixed.outputs.output_2 }}"
           echo "Mixed 3: ${{ steps.ternary_mixed.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== CONTAINS Operator Test ==="
+          echo "CONTAINS 1: ${{ steps.ternary_contains.outputs.output_1 }}"
+          echo "CONTAINS 2: ${{ steps.ternary_contains.outputs.output_2 }}"
+          echo "CONTAINS 3: ${{ steps.ternary_contains.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== NOT Operator Test ==="
+          echo "NOT 1: ${{ steps.ternary_not.outputs.output_1 }}"
+          echo "NOT 2: ${{ steps.ternary_not.outputs.output_2 }}"
+          echo "NOT 3: ${{ steps.ternary_not.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== EMPTY Operator Test ==="
+          echo "EMPTY 1: ${{ steps.ternary_empty.outputs.output_1 }}"
+          echo "EMPTY 2: ${{ steps.ternary_empty.outputs.output_2 }}"
+          echo "EMPTY 3: ${{ steps.ternary_empty.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== NOT_EMPTY Operator Test ==="
+          echo "NOT_EMPTY 1: ${{ steps.ternary_not_empty.outputs.output_1 }}"
+          echo "NOT_EMPTY 2: ${{ steps.ternary_not_empty.outputs.output_2 }}"
+          echo "NOT_EMPTY 3: ${{ steps.ternary_not_empty.outputs.output_3 }}"
+          
+          echo ""
+          echo "=== Combined New Operators Test ==="
+          echo "Combined 1: ${{ steps.ternary_combined.outputs.output_1 }}"
+          echo "Combined 2: ${{ steps.ternary_combined.outputs.output_2 }}"
+          echo "Combined 3: ${{ steps.ternary_combined.outputs.output_3 }}"
           
           echo ""
           echo "=== Error Test ==="
