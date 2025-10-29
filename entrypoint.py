@@ -133,25 +133,43 @@ class TernaryOperator:
     
     def evaluate_condition(self, condition: str) -> bool:
         """Evaluate a single condition with support for ||, &&, ==, !=, <, >, <=, >=, IN operators."""
-        # Check for IN operator before processing
-        if ' IN ' in condition:
+        # Check if condition contains logical operators (|| or &&)
+        if '||' in condition or '&&' in condition:
+            # Split by logical operators and evaluate each part
+            # Handle || (OR) - if any part is true, return true
+            if '||' in condition:
+                parts = condition.split('||')
+                results = []
+                for part in parts:
+                    part = part.strip()
+                    # Recursively evaluate each part (might contain &&)
+                    result = self.evaluate_condition(part)
+                    results.append(result)
+                return any(results)
+            
+            # Handle && (AND) - all parts must be true
+            if '&&' in condition:
+                parts = condition.split('&&')
+                results = []
+                for part in parts:
+                    part = part.strip()
+                    # Recursively evaluate each part
+                    result = self.evaluate_condition(part)
+                    results.append(result)
+                return all(results)
+        
+        # Check for IN operator (no logical operators at this point)
+        if ' IN ' in condition.upper():
             return self._evaluate_in_operator(condition)
         
+        # Simple comparison operator
         processed_condition = self.process_condition(condition)
         self.print_debug(f"Processed condition: {processed_condition}")
         
         try:
-            # Replace bash-style operators with Python operators
-            eval_condition = processed_condition
-            eval_condition = eval_condition.replace('||', ' or ')
-            eval_condition = eval_condition.replace('&&', ' and ')
-            eval_condition = eval_condition.replace('!=', '!=')
-            eval_condition = eval_condition.replace('==', '==')
-            
-            self.print_debug(f"Evaluating: {eval_condition}")
-            
-            # Safely evaluate the condition
-            result = eval(eval_condition)
+            # Evaluate the simple comparison
+            self.print_debug(f"Evaluating: {processed_condition}")
+            result = eval(processed_condition)
             return bool(result)
             
         except Exception as e:
