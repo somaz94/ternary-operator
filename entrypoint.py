@@ -195,7 +195,8 @@ class TernaryOperator:
     
     def evaluate_conditions(self) -> None:
         """Evaluate all conditions and set outputs."""
-        conditions_list = [c.strip() for c in self.conditions.split(',') if c.strip()]
+        # Parse conditions manually to handle IN operator with commas
+        conditions_list = self._parse_conditions(self.conditions)
         true_values_list = [v.strip() for v in self.true_values.split(',') if v.strip()]
         false_values_list = [v.strip() for v in self.false_values.split(',') if v.strip()]
         
@@ -221,6 +222,62 @@ class TernaryOperator:
                 self.print_debug(f"Condition {i} is FALSE")
             
             self.safe_write_output(f"output_{i}", result)
+    
+    def _parse_conditions(self, conditions_str: str) -> List[str]:
+        """
+        Parse conditions string handling IN operator with commas.
+        
+        The IN operator contains commas that should not be treated as condition separators.
+        Example: "SERVICE IN game,batch,api, ENVIRONMENT == dev"
+        Should parse as: ["SERVICE IN game,batch,api", "ENVIRONMENT == dev"]
+        
+        Args:
+            conditions_str: Raw conditions string
+            
+        Returns:
+            List of individual condition strings
+        """
+        conditions = []
+        current = []
+        in_operator = False
+        
+        parts = conditions_str.split(',')
+        
+        for part in parts:
+            part = part.strip()
+            if not part:
+                continue
+            
+            # Check if this part contains ' IN '
+            if ' IN ' in part:
+                # If we were building a condition, save it first
+                if current:
+                    conditions.append(','.join(current))
+                    current = []
+                # Start new IN condition
+                current = [part]
+                in_operator = True
+            elif in_operator:
+                # Check if this part looks like a new condition (contains operators)
+                if any(op in part for op in ['==', '!=', '>=', '<=', '>', '<', '&&', '||', ' IN ']):
+                    # This is a new condition, save previous one
+                    conditions.append(','.join(current))
+                    current = [part]
+                    in_operator = ' IN ' in part
+                else:
+                    # This is part of the IN operator values
+                    current.append(part)
+            else:
+                # Regular condition
+                if current:
+                    conditions.append(','.join(current))
+                current = [part]
+        
+        # Don't forget the last condition
+        if current:
+            conditions.append(','.join(current))
+        
+        return conditions
     
     def run(self) -> int:
         """Main execution method."""
