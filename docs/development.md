@@ -167,8 +167,15 @@ ternary-operator/
 ├── LICENSE                   # MIT License
 ├── action.yml                # GitHub Action metadata
 ├── Dockerfile                # Container definition
-├── entrypoint.py             # Main Python script
+├── entrypoint.py             # Main entry point (19 lines)
 ├── .gitignore                # Git ignore rules
+│
+├── src/                      # Source modules (modular architecture)
+│   ├── __init__.py           # Package initialization
+│   ├── colors.py             # Terminal output formatting (15 lines)
+│   ├── operators.py          # Operator evaluation logic (176 lines)
+│   ├── parser.py             # Condition parsing logic (129 lines)
+│   └── evaluator.py          # Main orchestration class (252 lines)
 │
 ├── docs/                     # Detailed documentation
 │   ├── api.md                # Input/output reference
@@ -179,7 +186,7 @@ ternary-operator/
 │
 ├── tests/                    # Test suite
 │   ├── README.md             # Test documentation
-│   ├── test_local.py         # Python test suite
+│   ├── test_local.py         # Python test suite (42 test cases)
 │   └── test_local.sh         # Bash test suite
 │
 ├── .github/
@@ -201,22 +208,64 @@ ternary-operator/
 
 #### `entrypoint.py`
 
-Main script with core logic:
+Main entry point (now simplified to 19 lines):
+
+```python
+#!/usr/bin/env python3
+from src.evaluator import TernaryOperator
+
+def main() -> int:
+    operator = TernaryOperator()
+    return operator.run()
+```
+
+**Key Change:**
+- Simplified to a thin wrapper that imports from `src/` modules
+- All logic moved to modular structure
+
+<br/>
+
+#### `src/` Module Structure
+
+**`src/evaluator.py`** - Main orchestration class (252 lines):
 
 ```python
 class TernaryOperator:
     - validate_inputs()          # Input validation
     - evaluate_conditions()      # Main evaluation loop
     - evaluate_condition()       # Single condition evaluation
-    - _evaluate_in_operator()    # IN operator handler
-    - _parse_conditions()        # Condition parser
     - process_condition()        # Variable substitution
 ```
 
+**`src/operators.py`** - Operator evaluation logic (176 lines):
+
+```python
+class OperatorEvaluator:         # Base evaluator
+class InOperatorEvaluator:       # IN operator handler
+class ContainsOperatorEvaluator: # CONTAINS operator handler
+class EmptyOperatorEvaluator:    # EMPTY/NOT_EMPTY handler
+```
+
+**`src/parser.py`** - Condition parsing (129 lines):
+
+```python
+class ConditionParser:
+    - parse()                    # Static method for parsing conditions
+                                 # Handles IN operator commas, parentheses
+```
+
+**`src/colors.py`** - Terminal output formatting (15 lines):
+
+```python
+class Colors:
+    # ANSI color codes for terminal output
+```
+
 **Key Features:**
+- Modular architecture (separation of concerns)
 - Condition parsing with IN operator support
 - Variable substitution (environment variables)
-- Operator support (==, !=, <, >, <=, >=, &&, ||, IN)
+- Operator support (==, !=, <, >, <=, >=, &&, ||, IN, CONTAINS, NOT, EMPTY, NOT_EMPTY)
 - Numeric comparison support
 - Debug output
 
@@ -248,9 +297,10 @@ runs:                # Docker container config
 Container definition:
 
 ```dockerfile
-FROM python:3.14-slim    # Base image
-COPY entrypoint.py /     # Copy script
-ENTRYPOINT ["python3", "/entrypoint.py"]
+FROM python:3.14-slim         # Base image
+COPY entrypoint.py /usr/src/  # Copy entry point
+COPY src/ /usr/src/src/       # Copy source modules
+ENTRYPOINT ["python", "/usr/src/entrypoint.py"]
 ```
 
 ---
