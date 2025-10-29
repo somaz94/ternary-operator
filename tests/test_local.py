@@ -315,6 +315,164 @@ def create_test_suite() -> List[TestCase]:
         env_vars={"SERVICE": "game"}
     ))
     
+    # CONTAINS Operator
+    tests.append(TestCase(
+        name="CONTAINS operator - substring found",
+        conditions="BRANCH_NAME CONTAINS feature",
+        true_values="contains-pass",
+        false_values="contains-fail",
+        expected_outputs={"output_1": "contains-pass"},
+        env_vars={"BRANCH_NAME": "feature/new-login"}
+    ))
+    
+    tests.append(TestCase(
+        name="CONTAINS operator - no match",
+        conditions="BRANCH_NAME CONTAINS hotfix",
+        true_values="contains-pass",
+        false_values="contains-fail",
+        expected_outputs={"output_1": "contains-fail"},
+        env_vars={"BRANCH_NAME": "feature/new-login"}
+    ))
+    
+    tests.append(TestCase(
+        name="CONTAINS operator - case sensitive",
+        conditions="MESSAGE CONTAINS Feature",
+        true_values="contains-pass",
+        false_values="contains-fail",
+        expected_outputs={"output_1": "contains-fail"},
+        env_vars={"MESSAGE": "feature: add new login"}
+    ))
+    
+    tests.append(TestCase(
+        name="CONTAINS operator - exact match",
+        conditions="BRANCH_NAME CONTAINS main",
+        true_values="contains-pass",
+        false_values="contains-fail",
+        expected_outputs={"output_1": "contains-pass"},
+        env_vars={"BRANCH_NAME": "main"}
+    ))
+    
+    # NOT Operator
+    tests.append(TestCase(
+        name="NOT operator - negate true to false",
+        conditions="NOT (SERVICE == game)",
+        true_values="not-pass",
+        false_values="not-fail",
+        expected_outputs={"output_1": "not-fail"},
+        env_vars={"SERVICE": "game"}
+    ))
+    
+    tests.append(TestCase(
+        name="NOT operator - negate false to true",
+        conditions="NOT (SERVICE == batch)",
+        true_values="not-pass",
+        false_values="not-fail",
+        expected_outputs={"output_1": "not-pass"},
+        env_vars={"SERVICE": "game"}
+    ))
+    
+    tests.append(TestCase(
+        name="NOT operator with IN",
+        conditions="NOT (SERVICE IN batch,api,web)",
+        true_values="not-in-pass",
+        false_values="not-in-fail",
+        expected_outputs={"output_1": "not-in-pass"},
+        env_vars={"SERVICE": "game"}
+    ))
+    
+    tests.append(TestCase(
+        name="NOT operator with AND",
+        conditions="NOT (SERVICE == game && ENV == prod)",
+        true_values="not-and-pass",
+        false_values="not-and-fail",
+        expected_outputs={"output_1": "not-and-pass"},
+        env_vars={"SERVICE": "game", "ENV": "qa"}
+    ))
+    
+    # EMPTY Operator
+    tests.append(TestCase(
+        name="EMPTY operator - empty string",
+        conditions="OPTIONAL_VAR EMPTY",
+        true_values="empty-pass",
+        false_values="empty-fail",
+        expected_outputs={"output_1": "empty-pass"},
+        env_vars={"OPTIONAL_VAR": ""}
+    ))
+    
+    tests.append(TestCase(
+        name="EMPTY operator - not set",
+        conditions="OPTIONAL_VAR EMPTY",
+        true_values="empty-pass",
+        false_values="empty-fail",
+        expected_outputs={"output_1": "empty-pass"},
+        env_vars={}
+    ))
+    
+    tests.append(TestCase(
+        name="EMPTY operator - has value",
+        conditions="OPTIONAL_VAR EMPTY",
+        true_values="empty-pass",
+        false_values="empty-fail",
+        expected_outputs={"output_1": "empty-fail"},
+        env_vars={"OPTIONAL_VAR": "some-value"}
+    ))
+    
+    # NOT_EMPTY Operator
+    tests.append(TestCase(
+        name="NOT_EMPTY operator - has value",
+        conditions="REQUIRED_VAR NOT_EMPTY",
+        true_values="not-empty-pass",
+        false_values="not-empty-fail",
+        expected_outputs={"output_1": "not-empty-pass"},
+        env_vars={"REQUIRED_VAR": "important-value"}
+    ))
+    
+    tests.append(TestCase(
+        name="NOT_EMPTY operator - empty string",
+        conditions="REQUIRED_VAR NOT_EMPTY",
+        true_values="not-empty-pass",
+        false_values="not-empty-fail",
+        expected_outputs={"output_1": "not-empty-fail"},
+        env_vars={"REQUIRED_VAR": ""}
+    ))
+    
+    tests.append(TestCase(
+        name="NOT_EMPTY operator - not set",
+        conditions="REQUIRED_VAR NOT_EMPTY",
+        true_values="not-empty-pass",
+        false_values="not-empty-fail",
+        expected_outputs={"output_1": "not-empty-fail"},
+        env_vars={}
+    ))
+    
+    # Combined New Operators
+    tests.append(TestCase(
+        name="CONTAINS with AND",
+        conditions="BRANCH_NAME CONTAINS feature && ENV == qa",
+        true_values="combined-pass",
+        false_values="combined-fail",
+        expected_outputs={"output_1": "combined-pass"},
+        env_vars={"BRANCH_NAME": "feature/new-api", "ENV": "qa"}
+    ))
+    
+    tests.append(TestCase(
+        name="NOT_EMPTY with OR",
+        conditions="API_KEY NOT_EMPTY || ENV == dev",
+        true_values="combined-pass",
+        false_values="combined-fail",
+        expected_outputs={"output_1": "combined-pass"},
+        env_vars={"API_KEY": "secret-key", "ENV": "prod"}
+    ))
+    
+    tests.append(TestCase(
+        name="NOT with CONTAINS",
+        conditions="NOT (BRANCH_NAME CONTAINS hotfix)",
+        true_values="not-contains-pass",
+        false_values="not-contains-fail",
+        expected_outputs={"output_1": "not-contains-pass"},
+        env_vars={"BRANCH_NAME": "feature/new-login"}
+    ))
+    
     # Mixed Operators
     tests.append(TestCase(
         name="IN with AND - both true",
@@ -457,9 +615,14 @@ def main():
             "Comparison Operators": tests[0:6],
             "Logical Operators": tests[6:11],
             "IN Operator": tests[11:15],
-            "Mixed Operators": tests[15:20],
-            "Multiple Conditions": tests[20:23],
-            "Error Cases": tests[23:25]
+            "CONTAINS Operator": tests[15:19],
+            "NOT Operator": tests[19:23],
+            "EMPTY Operator": tests[23:26],
+            "NOT_EMPTY Operator": tests[26:29],
+            "Combined New Operators": tests[29:32],
+            "Mixed Operators": tests[32:37],
+            "Multiple Conditions": tests[37:40],
+            "Error Cases": tests[40:42]
         }
         
         for category, category_tests in categories.items():

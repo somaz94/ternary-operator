@@ -12,7 +12,7 @@ A GitHub Action for evaluating conditional expressions and setting dynamic outpu
 ## Features
 
 - **Multiple Conditions**: Evaluate up to 10 conditions in a single step
-- **Rich Operators**: Support for comparison (`==`, `!=`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`), and IN operators
+- **Rich Operators**: Support for comparison (`==`, `!=`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `NOT`), special (`IN`), string (`CONTAINS`), and validation (`EMPTY`, `NOT_EMPTY`) operators
 - **Simple Syntax**: Clean, readable condition expressions
 - **Debug Mode**: Detailed logging for troubleshooting
 - **Zero Dependencies**: Lightweight Docker-based action
@@ -83,8 +83,10 @@ jobs:
 | Category | Operators | Example |
 |----------|-----------|---------|
 | **Comparison** | `==` `!=` `<` `>` `<=` `>=` | `VERSION >= 1.5` |
-| **Logical** | `&&` `\|\|` | `SERVICE == game && ENV == prod` |
+| **Logical** | `&&` `\|\|` `NOT` | `SERVICE == game && ENV == prod` |
 | **Special** | `IN` | `SERVICE IN game,batch,api` |
+| **String** | `CONTAINS` | `BRANCH_NAME CONTAINS feature` |
+| **Validation** | `EMPTY` `NOT_EMPTY` | `API_KEY NOT_EMPTY` |
 
 [→ See detailed operator documentation](docs/operators.md)
 

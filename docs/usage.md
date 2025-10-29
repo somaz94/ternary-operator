@@ -7,6 +7,8 @@ Practical examples and patterns for using the Ternary Operator Action.
 ## Table of Contents
 - [Quick Start](#quick-start)
 - [Basic Examples](#basic-examples)
+- [String Operator Examples](#string-operator-examples)
+- [Validation Operator Examples](#validation-operator-examples)
 - [Advanced Patterns](#advanced-patterns)
 - [Real-World Scenarios](#real-world-scenarios)
 - [Integration Examples](#integration-examples)
@@ -125,6 +127,291 @@ jobs:
     echo "Service check: ${{ steps.checks.outputs.output_1 }}"
     echo "Environment check: ${{ steps.checks.outputs.output_2 }}"
     echo "Branch check: ${{ steps.checks.outputs.output_3 }}"
+```
+
+---
+
+## String Operator Examples
+
+<br/>
+
+### Example 1: Branch Pattern Matching with CONTAINS
+
+```yaml
+- name: Check Branch Type
+  uses: somaz94/ternary-operator@v1
+  id: branch_type
+  with:
+    conditions: >-
+      BRANCH_NAME CONTAINS feature,
+      BRANCH_NAME CONTAINS hotfix,
+      BRANCH_NAME CONTAINS release
+    true_values: 'feature-branch,hotfix-branch,release-branch'
+    false_values: 'other-branch,other-branch,other-branch'
+  env:
+    BRANCH_NAME: ${{ github.ref_name }}
+
+- name: Run Branch-Specific Tests
+  run: |
+    case "${{ steps.branch_type.outputs.output_1 }}" in
+      feature-branch)
+        echo "Running feature tests..."
+        npm run test:feature
+        ;;
+      hotfix-branch)
+        echo "Running critical tests only..."
+        npm run test:critical
+        ;;
+      *)
+        echo "Running standard tests..."
+        npm run test
+        ;;
+    esac
+```
+
+<br/>
+
+### Example 2: Commit Message Filtering with CONTAINS
+
+```yaml
+- name: Check Commit Message
+  uses: somaz94/ternary-operator@v1
+  id: commit_check
+  with:
+    conditions: >-
+      COMMIT_MESSAGE CONTAINS [skip ci],
+      COMMIT_MESSAGE CONTAINS [docs only]
+    true_values: 'skip,docs-only'
+    false_values: 'run,full-build'
+  env:
+    COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+
+- name: Conditional Build
+  if: steps.commit_check.outputs.output_1 != 'skip'
+  run: npm run build
+
+- name: Run Tests
+  if: steps.commit_check.outputs.output_2 != 'docs-only'
+  run: npm test
+```
+
+<br/>
+
+### Example 3: Using NOT Operator
+
+```yaml
+- name: Non-Production Safety Check
+  uses: somaz94/ternary-operator@v1
+  id: safety
+  with:
+    conditions: >-
+      NOT (ENVIRONMENT == prod),
+      NOT (SERVICE IN critical-api,payment-service)
+    true_values: 'safe,non-critical'
+    false_values: 'requires-review,critical-service'
+  env:
+    ENVIRONMENT: ${{ inputs.environment }}
+    SERVICE: ${{ github.event.repository.name }}
+
+- name: Auto Deploy
+  if: |
+    steps.safety.outputs.output_1 == 'safe' &&
+    steps.safety.outputs.output_2 == 'non-critical'
+  run: ./deploy.sh --auto
+
+- name: Manual Review Required
+  if: |
+    steps.safety.outputs.output_1 != 'safe' ||
+    steps.safety.outputs.output_2 != 'non-critical'
+  run: |
+    echo "::warning::Manual review required for production or critical service"
+    exit 1
+```
+
+<br/>
+
+### Example 4: Tag Version Detection with CONTAINS
+
+```yaml
+- name: Check Tag Type
+  uses: somaz94/ternary-operator@v1
+  id: tag_check
+  with:
+    conditions: >-
+      TAG_NAME CONTAINS -rc,
+      TAG_NAME CONTAINS -beta,
+      TAG_NAME CONTAINS -alpha
+    true_values: 'release-candidate,beta-release,alpha-release'
+    false_values: 'stable,stable,stable'
+  env:
+    TAG_NAME: ${{ github.ref_name }}
+
+- name: Deploy to Environment
+  run: |
+    case "${{ steps.tag_check.outputs.output_1 }}" in
+      release-candidate)
+        echo "Deploying to staging..."
+        ./deploy.sh --env staging
+        ;;
+      beta-release|alpha-release)
+        echo "Deploying to dev..."
+        ./deploy.sh --env dev
+        ;;
+      stable)
+        echo "Deploying to production..."
+        ./deploy.sh --env prod
+        ;;
+    esac
+```
+
+---
+
+## Validation Operator Examples
+
+<br/>
+
+### Example 1: Required Configuration Validation with NOT_EMPTY
+
+```yaml
+- name: Validate Required Variables
+  uses: somaz94/ternary-operator@v1
+  id: validate
+  with:
+    conditions: >-
+      DATABASE_URL NOT_EMPTY,
+      API_KEY NOT_EMPTY,
+      SECRET_KEY NOT_EMPTY
+    true_values: 'valid,valid,valid'
+    false_values: 'missing,missing,missing'
+  env:
+    DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    API_KEY: ${{ secrets.API_KEY }}
+    SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+- name: Check All Required
+  id: all_valid
+  run: |
+    if [[ "${{ steps.validate.outputs.output_1 }}" == "valid" ]] && \
+       [[ "${{ steps.validate.outputs.output_2 }}" == "valid" ]] && \
+       [[ "${{ steps.validate.outputs.output_3 }}" == "valid" ]]; then
+      echo "valid=true" >> $GITHUB_OUTPUT
+    else
+      echo "valid=false" >> $GITHUB_OUTPUT
+      echo "::error::Missing required configuration"
+    fi
+
+- name: Deploy Application
+  if: steps.all_valid.outputs.valid == 'true'
+  run: ./deploy.sh
+```
+
+<br/>
+
+### Example 2: Optional Configuration with EMPTY
+
+```yaml
+- name: Check Optional Variables
+  uses: somaz94/ternary-operator@v1
+  id: optional
+  with:
+    conditions: >-
+      CUSTOM_DOMAIN EMPTY,
+      SLACK_WEBHOOK EMPTY,
+      DOCKER_TAG EMPTY
+    true_values: 'use-default,skip-notification,use-latest'
+    false_values: 'use-custom,send-notification,use-tag'
+  env:
+    CUSTOM_DOMAIN: ${{ inputs.custom_domain }}
+    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+    DOCKER_TAG: ${{ inputs.docker_tag }}
+
+- name: Set Domain
+  run: |
+    if [ "${{ steps.optional.outputs.output_1 }}" == "use-default" ]; then
+      echo "DOMAIN=app.example.com" >> $GITHUB_ENV
+    else
+      echo "DOMAIN=${{ inputs.custom_domain }}" >> $GITHUB_ENV
+    fi
+
+- name: Notify Slack
+  if: steps.optional.outputs.output_2 == 'send-notification'
+  run: |
+    curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+      -d '{"text":"Deployment started for ${{ github.repository }}"}'
+
+- name: Set Docker Tag
+  run: |
+    if [ "${{ steps.optional.outputs.output_3 }}" == "use-latest" ]; then
+      echo "TAG=latest" >> $GITHUB_ENV
+    else
+      echo "TAG=${{ inputs.docker_tag }}" >> $GITHUB_ENV
+    fi
+```
+
+<br/>
+
+### Example 3: Combined Validation and Logic
+
+```yaml
+- name: Pre-Deployment Checks
+  uses: somaz94/ternary-operator@v1
+  id: pre_deploy
+  with:
+    conditions: >-
+      API_KEY NOT_EMPTY && ENVIRONMENT == prod,
+      NOT (TAG_NAME EMPTY) || BRANCH_NAME == main,
+      DATABASE_URL NOT_EMPTY && NOT (ENVIRONMENT == dev)
+    true_values: 'prod-ready,tag-valid,db-required'
+    false_values: 'missing-key,no-tag,db-optional'
+  env:
+    API_KEY: ${{ secrets.API_KEY }}
+    ENVIRONMENT: ${{ inputs.environment }}
+    TAG_NAME: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+    BRANCH_NAME: ${{ github.ref_name }}
+    DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+- name: Production Deployment
+  if: |
+    steps.pre_deploy.outputs.output_1 == 'prod-ready' &&
+    steps.pre_deploy.outputs.output_2 == 'tag-valid' &&
+    steps.pre_deploy.outputs.output_3 == 'db-required'
+  run: ./deploy.sh --env prod
+
+- name: Development Deployment
+  if: steps.pre_deploy.outputs.output_1 == 'missing-key'
+  run: ./deploy.sh --env dev --no-api-key
+```
+
+<br/>
+
+### Example 4: Feature Flag Validation
+
+```yaml
+- name: Check Feature Flags
+  uses: somaz94/ternary-operator@v1
+  id: features
+  with:
+    conditions: >-
+      FEATURE_NEW_UI NOT_EMPTY && NOT (ENVIRONMENT == prod),
+      FEATURE_BETA_API NOT_EMPTY,
+      FEATURE_DEBUG NOT_EMPTY && ENVIRONMENT IN dev,qa
+    true_values: 'enable-new-ui,enable-beta-api,enable-debug'
+    false_values: 'use-old-ui,use-stable-api,no-debug'
+  env:
+    FEATURE_NEW_UI: ${{ vars.FEATURE_NEW_UI }}
+    FEATURE_BETA_API: ${{ vars.FEATURE_BETA_API }}
+    FEATURE_DEBUG: ${{ vars.FEATURE_DEBUG }}
+    ENVIRONMENT: ${{ inputs.environment }}
+
+- name: Build with Flags
+  run: |
+    FLAGS=""
+    [ "${{ steps.features.outputs.output_1 }}" == "enable-new-ui" ] && FLAGS="$FLAGS --new-ui"
+    [ "${{ steps.features.outputs.output_2 }}" == "enable-beta-api" ] && FLAGS="$FLAGS --beta-api"
+    [ "${{ steps.features.outputs.output_3 }}" == "enable-debug" ] && FLAGS="$FLAGS --debug"
+    
+    echo "Building with flags: $FLAGS"
+    npm run build $FLAGS
 ```
 
 ---
