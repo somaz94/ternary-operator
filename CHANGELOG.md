@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.3.2](https://github.com/somaz94/ternary-operator/tree/v1.3.2) (2025-10-29)
+
+[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.3.1...v1.3.2)
+
 ## [v1.3.1](https://github.com/somaz94/ternary-operator/tree/v1.3.1) (2025-10-29)
 
 [Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.3.0...v1.3.1)
