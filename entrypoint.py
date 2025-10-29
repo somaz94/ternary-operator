@@ -45,7 +45,7 @@ class TernaryOperator:
     def print_debug(self, message: str) -> None:
         """Print debug message if debug mode is enabled."""
         if self.debug_mode:
-            print(f"{Colors.OKCYAN}🔍 Debug: {message}{Colors.ENDC}")
+            print(f"{Colors.OKCYAN}• Debug: {message}{Colors.ENDC}")
     
     def print_error(self, message: str) -> None:
         """Print error message and exit."""
