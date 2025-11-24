@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set Variable
         id: set_vars
@@ -127,7 +127,7 @@ jobs:
     needs: build-and-push-docker
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set Variables from Outputs
         run: |
