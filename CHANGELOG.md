@@ -1,11 +1,12 @@
 # Changelog
 
-## [v1.3.2](https://github.com/somaz94/ternary-operator/tree/v1.3.2) (2025-11-24)
+## [v1.3.2](https://github.com/somaz94/ternary-operator/tree/v1.3.2) (2026-03-09)
 
 [Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.3.2...v1.3.2)
 
 **Merged pull requests:**
 
+- build\(deps\): bump docker/setup-buildx-action from 3 to 4 [\#8](https://github.com/somaz94/ternary-operator/pull/8) ([dependabot[bot]](https://github.com/apps/dependabot))
 - build\(deps\): bump actions/checkout from 5 to 6 [\#7](https://github.com/somaz94/ternary-operator/pull/7) ([dependabot[bot]](https://github.com/apps/dependabot))
 
 ## [v1.3.2](https://github.com/somaz94/ternary-operator/tree/v1.3.2) (2025-10-29)
