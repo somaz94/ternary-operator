@@ -6,6 +6,7 @@
 
 **Merged pull requests:**
 
+- build\(deps\): bump docker/build-push-action from 6 to 7 [\#9](https://github.com/somaz94/ternary-operator/pull/9) ([dependabot[bot]](https://github.com/apps/dependabot))
 - build\(deps\): bump docker/setup-buildx-action from 3 to 4 [\#8](https://github.com/somaz94/ternary-operator/pull/8) ([dependabot[bot]](https://github.com/apps/dependabot))
 - build\(deps\): bump actions/checkout from 5 to 6 [\#7](https://github.com/somaz94/ternary-operator/pull/7) ([dependabot[bot]](https://github.com/apps/dependabot))
 
