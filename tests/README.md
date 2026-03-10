@@ -1,72 +1,92 @@
-# Local Testing Suite
+# Tests
 
-This directory contains local testing scripts for the Ternary Operator Action.
+Local testing suite for the Ternary Operator Action.
+
+<br/>
+
+## Quick Start (Makefile)
+
+```bash
+cd /path/to/ternary-operator
+make test          # Run all tests (alias for test-local)
+make test-local    # Run Python integration tests
+make test-bash     # Run bash test suite
+make clean         # Remove cache and build artifacts
+make help          # Show all available commands
+```
+
+<br/>
 
 ## Test Files
 
-### `test_local.py` (Recommended)
-Comprehensive Python test suite with 25+ test cases.
+| File | Description |
+|------|-------------|
+| `test_local.py` | Python integration test suite (42 test cases, subprocess-based) |
+| `test_local.sh` | Bash test suite (17 core tests, lightweight) |
 
-**Features:**
-- Tests all operators (comparison, logical, IN, mixed)
-- Numeric comparison support
-- Color-coded output
-- Detailed failure messages
-- Edge case and error testing
+<br/>
 
-**Usage:**
+## Running Tests
+
 ```bash
-# From root directory
+# Python tests (recommended)
 python3 tests/test_local.py
 
-# From tests directory
-cd tests && python3 test_local.py
+# Bash tests
+bash tests/test_local.sh
+
+# Or using Makefile
+make test
 ```
 
-### `test_local.sh`
-Lightweight bash test script with 17 core test cases.
+<br/>
 
-**Features:**
-- Fast execution
-- Simple pass/fail output
-- Easy to customize
+## Test Categories
 
-**Usage:**
-```bash
-# From root directory
-./tests/test_local.sh
+<br/>
 
-# From tests directory
-cd tests && ./test_local.sh
+### Comparison Operators
+- `==`, `!=`, `<`, `>`, `<=`, `>=`
+- Numeric comparison support (`COUNT > 5`, `VERSION <= 10`)
 
-# Make executable if needed
-chmod +x tests/test_local.sh
-```
+<br/>
 
-## Test Coverage
+### Logical Operators
+- `&&` (AND) - both true, one false
+- `||` (OR) - first true, second true, both false
 
-Both scripts test:
-- ✅ **Comparison operators**: `==`, `!=`, `<`, `>`, `<=`, `>=`
-- ✅ **Logical operators**: `&&`, `||`
-- ✅ **IN operator**: `VAR IN val1,val2,val3`
-- ✅ **Mixed operators**: `SERVICE IN game,batch && ENV == qa`
-- ✅ **Multiple conditions**: Up to 10 conditions
-- ✅ **Numeric comparisons**: `COUNT > 5`, `VERSION <= 10`
-- ✅ **Error cases**: Max conditions limit, mismatched arrays
+<br/>
 
-## Running Tests Before Push
+### Special Operators
+- `IN` - match found, no match, multiple values, case sensitive
+- `CONTAINS` - substring found, no match, case sensitive, exact match
+- `NOT` - negate true/false, with IN, with AND
+- `EMPTY` - empty string, not set, has value
+- `NOT_EMPTY` - has value, empty string, not set
 
-Always run tests before pushing changes to GitHub:
+<br/>
 
-```bash
-# Quick check with Python (recommended)
-python3 tests/test_local.py
+### Combined Operators
+- CONTAINS with AND
+- NOT_EMPTY with OR
+- NOT with CONTAINS
+- IN with AND/OR
+- Complex mixed expressions
 
-# Or with bash
-./tests/test_local.sh
-```
+<br/>
 
-If all tests pass (✅ All tests passed!), you're ready to commit and push! 🚀
+### Multiple Conditions
+- All true (3 conditions)
+- Mixed results (3 conditions)
+- Maximum 10 conditions
+
+<br/>
+
+### Error Cases
+- Exceed maximum conditions (11)
+- Mismatched array lengths
+
+<br/>
 
 ## Adding Custom Tests
 
@@ -98,10 +118,10 @@ run_test "My custom test" \
     "export MY_VAR=expected_value"
 ```
 
+<br/>
+
 ## Continuous Integration
 
 The same conditions are tested in GitHub Actions CI:
-- `.github/workflows/ci.yml` - Main CI workflow
-- `.github/workflows/use-action.yml` - Action usage examples
-
-Local tests help catch issues before they reach CI! 🛡️
+- `.github/workflows/ci.yml` - Main CI workflow (local tests + Docker integration tests)
+- `.github/workflows/use-action.yml` - Smoke test with released action
