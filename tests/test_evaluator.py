@@ -81,6 +81,74 @@ class TestGetVarValue:
         assert op.get_var_value('MISSING_VAR') == ''
 
 
+class TestIsNumeric:
+    def test_integer(self):
+        assert TernaryOperator._is_numeric('42') is True
+
+    def test_float(self):
+        assert TernaryOperator._is_numeric('3.14') is True
+
+    def test_negative(self):
+        assert TernaryOperator._is_numeric('-5') is True
+
+    def test_string(self):
+        assert TernaryOperator._is_numeric('game') is False
+
+    def test_empty(self):
+        assert TernaryOperator._is_numeric('') is False
+
+    def test_mixed(self):
+        assert TernaryOperator._is_numeric('1.2.3') is False
+
+
+class TestParseComparison:
+    def setup_method(self):
+        os.environ['INPUT_CONDITIONS'] = ''
+        os.environ['INPUT_TRUE_VALUES'] = ''
+        os.environ['INPUT_FALSE_VALUES'] = ''
+
+    def test_equal_operator(self, monkeypatch):
+        monkeypatch.setenv('SERVICE', 'game')
+        op = TernaryOperator()
+        result = op._parse_comparison('SERVICE == game')
+        assert result == ('game', '==', 'game')
+
+    def test_not_equal_operator(self, monkeypatch):
+        monkeypatch.setenv('SERVICE', 'game')
+        op = TernaryOperator()
+        result = op._parse_comparison('SERVICE != batch')
+        assert result == ('game', '!=', 'batch')
+
+    def test_less_equal_operator(self, monkeypatch):
+        monkeypatch.setenv('VERSION', '1.5')
+        op = TernaryOperator()
+        result = op._parse_comparison('VERSION <= 2.0')
+        assert result == ('1.5', '<=', '2.0')
+
+    def test_greater_equal_operator(self, monkeypatch):
+        monkeypatch.setenv('VERSION', '3.0')
+        op = TernaryOperator()
+        result = op._parse_comparison('VERSION >= 1.0')
+        assert result == ('3.0', '>=', '1.0')
+
+    def test_no_operator(self, monkeypatch):
+        op = TernaryOperator()
+        result = op._parse_comparison('SERVICE game')
+        assert result is None
+
+    def test_unset_variable(self, monkeypatch):
+        monkeypatch.delenv('MISSING', raising=False)
+        op = TernaryOperator()
+        result = op._parse_comparison('MISSING == value')
+        assert result == ('', '==', 'value')
+
+    def test_lowercase_literal(self, monkeypatch):
+        """Lowercase values are not resolved as env vars."""
+        op = TernaryOperator()
+        result = op._parse_comparison('hello == world')
+        assert result == ('hello', '==', 'world')
+
+
 class TestEvaluateCondition:
     def setup_method(self):
         os.environ['INPUT_CONDITIONS'] = ''
@@ -173,6 +241,23 @@ class TestEvaluateCondition:
         monkeypatch.setenv('SERVICE', 'game')
         op = TernaryOperator()
         assert op.evaluate_condition('SERVICE NOT_EMPTY') is True
+
+    def test_no_valid_operator(self, monkeypatch):
+        op = TernaryOperator()
+        assert op.evaluate_condition('INVALID CONDITION') is False
+
+    def test_float_comparison(self, monkeypatch):
+        monkeypatch.setenv('VERSION', '1.5')
+        op = TernaryOperator()
+        assert op.evaluate_condition('VERSION >= 1.5') is True
+        assert op.evaluate_condition('VERSION > 1.4') is True
+        assert op.evaluate_condition('VERSION < 2.0') is True
+
+    def test_string_comparison_fallback(self, monkeypatch):
+        monkeypatch.setenv('SERVICE', 'batch')
+        op = TernaryOperator()
+        assert op.evaluate_condition('SERVICE == batch') is True
+        assert op.evaluate_condition('SERVICE == game') is False
 
 
 class TestEvaluateConditions:
