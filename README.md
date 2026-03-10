@@ -30,7 +30,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       # Set environment variables
       - name: Set Variables
@@ -165,22 +165,33 @@ jobs:
 Test your changes before pushing to GitHub:
 
 ```bash
-# Run comprehensive Python test suite (25+ tests)
+# Run unit tests with pytest (73 tests with coverage)
+make test
+
+# Run integration tests (42 test cases)
+make test-local
+
+# Run all tests
+make test-all
+```
+
+Or without Makefile:
+
+```bash
+# Unit tests (pytest)
+python3 -m pytest tests/ -v --ignore=tests/test_local.py
+
+# Integration tests
 python3 tests/test_local.py
 
-# Or use bash script (17 tests, faster)
+# Bash tests
 ./tests/test_local.sh
 ```
 
-Both scripts work from any directory and automatically find the project root.
-
 #### Test Coverage:
-- All comparison operators
-- Logical operators (AND/OR)
-- IN operator with multiple values
-- Mixed operators
-- Numeric comparisons
-- Error cases
+- Unit tests: 73 tests (operators, parser, evaluator, colors)
+- Integration tests: 42 test cases (end-to-end subprocess tests)
+- Bash tests: 17 core tests
 
 [→ See testing guide](docs/development.md#testing)
 
@@ -236,7 +247,7 @@ Both scripts work from any directory and automatically find the project root.
 
 4. **Test locally** before pushing:
    ```bash
-   python3 tests/test_local.py
+   make test-all
    ```
 
 [→ See more best practices](docs/usage.md)
@@ -325,7 +336,7 @@ Contributions welcome! Please:
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Test locally: `python3 tests/test_local.py`
+4. Test locally: `make test-all`
 5. Commit: `git commit -am "feat: Add new feature"`
 6. Push and create a Pull Request
 

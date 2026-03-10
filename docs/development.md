@@ -36,13 +36,18 @@ cd ternary-operator
 
 ### Environment Setup
 
-No additional dependencies required! The action uses Python standard library only.
+For development, install dev dependencies:
 
 ```bash
+# Create virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
 # Verify Python version
 python3 --version
-
-# Should be 3.10 or higher
 ```
 
 ---
@@ -51,47 +56,55 @@ python3 --version
 
 <br/>
 
-### Local Testing (Recommended)
+### Using Makefile (Recommended)
 
-Before pushing changes, always run local tests:
+```bash
+# Run unit tests with coverage (pytest, 73 tests)
+make test
+
+# Run integration tests (subprocess, 42 tests)
+make test-local
+
+# Run bash tests (17 tests)
+make test-bash
+
+# Run all tests
+make test-all
+
+# Coverage report
+make coverage
+```
 
 <br/>
 
-#### Python Test Suite (Comprehensive)
+### Unit Tests (pytest)
 
 ```bash
-# Run all 25+ test cases
+# Run with coverage
+python3 -m pytest tests/ -v \
+  --cov=src \
+  --cov-config=.coveragerc \
+  --cov-report=term-missing \
+  --ignore=tests/test_local.py
+```
+
+**Test files:**
+- `tests/test_evaluator.py` - 36 tests (main evaluator class)
+- `tests/test_operators.py` - 22 tests (IN, CONTAINS, EMPTY operators)
+- `tests/test_parser.py` - 13 tests (condition parser)
+- `tests/test_colors.py` - 2 tests (color codes)
+
+<br/>
+
+### Integration Tests
+
+```bash
+# Python test suite (42 end-to-end test cases)
 python3 tests/test_local.py
 
-# Expected output:
-# 🧪 Local Test Suite for Ternary Operator Action
-# ...
-# ✅ All tests passed! (25/25)
-```
-
-**Features:**
-- 25+ comprehensive test cases
-- All operators tested
-- Edge cases and error scenarios
-- Color-coded output
-- Detailed failure messages
-
-<br/>
-
-#### Bash Test Suite (Quick Check)
-
-```bash
-# Run 17 core tests
+# Bash test suite (17 core tests)
 ./tests/test_local.sh
-
-# Or from tests directory
-cd tests && ./test_local.sh
 ```
-
-**Features:**
-- Fast execution
-- Core functionality coverage
-- Simple pass/fail output
 
 <br/>
 
@@ -165,19 +178,26 @@ docker run --rm \
 ternary-operator/
 ├── README.md                 # Main documentation (overview + quickstart)
 ├── LICENSE                   # MIT License
+├── CLAUDE.md                 # Project conventions and guidelines
+├── CODEOWNERS                # Repository code owners
+├── CONTRIBUTORS.md           # Contributors list (auto-generated)
+├── Makefile                  # Development commands
 ├── action.yml                # GitHub Action metadata
 ├── Dockerfile                # Container definition
-├── entrypoint.py             # Main entry point (19 lines)
-├── .gitignore                # Git ignore rules
+├── entrypoint.py             # Main entry point
+├── requirements-dev.txt      # Dev dependencies (pytest, pytest-cov)
+├── .coveragerc               # Coverage configuration
+├── cliff.toml                # git-cliff changelog configuration
 │
 ├── src/                      # Source modules (modular architecture)
 │   ├── __init__.py           # Package initialization
-│   ├── colors.py             # Terminal output formatting (15 lines)
-│   ├── operators.py          # Operator evaluation logic (176 lines)
-│   ├── parser.py             # Condition parsing logic (129 lines)
-│   └── evaluator.py          # Main orchestration class (252 lines)
+│   ├── colors.py             # Terminal output formatting
+│   ├── operators.py          # Operator evaluation logic
+│   ├── parser.py             # Condition parsing logic
+│   └── evaluator.py          # Main orchestration class
 │
 ├── docs/                     # Detailed documentation
+│   ├── README.md             # Documentation index
 │   ├── api.md                # Input/output reference
 │   ├── operators.md          # Operator documentation
 │   ├── usage.md              # Usage examples
@@ -186,18 +206,26 @@ ternary-operator/
 │
 ├── tests/                    # Test suite
 │   ├── README.md             # Test documentation
-│   ├── test_local.py         # Python test suite (42 test cases)
-│   └── test_local.sh         # Bash test suite
+│   ├── conftest.py           # pytest fixtures
+│   ├── test_evaluator.py     # Unit tests - evaluator (36 tests)
+│   ├── test_operators.py     # Unit tests - operators (22 tests)
+│   ├── test_parser.py        # Unit tests - parser (13 tests)
+│   ├── test_colors.py        # Unit tests - colors (2 tests)
+│   ├── test_local.py         # Integration tests (42 test cases)
+│   └── test_local.sh         # Bash integration tests (17 tests)
 │
 ├── .github/
+│   ├── release.yml           # PR label-based release notes
 │   └── workflows/
 │       ├── ci.yml            # CI/CD workflow
-│       └── use-action.yml    # Usage example workflow
+│       ├── release.yml       # Release creation workflow
+│       ├── use-action.yml    # Smoke test workflow
+│       ├── changelog-generator.yml
+│       ├── contributors.yml
+│       ├── gitlab-mirror.yml
+│       └── issue-greeting.yml
 │
 └── backup/                   # Archived old files
-    ├── entrypoint.sh.bak     # Original bash version
-    ├── Dockerfile.bak        # Original Dockerfile
-    └── action.yml.bak        # Original action config
 ```
 
 <br/>
@@ -227,14 +255,15 @@ def main() -> int:
 
 #### `src/` Module Structure
 
-**`src/evaluator.py`** - Main orchestration class (252 lines):
+**`src/evaluator.py`** - Main orchestration class:
 
 ```python
 class TernaryOperator:
     - validate_inputs()          # Input validation
     - evaluate_conditions()      # Main evaluation loop
     - evaluate_condition()       # Single condition evaluation
-    - process_condition()        # Variable substitution
+    - _parse_comparison()        # Safe comparison parsing
+    - _is_numeric()              # Numeric value detection
 ```
 
 **`src/operators.py`** - Operator evaluation logic (176 lines):
@@ -320,7 +349,7 @@ ENTRYPOINT ["python", "/usr/src/entrypoint.py"]
 3. **Make your changes**
 4. **Test locally**
    ```bash
-   python3 tests/test_local.py
+   make test-all
    ```
 
 5. **Commit your changes**
@@ -378,16 +407,10 @@ def public_method(self):
 
 All changes must include tests:
 
-```python
-# Add test case to tests/test_local.py
-tests.append(TestCase(
-    name="My new feature test",
-    conditions="MY_VAR == value",
-    true_values="success",
-    false_values="failure",
-    expected_outputs={"output_1": "success"},
-    env_vars={"MY_VAR": "value"}
-))
+```bash
+# Unit tests (pytest) - add to tests/test_evaluator.py, test_operators.py, etc.
+# Integration tests - add to tests/test_local.py
+make test-all
 ```
 
 <br/>
@@ -495,8 +518,7 @@ We use [Semantic Versioning](https://semver.org/):
 
 1. **Run full test suite**
    ```bash
-   python3 tests/test_local.py
-   ./tests/test_local.sh
+   make test-all
    ```
 
 2. **Test in real workflow**
@@ -526,13 +548,13 @@ git checkout -b feature/new-operator
 vim entrypoint.py
 
 # 3. Test locally
-python3 tests/test_local.py
+make test-all
 
 # 4. Add tests if needed
-vim tests/test_local.py
+vim tests/test_evaluator.py
 
 # 5. Test again
-python3 tests/test_local.py
+make test-all
 
 # 6. Update documentation
 vim docs/operators.md
@@ -702,4 +724,4 @@ act -W .github/workflows/ci.yml
 - **Discussions:** [GitHub Discussions](https://github.com/somaz94/ternary-operator/discussions)
 - **Email:** Create an issue for private concerns
 
-Thank you for contributing! 🎉
+Thank you for contributing!

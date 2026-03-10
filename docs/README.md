@@ -262,7 +262,7 @@ This documentation is maintained alongside the codebase. When updating:
 
 <div align="center">
 
-**📖 Complete | 🔍 Searchable | 💡 Practical**
+**Complete | Searchable | Practical**
 
 [Back to Main README](../README.md) | [Report Issue](https://github.com/somaz94/ternary-operator/issues)
 
