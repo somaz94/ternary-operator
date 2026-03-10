@@ -8,7 +8,7 @@ on:
     paths-ignore:
       - '.github/workflows/**'
       - '**/*.md'
-      - 'backup/**/*'
+      - 'backup/**'
   workflow_dispatch:
     inputs:
       environment:
@@ -43,6 +43,21 @@ permissions:
   contents: read
 
 jobs:
+  unit-test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+
+      - name: Run Tests
+        run: python -m pytest tests/test_local.py -v
+
   build-and-push-docker:
     name: Build and Push Docker
     runs-on: ubuntu-latest
@@ -124,7 +139,9 @@ jobs:
   test-action:
     name: Test Ternary Operator Action
     runs-on: ubuntu-latest
-    needs: build-and-push-docker
+    needs:
+      - unit-test
+      - build-and-push-docker
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -162,6 +179,7 @@ jobs:
             service-false,environment-false,test-false,env-false,branch-false,
             service-false-2,environment-false-2,test-false-2,env-false-2,branch-false-2
           debug_mode: true
+
       - name: Test Comparison Operators
         id: ternary_comparison
         uses: ./
@@ -316,61 +334,61 @@ jobs:
           echo "Equal: ${{ steps.ternary_comparison.outputs.output_1 }}"
           echo "Not Equal: ${{ steps.ternary_comparison.outputs.output_2 }}"
           echo "QA Check: ${{ steps.ternary_comparison.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Logical Operators Test ==="
           echo "AND: ${{ steps.ternary_logical.outputs.output_1 }}"
           echo "OR: ${{ steps.ternary_logical.outputs.output_2 }}"
           echo "Both: ${{ steps.ternary_logical.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== IN Operator Test ==="
           echo "Service IN: ${{ steps.ternary_in.outputs.output_1 }}"
           echo "Environment IN: ${{ steps.ternary_in.outputs.output_2 }}"
           echo "Branch IN: ${{ steps.ternary_in.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Mixed Operators Test ==="
           echo "Mixed 1: ${{ steps.ternary_mixed.outputs.output_1 }}"
           echo "Mixed 2: ${{ steps.ternary_mixed.outputs.output_2 }}"
           echo "Mixed 3: ${{ steps.ternary_mixed.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== CONTAINS Operator Test ==="
           echo "CONTAINS 1: ${{ steps.ternary_contains.outputs.output_1 }}"
           echo "CONTAINS 2: ${{ steps.ternary_contains.outputs.output_2 }}"
           echo "CONTAINS 3: ${{ steps.ternary_contains.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== NOT Operator Test ==="
           echo "NOT 1: ${{ steps.ternary_not.outputs.output_1 }}"
           echo "NOT 2: ${{ steps.ternary_not.outputs.output_2 }}"
           echo "NOT 3: ${{ steps.ternary_not.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== EMPTY Operator Test ==="
           echo "EMPTY 1: ${{ steps.ternary_empty.outputs.output_1 }}"
           echo "EMPTY 2: ${{ steps.ternary_empty.outputs.output_2 }}"
           echo "EMPTY 3: ${{ steps.ternary_empty.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== NOT_EMPTY Operator Test ==="
           echo "NOT_EMPTY 1: ${{ steps.ternary_not_empty.outputs.output_1 }}"
           echo "NOT_EMPTY 2: ${{ steps.ternary_not_empty.outputs.output_2 }}"
           echo "NOT_EMPTY 3: ${{ steps.ternary_not_empty.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Combined New Operators Test ==="
           echo "Combined 1: ${{ steps.ternary_combined.outputs.output_1 }}"
           echo "Combined 2: ${{ steps.ternary_combined.outputs.output_2 }}"
           echo "Combined 3: ${{ steps.ternary_combined.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Error Test ==="
           if [[ "${{ steps.ternary_error.outcome }}" == "failure" ]]; then
-            echo "✅ Error test passed: Action failed as expected when exceeding maximum conditions"
+            echo "Error test passed: Action failed as expected when exceeding maximum conditions"
           else
-            echo "❌ Error test failed: Action should have failed when exceeding maximum conditions"
+            echo "Error test failed: Action should have failed when exceeding maximum conditions"
             exit 1
           fi
 
@@ -386,3 +404,21 @@ jobs:
           echo "Eighth condition result: ${{ steps.ternary.outputs.output_8 }}"
           echo "Ninth condition result: ${{ steps.ternary.outputs.output_9 }}"
           echo "Tenth condition result: ${{ steps.ternary.outputs.output_10 }}"
+
+  ci-result:
+    name: CI Result
+    if: always()
+    needs:
+      - unit-test
+      - build-and-push-docker
+      - test-action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all jobs
+        run: |
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || \
+             [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "[FAIL] Some jobs failed or were cancelled"
+            exit 1
+          fi
+          echo "[PASS] All CI jobs passed"

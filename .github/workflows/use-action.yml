@@ -1,4 +1,4 @@
-name: Example Workflow using Ternary Operator Action
+name: Smoke Test (Released Action)
 
 on:
   workflow_dispatch:
@@ -7,33 +7,6 @@ on:
         description: 'workflow run'
         required: true
         default: 'true'
-      environment:
-        type: environment
-        description: Select the environment
-        required: false
-      branch:
-        type: choice
-        options:
-          - qa
-          - dev
-        description: Select the branch
-        required: false
-        default: qa
-      test:
-        type: string
-        description: Select the test
-        required: false
-      service:
-        description: Which service to be built. game or batch or etc...
-        required: false
-        type: choice
-        options:
-          - game
-          - batch
-      env:
-        type: string
-        description: Select the env
-        required: false
   workflow_run:
     workflows: ["Create release"]
     types:
@@ -43,8 +16,12 @@ permissions:
   contents: read
 
 jobs:
-  action-module:
+  smoke-test:
+    name: Smoke Test (Ternary Operator)
     runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -54,9 +31,9 @@ jobs:
         uses: somaz94/env-output-setter@v1
         with:
           env_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          env_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
+          env_value: "game,qa,prod,xov,qa"
           output_key: 'SERVICE,ENVIRONMENT,TEST,ENV,BRANCH'
-          output_value: "${{ github.event.inputs.service || 'game' }},${{ github.event.inputs.environment || 'qa' }},${{ github.event.inputs.test || 'prod' }},${{ github.event.inputs.env || 'xov' }},${{ github.event.inputs.branch || 'qa' }}"
+          output_value: "game,qa,prod,xov,qa"
 
       - name: Set Environment Variables
         run: |
@@ -238,7 +215,7 @@ jobs:
             1,2,3,4,5,6,7,8,9,10,11
           false_values: >-
             1,2,3,4,5,6,7,8,9,10,11
-          
+
       - name: Print Output
         run: |
           echo "=== Main Conditions Test ==="
@@ -252,66 +229,66 @@ jobs:
           echo "Eighth condition result: ${{ steps.ternary.outputs.output_8 }}"
           echo "Ninth condition result: ${{ steps.ternary.outputs.output_9 }}"
           echo "Tenth condition result: ${{ steps.ternary.outputs.output_10 }}"
-          
+
           echo ""
           echo "=== Comparison Operators Test ==="
           echo "Equal: ${{ steps.ternary_comparison.outputs.output_1 }}"
           echo "Not Equal: ${{ steps.ternary_comparison.outputs.output_2 }}"
           echo "QA Check: ${{ steps.ternary_comparison.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Logical Operators Test ==="
           echo "AND: ${{ steps.ternary_logical.outputs.output_1 }}"
           echo "OR: ${{ steps.ternary_logical.outputs.output_2 }}"
           echo "Both: ${{ steps.ternary_logical.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== IN Operator Test ==="
           echo "Service IN: ${{ steps.ternary_in.outputs.output_1 }}"
           echo "Environment IN: ${{ steps.ternary_in.outputs.output_2 }}"
           echo "Branch IN: ${{ steps.ternary_in.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Mixed Operators Test ==="
           echo "Mixed 1: ${{ steps.ternary_mixed.outputs.output_1 }}"
           echo "Mixed 2: ${{ steps.ternary_mixed.outputs.output_2 }}"
           echo "Mixed 3: ${{ steps.ternary_mixed.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== CONTAINS Operator Test ==="
           echo "CONTAINS 1: ${{ steps.ternary_contains.outputs.output_1 }}"
           echo "CONTAINS 2: ${{ steps.ternary_contains.outputs.output_2 }}"
           echo "CONTAINS 3: ${{ steps.ternary_contains.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== NOT Operator Test ==="
           echo "NOT 1: ${{ steps.ternary_not.outputs.output_1 }}"
           echo "NOT 2: ${{ steps.ternary_not.outputs.output_2 }}"
           echo "NOT 3: ${{ steps.ternary_not.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== EMPTY Operator Test ==="
           echo "EMPTY 1: ${{ steps.ternary_empty.outputs.output_1 }}"
           echo "EMPTY 2: ${{ steps.ternary_empty.outputs.output_2 }}"
           echo "EMPTY 3: ${{ steps.ternary_empty.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== NOT_EMPTY Operator Test ==="
           echo "NOT_EMPTY 1: ${{ steps.ternary_not_empty.outputs.output_1 }}"
           echo "NOT_EMPTY 2: ${{ steps.ternary_not_empty.outputs.output_2 }}"
           echo "NOT_EMPTY 3: ${{ steps.ternary_not_empty.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Combined New Operators Test ==="
           echo "Combined 1: ${{ steps.ternary_combined.outputs.output_1 }}"
           echo "Combined 2: ${{ steps.ternary_combined.outputs.output_2 }}"
           echo "Combined 3: ${{ steps.ternary_combined.outputs.output_3 }}"
-          
+
           echo ""
           echo "=== Error Test ==="
           if [[ "${{ steps.ternary_error.outcome }}" == "failure" ]]; then
-            echo "✅ Error test passed: Action failed as expected when exceeding maximum conditions"
+            echo "Error test passed: Action failed as expected when exceeding maximum conditions"
           else
-            echo "❌ Error test failed: Action should have failed when exceeding maximum conditions"
+            echo "Error test failed: Action should have failed when exceeding maximum conditions"
             exit 1
           fi

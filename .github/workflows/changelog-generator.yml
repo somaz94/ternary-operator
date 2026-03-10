@@ -1,16 +1,16 @@
 name: Generate changelog
 on:
-  # release:
-  #   types: [created, edited, published]
   pull_request:
     types: [closed]
+  issues:
+    types: [closed]
   workflow_run:
-    workflows: ["Create release"]  # release.yml의 name과 일치해야 함
+    workflows: ["Create release"]
     types:
       - completed
-  workflow_dispatch:  
-  
-permissions: 
+  workflow_dispatch:
+
+permissions:
   contents: write
   pull-requests: write
 
@@ -25,14 +25,14 @@ jobs:
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
-        
+
     - name: Get first tag
       id: get_first_tag
       run: |
-        # 시맨틱 버전 태그 중 가장 최신 버전 찾기 (v1 제외)
+        # Find the latest semantic version tag (excluding major-only tags like v1)
         latest_tag="$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | sort -V | tail -n1)"
         echo "LATEST_TAG=${latest_tag}" >> "$GITHUB_ENV"
-        # 첫 번째 태그는 v1.0.0으로 고정
+        # First tag is fixed to v1.0.0
         echo "FIRST_TAG=v1.0.0" >> "$GITHUB_ENV"
 
     - name: Generate changelog
@@ -41,8 +41,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         futureRelease: ${{ github.event.release.tag_name || env.LATEST_TAG }}
         output: CHANGELOG.md
-        sinceTag: ${{ env.FIRST_TAG }}  # v1.0.0과 같은 구체적인 버전 태그
-        # excludeTags: "v1,v2"  # 명시적으로 제외할 태그
+        sinceTag: ${{ env.FIRST_TAG }}
         excludeTagsRegex: "^v[0-9]$"
 
     - name: Git Commit and Push
