@@ -1,8 +1,8 @@
 # Changelog
 
-## [v1.3.2](https://github.com/somaz94/ternary-operator/tree/v1.3.2) (2026-03-09)
+## [v1.4.0](https://github.com/somaz94/ternary-operator/tree/v1.4.0) (2026-03-10)
 
-[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.3.2...v1.3.2)
+[Full Changelog](https://github.com/somaz94/ternary-operator/compare/v1.3.2...v1.4.0)
 
 **Merged pull requests:**
 
