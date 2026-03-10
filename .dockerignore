@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-src/__pycache__/
 
 # Git files
 .git
@@ -15,6 +14,7 @@ src/__pycache__/
 README.md
 CHANGELOG.md
 LICENSE
+CONTRIBUTORS.md
 *.md
 docs/
 
@@ -28,6 +28,15 @@ docs/
 
 # Backup files
 backup/
+
+# Config files
+cliff.toml
+CLAUDE.md
+CODEOWNERS
+.prettierrc.json
+.coveragerc
+Makefile
+requirements-dev.txt
 
 # Environment files
 .env
