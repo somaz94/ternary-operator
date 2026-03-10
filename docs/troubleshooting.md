@@ -27,14 +27,14 @@ Common issues and solutions for the Ternary Operator Action.
 
 1. **Variable Not Set**
    ```yaml
-   # ❌ Variable SERVICE not set in environment
+   # [X] Variable SERVICE not set in environment
    conditions: 'SERVICE == game'
    # Result: FALSE (even if you expect it to be true)
    ```
    
    **Solution:**
    ```yaml
-   # ✅ Set variable first
+   # [O] Set variable first
    - name: Set Variable
      run: echo "SERVICE=game" >> $GITHUB_ENV
    
@@ -46,27 +46,27 @@ Common issues and solutions for the Ternary Operator Action.
 
 2. **Case Sensitivity**
    ```yaml
-   # ❌ SERVICE=game but checking for Game
+   # [X] SERVICE=game but checking for Game
    conditions: 'SERVICE == Game'
    # Result: FALSE
    ```
    
    **Solution:**
    ```yaml
-   # ✅ Match exact case
+   # [O] Match exact case
    conditions: 'SERVICE == game'
    ```
 
 3. **String vs Number Comparison**
    ```yaml
-   # ❌ VERSION="1.5" (string) compared to number
+   # [X] VERSION="1.5" (string) compared to number
    conditions: 'VERSION > 1.0'
    # Result: Depends on string representation
    ```
    
    **Solution:**
    ```yaml
-   # ✅ Ensure numeric values aren't quoted in env
+   # [O] Ensure numeric values aren't quoted in env
    - run: echo "VERSION=1.5" >> $GITHUB_ENV  # Not "VERSION=\"1.5\""
    ```
 
@@ -84,27 +84,27 @@ Common issues and solutions for the Ternary Operator Action.
 
 1. **Whitespace in Values**
    ```yaml
-   # ❌ Extra spaces around values
+   # [X] Extra spaces around values
    conditions: 'SERVICE IN game, batch, api'
    # Might match " batch" instead of "batch"
    ```
    
    **Solution:**
    ```yaml
-   # ✅ No spaces after commas (or they're auto-trimmed)
+   # [O] No spaces after commas (or they're auto-trimmed)
    conditions: 'SERVICE IN game,batch,api'
    ```
 
 2. **Case Mismatch**
    ```yaml
-   # ❌ SERVICE=Game but list has lowercase
+   # [X] SERVICE=Game but list has lowercase
    conditions: 'SERVICE IN game,batch'
    # Result: FALSE
    ```
    
    **Solution:**
    ```yaml
-   # ✅ Match exact case
+   # [O] Match exact case
    conditions: 'SERVICE IN Game,Batch'
    # Or normalize in environment
    - run: echo "SERVICE=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
@@ -112,14 +112,14 @@ Common issues and solutions for the Ternary Operator Action.
 
 3. **Confusion with AND/OR**
    ```yaml
-   # ❌ Mixing IN with conditional operators incorrectly
+   # [X] Mixing IN with conditional operators incorrectly
    conditions: 'SERVICE IN game,batch && ENVIRONMENT == prod'
    # This checks: (SERVICE IN game,batch) AND (ENVIRONMENT == prod)
    ```
    
    **Solution: This is actually correct!** The IN operator groups the values:
    ```yaml
-   # ✅ Properly structured
+   # [O] Properly structured
    conditions: 'SERVICE IN game,batch && ENVIRONMENT == prod'
    ```
 
@@ -131,7 +131,7 @@ Common issues and solutions for the Ternary Operator Action.
 
 **Symptoms:**
 ```
-❌ Error: Number of conditions (3), true values (2), and false values (3) must match
+[X] Error: Number of conditions (3), true values (2), and false values (3) must match
 ```
 
 **Cause:**
@@ -139,12 +139,12 @@ Different number of items in conditions, true_values, or false_values.
 
 **Solution:**
 ```yaml
-# ❌ Wrong
+# [X] Wrong
 conditions: 'A == 1, B == 2, C == 3'  # 3 conditions
 true_values: 'yes,ok'                  # 2 values
 false_values: 'no,fail,never'         # 3 values
 
-# ✅ Correct
+# [O] Correct
 conditions: 'A == 1, B == 2, C == 3'  # 3 conditions
 true_values: 'yes,ok,good'            # 3 values
 false_values: 'no,fail,never'         # 3 values
@@ -165,7 +165,7 @@ debug_mode: true
 
 **Symptoms:**
 ```
-❌ Error: Maximum number of conditions (10) exceeded. Found 11 conditions
+[X] Error: Maximum number of conditions (10) exceeded. Found 11 conditions
 ```
 
 **Cause:**
@@ -190,24 +190,24 @@ More than 10 conditions in a single action call.
 
 2. **Combine conditions:**
    ```yaml
-   # ❌ Before: 12 conditions
+   # [X] Before: 12 conditions
    SERVICE == game,
    SERVICE == batch,
    SERVICE == api,
    ...
    
-   # ✅ After: 1 condition
+   # [O] After: 1 condition
    SERVICE IN game,batch,api,...
    ```
 
 3. **Simplify logic:**
    ```yaml
-   # ❌ Before: Multiple similar conditions
+   # [X] Before: Multiple similar conditions
    ENV == dev || ENV == qa,
    ENV == stage || ENV == prod,
    ...
    
-   # ✅ After: Grouped conditions
+   # [O] After: Grouped conditions
    ENV IN dev,qa,stage,prod
    ```
 
@@ -226,7 +226,7 @@ Variable set in a previous step not available in current step's environment.
 
 **Solution:**
 ```yaml
-# ❌ Wrong order
+# [X] Wrong order
 - name: Evaluate
   uses: somaz94/ternary-operator@v1
   with:
@@ -235,7 +235,7 @@ Variable set in a previous step not available in current step's environment.
 - name: Set Variable (too late!)
   run: echo "SERVICE=game" >> $GITHUB_ENV
 
-# ✅ Correct order
+# [O] Correct order
 - name: Set Variable
   run: echo "SERVICE=game" >> $GITHUB_ENV
 
@@ -255,7 +255,7 @@ Variable set in a previous step not available in current step's environment.
 
 **Full Error:**
 ```
-❌ Error: Missing required inputs: CONDITIONS, TRUE_VALUES, FALSE_VALUES
+[X] Error: Missing required inputs: CONDITIONS, TRUE_VALUES, FALSE_VALUES
 ```
 
 **Cause:**
@@ -263,7 +263,7 @@ One or more required inputs not provided.
 
 **Solution:**
 ```yaml
-# ✅ Provide all required inputs
+# [O] Provide all required inputs
 - uses: somaz94/ternary-operator@v1
   with:
     conditions: 'SERVICE == game'     # Required
@@ -279,7 +279,7 @@ One or more required inputs not provided.
 
 **Full Error:**
 ```
-❌ Error: Number of conditions (2), true values (1), and false values (2) must match
+[X] Error: Number of conditions (2), true values (1), and false values (2) must match
 ```
 
 **Cause:**
@@ -306,7 +306,7 @@ false_values: 'no, fail'           # Count: 2
 
 **Full Error:**
 ```
-❌ Error: Maximum number of conditions (10) exceeded. Found 11 conditions
+[X] Error: Maximum number of conditions (10) exceeded. Found 11 conditions
 ```
 
 **Solution:**
@@ -337,10 +337,9 @@ Always start by enabling debug mode:
 • Debug: Raw conditions string: 'SERVICE == game'
 • Debug: Parsed 1 conditions:
   1. SERVICE == game
-• Debug: Variable SERVICE = game
-• Debug: Processed condition: "game" == "game"
-• Debug: Evaluating: "game" == "game"
-✅ Success: Condition 1 is TRUE
+• Debug: Comparison: 'game' == 'game'
+• Debug: Result: 'game' == 'game' = True
+Success: Condition 1 is TRUE
 ```
 
 <br/>
@@ -375,8 +374,8 @@ Print environment variables before evaluation:
 Before pushing to GitHub, test locally:
 
 ```bash
-# Run comprehensive tests
-python3 tests/test_local.py
+# Run all tests (unit + integration)
+make test-all
 
 # Run specific test
 export SERVICE=game
@@ -489,10 +488,10 @@ false_values: 'fail1,fail2,fail3'
 
 **Solutions:**
 ```yaml
-# ❌ Slow
+# [X] Slow
 conditions: 'A == 1 && B == 2 && C == 3 && D == 4 && E == 5 || F == 6 || G == 7'
 
-# ✅ Faster - split into simpler conditions
+# [O] Faster - split into simpler conditions
 conditions: >-
   A == 1 && B == 2,
   C == 3 && D == 4,
@@ -507,11 +506,11 @@ conditions: >-
 
 ### Before Asking for Help
 
-1. ✅ Enable `debug_mode: true`
-2. ✅ Check this troubleshooting guide
-3. ✅ Test locally with `tests/test_local.py`
-4. ✅ Review [Usage Examples](usage.md)
-5. ✅ Check [Operators Reference](operators.md)
+1. Enable `debug_mode: true`
+2. Check this troubleshooting guide
+3. Test locally with `make test-all`
+4. Review [Usage Examples](usage.md)
+5. Check [Operators Reference](operators.md)
 
 <br/>
 

@@ -29,7 +29,7 @@ jobs:
   evaluate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set Environment
         run: echo "ENVIRONMENT=prod" >> $GITHUB_ENV
@@ -428,7 +428,7 @@ jobs:
   configure:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set Variables
         id: vars
@@ -467,7 +467,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Determine Strategy
         uses: somaz94/ternary-operator@v1
@@ -501,7 +501,7 @@ jobs:
         region: [us-east, us-west, eu-west, ap-south]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set Region
         run: echo "REGION=${{ matrix.region }}" >> $GITHUB_ENV
@@ -533,7 +533,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Check Feature Availability
         uses: somaz94/ternary-operator@v1
@@ -569,7 +569,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set Variables
         id: vars
@@ -619,7 +619,7 @@ jobs:
   migrate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Check Migration Safety
         uses: somaz94/ternary-operator@v1
@@ -657,7 +657,7 @@ jobs:
   scale:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Determine Replica Count
         uses: somaz94/ternary-operator@v1
@@ -688,7 +688,7 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Determine Notification Channel
         uses: somaz94/ternary-operator@v1
@@ -743,7 +743,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set Environment Variable
         run: echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
@@ -770,7 +770,7 @@ jobs:
   process:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       # Step 1: Set multiple variables
       - name: Set Variables
@@ -816,7 +816,7 @@ jobs:
         environment: [dev, qa, prod]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set Matrix Values
         run: |

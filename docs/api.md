@@ -148,7 +148,7 @@ debug_mode: true
 • Debug: Variable SERVICE = game
 • Debug: Checking if SERVICE='game' IN [game, batch, api]
 • Debug: IN operator result: True
-✅ Success: Condition 1 is TRUE
+Success: Condition 1 is TRUE
 ```
 
 #### Use Cases:
@@ -250,7 +250,7 @@ jobs:
 
 #### Enforcement:
 ```
-❌ Error: Maximum number of conditions (10) exceeded. Found 11 conditions
+[X] Error: Maximum number of conditions (10) exceeded. Found 11 conditions
 ```
 
 #### Workaround:
@@ -281,7 +281,7 @@ All three arrays must have the same length:
 
 #### Error Example:
 ```yaml
-# ❌ This will fail
+# [X] This will fail
 conditions: 'A == 1, B == 2'      # 2 conditions
 true_values: 'yes'                 # 1 value
 false_values: 'no,never'          # 2 values
@@ -291,7 +291,7 @@ false_values: 'no,never'          # 2 values
 
 #### Correct:
 ```yaml
-# ✅ This works
+# [O] This works
 conditions: 'A == 1, B == 2'      # 2 conditions
 true_values: 'yes,ok'             # 2 values
 false_values: 'no,fail'           # 2 values
@@ -308,18 +308,18 @@ Environment variables used in conditions must:
 
 #### Valid:
 ```yaml
-SERVICE       # ✅
-ENVIRONMENT   # ✅
-MY_VAR        # ✅
-API_V2        # ✅
-COUNT         # ✅
+SERVICE       # [O]
+ENVIRONMENT   # [O]
+MY_VAR        # [O]
+API_V2        # [O]
+COUNT         # [O]
 ```
 
 #### Invalid:
 ```yaml
-service       # ❌ lowercase
-my-var        # ❌ contains hyphen
-2ND_VAR       # ❌ starts with number
+service       # [X] lowercase
+my-var        # [X] contains hyphen
+2ND_VAR       # [X] starts with number
 ```
 
 ---
@@ -431,7 +431,7 @@ jobs:
       result3: ${{ steps.evaluate.outputs.output_3 }}
     
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set Environment Variables
         uses: somaz94/env-output-setter@v1

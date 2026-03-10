@@ -8,9 +8,11 @@ Local testing suite for the Ternary Operator Action.
 
 ```bash
 cd /path/to/ternary-operator
-make test          # Run all tests (alias for test-local)
-make test-local    # Run Python integration tests
-make test-bash     # Run bash test suite
+make test          # Run unit tests with pytest (73 tests with coverage)
+make test-local    # Run Python integration tests (42 test cases)
+make test-bash     # Run bash test suite (17 tests)
+make test-all      # Run all tests
+make coverage      # Coverage report
 make clean         # Remove cache and build artifacts
 make help          # Show all available commands
 ```
@@ -19,24 +21,32 @@ make help          # Show all available commands
 
 ## Test Files
 
-| File | Description |
-|------|-------------|
-| `test_local.py` | Python integration test suite (42 test cases, subprocess-based) |
-| `test_local.sh` | Bash test suite (17 core tests, lightweight) |
+| File | Type | Description |
+|------|------|-------------|
+| `conftest.py` | Unit | pytest fixtures (clean_env, github_output, default_env) |
+| `test_evaluator.py` | Unit | TernaryOperator class tests (36 tests) |
+| `test_operators.py` | Unit | IN, CONTAINS, EMPTY operator tests (22 tests) |
+| `test_parser.py` | Unit | ConditionParser tests (13 tests) |
+| `test_colors.py` | Unit | Color code tests (2 tests) |
+| `test_local.py` | Integration | End-to-end subprocess tests (42 test cases) |
+| `test_local.sh` | Integration | Bash test suite (17 core tests) |
 
 <br/>
 
 ## Running Tests
 
 ```bash
-# Python tests (recommended)
+# Unit tests with pytest (recommended)
+python3 -m pytest tests/ -v --ignore=tests/test_local.py
+
+# Integration tests
 python3 tests/test_local.py
 
 # Bash tests
 bash tests/test_local.sh
 
-# Or using Makefile
-make test
+# All tests via Makefile
+make test-all
 ```
 
 <br/>

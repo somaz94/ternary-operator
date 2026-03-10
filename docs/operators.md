@@ -210,7 +210,7 @@ BRANCH == main || BRANCH == develop || BRANCH == release
 - Fallback scenarios
 - Alternative paths
 
-**💡 Tip:** Consider using the `IN` operator for cleaner syntax when checking multiple values of the same variable.
+**Tip:** Consider using the `IN` operator for cleaner syntax when checking multiple values of the same variable.
 
 <br/>
 
@@ -277,10 +277,10 @@ STATUS IN pending,running,completed
 ```
 
 **Features:**
-- ✅ Cleaner syntax
-- ✅ Easier to maintain
-- ✅ Better readability
-- ✅ Works with any number of values
+- Cleaner syntax
+- Easier to maintain
+- Better readability
+- Works with any number of values
 
 **Use Cases:**
 - Service name validation
@@ -289,7 +289,7 @@ STATUS IN pending,running,completed
 - Status matching
 - Region selection
 
-**⚠️ Important Notes:**
+**Important Notes:**
 - Values are case-sensitive: `game` != `Game`
 - Whitespace after commas is automatically trimmed
 - Each value is treated as a string
@@ -326,10 +326,10 @@ TAG_NAME CONTAINS -rc             # v1.2.0-rc1 → true
 ```
 
 **Features:**
-- ✅ Case-sensitive matching
-- ✅ Works with any string values
-- ✅ Simple substring detection
-- ✅ No regex complexity
+- Case-sensitive matching
+- Works with any string values
+- Simple substring detection
+- No regex complexity
 
 **Use Cases:**
 - Branch name pattern matching
@@ -338,7 +338,7 @@ TAG_NAME CONTAINS -rc             # v1.2.0-rc1 → true
 - Tag filtering
 - Label checking
 
-**⚠️ Important:**
+**Important:**
 - Case-sensitive: `feature` != `Feature`
 - Exact substring match required
 - Left side is checked for containing right side
@@ -392,10 +392,10 @@ NOT (BRANCH == main || BRANCH == develop) # False when either is true
 ```
 
 **Features:**
-- ✅ Inverts any condition result
-- ✅ Works with all operators
-- ✅ Simplifies negative logic
-- ✅ Cleaner than complex alternatives
+- Inverts any condition result
+- Works with all operators
+- Simplifies negative logic
+- Cleaner than complex alternatives
 
 **Use Cases:**
 - Excluding specific values
@@ -411,7 +411,7 @@ NOT (BRANCH == main || BRANCH == develop) # False when either is true
 | True     | False      |
 | False    | True       |
 
-**💡 Tip:** Parentheses are optional but recommended for clarity.
+**Tip:** Parentheses are optional but recommended for clarity.
 
 **Example Workflow:**
 ```yaml
@@ -464,10 +464,10 @@ CUSTOM_DOMAIN EMPTY              # Use default domain
 - Variable contains only whitespace
 
 **Features:**
-- ✅ Checks for missing values
-- ✅ Detects empty strings
-- ✅ Ignores whitespace-only values
-- ✅ Simple validation
+- Checks for missing values
+- Detects empty strings
+- Ignores whitespace-only values
+- Simple validation
 
 **Use Cases:**
 - Optional parameter validation
@@ -524,10 +524,10 @@ SERVICE_NAME NOT_EMPTY           # Validate service name
 - Variable contains any non-whitespace characters
 
 **Features:**
-- ✅ Validates required values
-- ✅ Ensures configuration exists
-- ✅ Prevents empty inputs
-- ✅ Simple presence check
+- Validates required values
+- Ensures configuration exists
+- Prevents empty inputs
+- Simple presence check
 
 **Use Cases:**
 - Required parameter validation
@@ -556,7 +556,7 @@ SERVICE_NAME NOT_EMPTY           # Validate service name
   run: ./deploy.sh
 ```
 
-**💡 Tip:** Use `NOT_EMPTY` to ensure required variables are set before proceeding with critical operations.
+**Tip:** Use `NOT_EMPTY` to ensure required variables are set before proceeding with critical operations.
 
 ---
 
@@ -584,7 +584,7 @@ This is evaluated as:
 ((NOT (SERVICE == game)) && ENVIRONMENT == prod) || BRANCH == main
 ```
 
-**💡 Best Practice:** Use clear, simple conditions to avoid confusion. If you need complex logic, break it into multiple condition evaluations.
+**Best Practice:** Use clear, simple conditions to avoid confusion. If you need complex logic, break it into multiple condition evaluations.
 
 ---
 

@@ -13,7 +13,12 @@ src/
   operators.py                   # Specialized operator evaluators (IN, CONTAINS, EMPTY)
   colors.py                      # ANSI color codes for terminal output
 tests/
-  test_local.py                  # Python integration test suite (42 test cases)
+  conftest.py                    # pytest fixtures
+  test_evaluator.py              # Unit tests - evaluator (36 tests)
+  test_operators.py              # Unit tests - operators (22 tests)
+  test_parser.py                 # Unit tests - parser (13 tests)
+  test_colors.py                 # Unit tests - colors (2 tests)
+  test_local.py                  # Integration test suite (42 test cases)
   test_local.sh                  # Bash test suite (17 tests)
   README.md                      # Testing documentation
 docs/
@@ -29,15 +34,21 @@ backup/
 Dockerfile                       # Single-stage (python:3.14-slim)
 action.yml                       # GitHub Action definition (4 inputs, 10 outputs)
 cliff.toml                       # git-cliff config for release notes
-Makefile                         # Test and clean commands
+Makefile                         # Development commands (test, coverage, clean)
+requirements-dev.txt             # Dev dependencies (pytest, pytest-cov)
+.coveragerc                      # Coverage configuration
+CODEOWNERS                       # Repository code owners
+CONTRIBUTORS.md                  # Contributors list (auto-generated)
 ```
 
 ## Build & Test
 
 ```bash
-make test          # Run all tests (alias for test-local)
-make test-local    # Run Python integration tests
-make test-bash     # Run bash test suite
+make test          # Run unit tests with pytest (73 tests with coverage)
+make test-local    # Run Python integration tests (42 test cases)
+make test-bash     # Run bash test suite (17 tests)
+make test-all      # Run all tests
+make coverage      # Coverage report
 make clean         # Remove cache and build artifacts
 make help          # Show all available commands
 ```
@@ -78,7 +89,8 @@ tag push v* → Create release
 
 ### CI Structure
 ```
-test-local ──────────┐
+unit-test ───────────┐
+test-local ──────────┤
 build-and-push-docker ──→ test-action ──→ ci-result
 ```
 
@@ -89,7 +101,7 @@ build-and-push-docker ──→ test-action ──→ ci-result
 - **Secrets**: `PAT_TOKEN` (cross-repo ops), `GITHUB_TOKEN` (changelog, releases)
 - **Docker**: Single-stage build, python:3.14-slim base
 - **Comments**: English only
-- **Testing**: Python integration tests (subprocess-based), bash test suite
+- **Testing**: pytest unit tests (73), Python integration tests (42, subprocess-based), bash test suite (17)
 - **Release**: `git switch` (not `git checkout`), git-cliff for RELEASE.md
 - **cliff.toml**: Skip `^Merge`, `^Update changelog`, `^Auto commit`
 - **paths-ignore**: `.github/workflows/**`, `**/*.md`, `backup/**`
