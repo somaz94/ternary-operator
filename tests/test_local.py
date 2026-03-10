@@ -55,10 +55,10 @@ class TestRunner:
     def print_result(self, test_name: str, passed: bool, details: str = ""):
         """Print test result"""
         if passed:
-            print(f"{Colors.GREEN}✅ PASS{Colors.NC}: {test_name}")
+            print(f"{Colors.GREEN}PASS{Colors.NC}: {test_name}")
             self.passed_tests += 1
         else:
-            print(f"{Colors.RED}❌ FAIL{Colors.NC}: {test_name}")
+            print(f"{Colors.RED}FAIL{Colors.NC}: {test_name}")
             if details:
                 print(f"   {details}")
             self.failed_tests += 1
@@ -156,7 +156,7 @@ class TestRunner:
     
     def print_summary(self):
         """Print test summary"""
-        self.print_header("📊 Test Summary")
+        self.print_header("Test Summary")
         print(f"Total Tests: {self.total_tests}")
         print(f"{Colors.GREEN}Passed: {self.passed_tests}{Colors.NC}")
         if self.failed_tests > 0:
@@ -166,10 +166,10 @@ class TestRunner:
         print()
         
         if self.failed_tests > 0:
-            print(f"{Colors.RED}❌ Some tests failed{Colors.NC}")
+            print(f"{Colors.RED}Some tests failed{Colors.NC}")
             return False
         else:
-            print(f"{Colors.GREEN}✅ All tests passed!{Colors.NC}")
+            print(f"{Colors.GREEN}All tests passed!{Colors.NC}")
             return True
 
 
@@ -583,7 +583,7 @@ def create_test_suite() -> List[TestCase]:
 
 def main():
     """Main test execution"""
-    print(f"{Colors.BOLD}🧪 Local Test Suite for Ternary Operator Action{Colors.NC}")
+    print(f"{Colors.BOLD}Local Test Suite for Ternary Operator Action{Colors.NC}")
     
     # Determine the root directory (parent of tests directory or current if entrypoint.py exists)
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -592,7 +592,7 @@ def main():
     # Check if entrypoint.py exists
     entrypoint_path = os.path.join(root_dir, 'entrypoint.py')
     if not os.path.exists(entrypoint_path):
-        print(f"{Colors.RED}❌ Error: entrypoint.py not found{Colors.NC}")
+        print(f"{Colors.RED}Error: entrypoint.py not found{Colors.NC}")
         print(f"Looking in: {entrypoint_path}")
         print("Please run this script from the ternary-operator root directory or tests directory")
         return 1
@@ -606,7 +606,7 @@ def main():
         runner = TestRunner()
         
         # Create test suite
-        runner.print_header("🔧 Creating Test Suite")
+        runner.print_header("Creating Test Suite")
         tests = create_test_suite()
         print(f"Created {len(tests)} test cases")
         
@@ -626,7 +626,7 @@ def main():
         }
         
         for category, category_tests in categories.items():
-            runner.print_header(f"📋 {category}")
+            runner.print_header(category)
             for test in category_tests:
                 runner.run_test(test)
         

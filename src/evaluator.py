@@ -33,7 +33,7 @@ class TernaryOperator:
     def print_header(self, message: str) -> None:
         """Print a formatted header."""
         print(f"\n{'=' * 50}")
-        print(f"▶️ {message}")
+        print(f"  {message}")
         print(f"{'=' * 50}\n")
     
     def print_debug(self, message: str) -> None:
@@ -43,12 +43,12 @@ class TernaryOperator:
     
     def print_error(self, message: str) -> None:
         """Print error message and exit."""
-        print(f"{Colors.FAIL}❌ Error: {message}{Colors.ENDC}", file=sys.stderr)
+        print(f"{Colors.FAIL}Error: {message}{Colors.ENDC}", file=sys.stderr)
         sys.exit(1)
     
     def print_success(self, message: str) -> None:
         """Print success message."""
-        print(f"{Colors.OKGREEN}✅ Success: {message}{Colors.ENDC}")
+        print(f"{Colors.OKGREEN}Success: {message}{Colors.ENDC}")
     
     def safe_write_output(self, key: str, value: str) -> None:
         """Safely write output to both stdout and GITHUB_OUTPUT."""
@@ -221,7 +221,7 @@ class TernaryOperator:
         self.print_debug(f"Processing {len(conditions_list)} conditions")
         
         for i, condition in enumerate(conditions_list, 1):
-            print(f"\n📋 Evaluating Condition {i}: {condition}")
+            print(f"\nEvaluating Condition {i}: {condition}")
             
             # Evaluate the condition
             if self.evaluate_condition(condition):

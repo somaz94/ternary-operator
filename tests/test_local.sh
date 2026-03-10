@@ -20,7 +20,7 @@ echo ""
 
 # Check if entrypoint.py exists
 if [ ! -f "entrypoint.py" ]; then
-    echo "❌ Error: entrypoint.py not found in $ROOT_DIR"
+    echo "Error: entrypoint.py not found in $ROOT_DIR"
     echo "Please run this script from the ternary-operator root directory or tests directory"
     exit 1
 fi
@@ -54,10 +54,10 @@ print_result() {
     TOTAL_TESTS=$((TOTAL_TESTS + 1))
     
     if [ "$expected" == "$actual" ]; then
-        echo -e "${GREEN}✅ PASS${NC}: $test_name"
+        echo -e "${GREEN}PASS${NC}: $test_name"
         PASSED_TESTS=$((PASSED_TESTS + 1))
     else
-        echo -e "${RED}❌ FAIL${NC}: $test_name"
+        echo -e "${RED}FAIL${NC}: $test_name"
         echo -e "   Expected: $expected"
         echo -e "   Got: $actual"
         FAILED_TESTS=$((FAILED_TESTS + 1))
@@ -109,7 +109,7 @@ run_test() {
 }
 
 # Main test execution
-print_header "🧪 Local Testing for Ternary Operator Action"
+print_header "Local Testing for Ternary Operator Action"
 
 print_header "Test 1: Comparison Operators"
 
@@ -234,7 +234,7 @@ if python3 entrypoint.py > /tmp/test_multi_run_$$.log 2>&1; then
     print_result "Condition 2" "e-pass" "$output2"
     print_result "Condition 3" "b-pass" "$output3"
 else
-    echo -e "${RED}❌ Multiple conditions test failed${NC}"
+    echo -e "${RED}Multiple conditions test failed${NC}"
     FAILED_TESTS=$((FAILED_TESTS + 3))
     TOTAL_TESTS=$((TOTAL_TESTS + 3))
 fi
@@ -254,14 +254,14 @@ echo ""
 echo -e "${YELLOW}Testing: Maximum conditions exceeded${NC}"
 
 if python3 entrypoint.py > /tmp/test_error_run_$$.log 2>&1; then
-    echo -e "${RED}❌ FAIL${NC}: Should have failed with too many conditions"
+    echo -e "${RED}FAIL${NC}: Should have failed with too many conditions"
     FAILED_TESTS=$((FAILED_TESTS + 1))
 else
     if grep -q "Maximum number of conditions" /tmp/test_error_run_$$.log; then
-        echo -e "${GREEN}✅ PASS${NC}: Correctly rejected too many conditions"
+        echo -e "${GREEN}PASS${NC}: Correctly rejected too many conditions"
         PASSED_TESTS=$((PASSED_TESTS + 1))
     else
-        echo -e "${RED}❌ FAIL${NC}: Failed but with wrong error message"
+        echo -e "${RED}FAIL${NC}: Failed but with wrong error message"
         FAILED_TESTS=$((FAILED_TESTS + 1))
     fi
 fi
@@ -270,7 +270,7 @@ TOTAL_TESTS=$((TOTAL_TESTS + 1))
 rm -f "$GITHUB_OUTPUT" "/tmp/test_error_run_$$.log"
 
 # Print summary
-print_header "📊 Test Summary"
+print_header "Test Summary"
 echo -e "Total Tests: $TOTAL_TESTS"
 echo -e "${GREEN}Passed: $PASSED_TESTS${NC}"
 if [ $FAILED_TESTS -gt 0 ]; then
@@ -282,9 +282,9 @@ echo ""
 
 # Exit with appropriate code
 if [ $FAILED_TESTS -gt 0 ]; then
-    echo -e "${RED}❌ Some tests failed${NC}"
+    echo -e "${RED}Some tests failed${NC}"
     exit 1
 else
-    echo -e "${GREEN}✅ All tests passed!${NC}"
+    echo -e "${GREEN}All tests passed!${NC}"
     exit 0
 fi

@@ -19,6 +19,6 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '👋 Hello! Thank you for creating this issue.\n\nWe will review it and get back to you soon.'
+              body: 'Hello! Thank you for creating this issue.\n\nWe will review it and get back to you soon.'
             })
 

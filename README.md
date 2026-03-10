@@ -175,12 +175,12 @@ python3 tests/test_local.py
 Both scripts work from any directory and automatically find the project root.
 
 #### Test Coverage:
-- ✅ All comparison operators
-- ✅ Logical operators (AND/OR)
-- ✅ IN operator with multiple values
-- ✅ Mixed operators
-- ✅ Numeric comparisons
-- ✅ Error cases
+- All comparison operators
+- Logical operators (AND/OR)
+- IN operator with multiple values
+- Mixed operators
+- Numeric comparisons
+- Error cases
 
 [→ See testing guide](docs/development.md#testing)
 
@@ -213,19 +213,19 @@ Both scripts work from any directory and automatically find the project root.
 
 1. **Use IN operator** for multiple value checks:
    ```yaml
-   # ✅ Good
+   # Good
    SERVICE IN game,batch,api
    
-   # ❌ Avoid
+   # Avoid
    SERVICE == game || SERVICE == batch || SERVICE == api
    ```
 
 2. **Keep conditions simple** for readability:
    ```yaml
-   # ✅ Good - split into multiple conditions
+   # Good - split into multiple conditions
    conditions: 'SERVICE == game, ENVIRONMENT == prod'
    
-   # ❌ Harder to read
+   # Harder to read
    conditions: 'SERVICE == game && ENV == prod && BRANCH == main && VERSION >= 1.0'
    ```
 
@@ -291,7 +291,7 @@ Ensure same number of:
 - False values
 
 ```yaml
-# ✅ Correct - all have 2 items
+# Correct - all have 2 items
 conditions: 'A == 1, B == 2'
 true_values: 'yes,ok'
 false_values: 'no,fail'
@@ -349,7 +349,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 <div align="center">
 
-**Made with ❤️ for better GitHub Actions workflows**
+**Made for better GitHub Actions workflows**
 
 [Documentation](docs/) | [Examples](docs/usage.md) | [Contributing](docs/development.md)
 
