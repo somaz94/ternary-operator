@@ -165,7 +165,7 @@ jobs:
 Test your changes before pushing to GitHub:
 
 ```bash
-# Run unit tests with pytest (73 tests with coverage)
+# Run unit tests with pytest (89 tests with coverage)
 make test
 
 # Run integration tests (42 test cases)
@@ -189,7 +189,7 @@ python3 tests/test_local.py
 ```
 
 #### Test Coverage:
-- Unit tests: 73 tests (operators, parser, evaluator, colors)
+- Unit tests: 89 tests (operators, parser, evaluator, colors)
 - Integration tests: 42 test cases (end-to-end subprocess tests)
 - Bash tests: 17 core tests
 

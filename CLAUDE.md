@@ -14,7 +14,7 @@ src/
   colors.py                      # ANSI color codes for terminal output
 tests/
   conftest.py                    # pytest fixtures
-  test_evaluator.py              # Unit tests - evaluator (36 tests)
+  test_evaluator.py              # Unit tests - evaluator (52 tests)
   test_operators.py              # Unit tests - operators (22 tests)
   test_parser.py                 # Unit tests - parser (13 tests)
   test_colors.py                 # Unit tests - colors (2 tests)
@@ -44,7 +44,7 @@ CONTRIBUTORS.md                  # Contributors list (auto-generated)
 ## Build & Test
 
 ```bash
-make test          # Run unit tests with pytest (73 tests with coverage)
+make test          # Run unit tests with pytest (89 tests with coverage)
 make test-local    # Run Python integration tests (42 test cases)
 make test-bash     # Run bash test suite (17 tests)
 make test-all      # Run all tests
@@ -101,7 +101,7 @@ build-and-push-docker ──→ test-action ──→ ci-result
 - **Secrets**: `PAT_TOKEN` (cross-repo ops), `GITHUB_TOKEN` (changelog, releases)
 - **Docker**: Single-stage build, python:3.14-slim base
 - **Comments**: English only
-- **Testing**: pytest unit tests (73), Python integration tests (42, subprocess-based), bash test suite (17)
+- **Testing**: pytest unit tests (89), Python integration tests (42, subprocess-based), bash test suite (17)
 - **Release**: `git switch` (not `git checkout`), git-cliff for RELEASE.md
 - **cliff.toml**: Skip `^Merge`, `^Update changelog`, `^Auto commit`
 - **paths-ignore**: `.github/workflows/**`, `**/*.md`, `backup/**`

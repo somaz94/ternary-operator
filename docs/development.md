@@ -59,7 +59,7 @@ python3 --version
 ### Using Makefile (Recommended)
 
 ```bash
-# Run unit tests with coverage (pytest, 73 tests)
+# Run unit tests with coverage (pytest, 89 tests)
 make test
 
 # Run integration tests (subprocess, 42 tests)
@@ -89,7 +89,7 @@ python3 -m pytest tests/ -v \
 ```
 
 **Test files:**
-- `tests/test_evaluator.py` - 36 tests (main evaluator class)
+- `tests/test_evaluator.py` - 52 tests (main evaluator class)
 - `tests/test_operators.py` - 22 tests (IN, CONTAINS, EMPTY operators)
 - `tests/test_parser.py` - 13 tests (condition parser)
 - `tests/test_colors.py` - 2 tests (color codes)
@@ -207,7 +207,7 @@ ternary-operator/
 ├── tests/                    # Test suite
 │   ├── README.md             # Test documentation
 │   ├── conftest.py           # pytest fixtures
-│   ├── test_evaluator.py     # Unit tests - evaluator (36 tests)
+│   ├── test_evaluator.py     # Unit tests - evaluator (52 tests)
 │   ├── test_operators.py     # Unit tests - operators (22 tests)
 │   ├── test_parser.py        # Unit tests - parser (13 tests)
 │   ├── test_colors.py        # Unit tests - colors (2 tests)

@@ -8,7 +8,7 @@ Local testing suite for the Ternary Operator Action.
 
 ```bash
 cd /path/to/ternary-operator
-make test          # Run unit tests with pytest (73 tests with coverage)
+make test          # Run unit tests with pytest (89 tests with coverage)
 make test-local    # Run Python integration tests (42 test cases)
 make test-bash     # Run bash test suite (17 tests)
 make test-all      # Run all tests
@@ -24,7 +24,7 @@ make help          # Show all available commands
 | File | Type | Description |
 |------|------|-------------|
 | `conftest.py` | Unit | pytest fixtures (clean_env, github_output, default_env) |
-| `test_evaluator.py` | Unit | TernaryOperator class tests (36 tests) |
+| `test_evaluator.py` | Unit | TernaryOperator class tests (52 tests) |
 | `test_operators.py` | Unit | IN, CONTAINS, EMPTY operator tests (22 tests) |
 | `test_parser.py` | Unit | ConditionParser tests (13 tests) |
 | `test_colors.py` | Unit | Color code tests (2 tests) |
