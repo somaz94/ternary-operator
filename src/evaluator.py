@@ -2,6 +2,7 @@
 Main evaluator class for the Ternary Operator Action.
 """
 
+import operator
 import os
 import re
 import sys
@@ -16,6 +17,14 @@ class TernaryOperator:
     """Main class for evaluating conditions and setting outputs."""
     
     MAX_CONDITIONS = 10
+    COMPARISON_OPS = {
+        '==': operator.eq,
+        '!=': operator.ne,
+        '<=': operator.le,
+        '>=': operator.ge,
+        '<': operator.lt,
+        '>': operator.gt,
+    }
     
     def __init__(self):
         """Initialize with environment variables."""
@@ -106,39 +115,36 @@ class TernaryOperator:
             self.print_debug(f"Warning: Variable {varname} is not set or empty")
         return value
     
-    def process_condition(self, condition: str) -> str:
-        """Process a condition by replacing variables and values with quoted strings or numbers."""
-        processed = condition
-        
-        # First, find and replace all uppercase variable names (environment variables)
-        # Pattern: starts with uppercase letter, can contain uppercase letters, numbers, and underscores
-        variables = re.findall(r'\b[A-Z][A-Z0-9_]*\b', condition)
-        for varname in variables:
-            value = self.get_var_value(varname)
-            if value:
-                self.print_debug(f"Variable {varname} = {value}")
-                # Check if value is numeric - if so, don't quote it
-                if value.isdigit() or (value.replace('.', '', 1).isdigit() and value.count('.') <= 1):
-                    # It's a number, don't quote
-                    processed = processed.replace(varname, value)
-                else:
-                    # It's a string, quote it
-                    processed = processed.replace(varname, f'"{value}"')
-        
-        # Then, find all unquoted lowercase/mixed-case words and quote them
-        # This handles comparison values like: game, batch, dev, prod, etc.
-        # But skip numeric values
-        # Pattern matches words that are not already in quotes and not numbers
-        def quote_if_not_number(match):
-            word = match.group(1)
-            # Don't quote if it's a number
-            if word.isdigit() or (word.replace('.', '', 1).isdigit() and word.count('.') <= 1):
-                return word
-            return f'"{word}"'
-        
-        processed = re.sub(r'(?<!")(?<!\w)([a-z_][a-z0-9_.-]*)(?!")(?!\w)', quote_if_not_number, processed)
-        
-        return processed
+    @staticmethod
+    def _is_numeric(value: str) -> bool:
+        """Check if a string value is numeric (int or float)."""
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    def _parse_comparison(self, condition: str):
+        """Parse a simple comparison condition into (left, op, right).
+
+        Returns a tuple of (left_value, operator_str, right_value) or None if
+        no comparison operator is found.
+        """
+        # Match operators in order: longest first to avoid <= matching as <
+        for op in ('<=', '>=', '!=', '==', '<', '>'):
+            if f' {op} ' in condition:
+                parts = condition.split(f' {op} ', 1)
+                if len(parts) == 2:
+                    left_raw = parts[0].strip()
+                    right_raw = parts[1].strip()
+
+                    # Resolve environment variables (uppercase names)
+                    left_val = self.get_var_value(left_raw) if re.match(r'^[A-Z][A-Z0-9_]*$', left_raw) else left_raw
+                    right_val = self.get_var_value(right_raw) if re.match(r'^[A-Z][A-Z0-9_]*$', right_raw) else right_raw
+
+                    self.print_debug(f"Comparison: '{left_val}' {op} '{right_val}'")
+                    return left_val, op, right_val
+        return None
     
     def evaluate_condition(self, condition: str) -> bool:
         """Evaluate a single condition with support for all operators."""
@@ -190,15 +196,25 @@ class TernaryOperator:
             return self.empty_evaluator.evaluate(condition)
         
         # Simple comparison operator
-        processed_condition = self.process_condition(condition)
-        self.print_debug(f"Processed condition: {processed_condition}")
-        
+        parsed = self._parse_comparison(condition)
+        if parsed is None:
+            self.print_debug(f"No valid operator found in condition: '{condition}'")
+            return False
+
+        left_val, op, right_val = parsed
+        op_func = self.COMPARISON_OPS.get(op)
+        if op_func is None:
+            self.print_debug(f"Unsupported operator: '{op}'")
+            return False
+
         try:
-            # Evaluate the simple comparison
-            self.print_debug(f"Evaluating: {processed_condition}")
-            result = eval(processed_condition)
+            # Compare as numbers if both sides are numeric
+            if self._is_numeric(left_val) and self._is_numeric(right_val):
+                result = op_func(float(left_val), float(right_val))
+            else:
+                result = op_func(left_val, right_val)
+            self.print_debug(f"Result: '{left_val}' {op} '{right_val}' = {result}")
             return bool(result)
-            
         except Exception as e:
             self.print_debug(f"Error evaluating condition '{condition}': {e}")
             return False
