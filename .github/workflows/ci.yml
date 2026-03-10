@@ -55,6 +55,9 @@ jobs:
         with:
           python-version: '3.14'
 
+      - name: Install dependencies
+        run: pip install pytest
+
       - name: Run Tests
         run: python -m pytest tests/test_local.py -v
 
