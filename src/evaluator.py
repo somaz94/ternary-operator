@@ -6,7 +6,6 @@ import operator
 import os
 import re
 import sys
-from typing import List
 
 from .colors import Colors
 from .parser import ConditionParser
@@ -15,8 +14,9 @@ from .operators import InOperatorEvaluator, ContainsOperatorEvaluator, EmptyOper
 
 class TernaryOperator:
     """Main class for evaluating conditions and setting outputs."""
-    
+
     MAX_CONDITIONS = 10
+    MAX_RECURSION_DEPTH = 50
     COMPARISON_OPS = {
         '==': operator.eq,
         '!=': operator.ne,
@@ -146,65 +146,59 @@ class TernaryOperator:
                     return left_val, op, right_val
         return None
     
-    def evaluate_condition(self, condition: str) -> bool:
+    def _evaluate_logical(self, condition: str, op: str, aggregator) -> bool:
+        """Evaluate a logical operator (|| or &&) by splitting and aggregating results."""
+        parts = condition.split(op)
+        return aggregator(
+            self.evaluate_condition(part.strip(), self._depth + 1)
+            for part in parts
+        )
+
+    def evaluate_condition(self, condition: str, depth: int = 0) -> bool:
         """Evaluate a single condition with support for all operators."""
+        self._depth = depth
+        if depth >= self.MAX_RECURSION_DEPTH:
+            self.print_debug(f"Max recursion depth ({self.MAX_RECURSION_DEPTH}) exceeded")
+            return False
+
         # Handle NOT operator first (highest priority)
         if condition.strip().upper().startswith('NOT '):
             inner_condition = condition[4:].strip()
             # Remove surrounding parentheses if present
             if inner_condition.startswith('(') and inner_condition.endswith(')'):
                 inner_condition = inner_condition[1:-1].strip()
-            result = self.evaluate_condition(inner_condition)
+            result = self.evaluate_condition(inner_condition, depth + 1)
             self.print_debug(f"NOT operator: negating {result} -> {not result}")
             return not result
-        
+
         # Check if condition contains logical operators (|| or &&)
-        if '||' in condition or '&&' in condition:
-            # Split by logical operators and evaluate each part
-            # Handle || (OR) - if any part is true, return true
-            if '||' in condition:
-                parts = condition.split('||')
-                results = []
-                for part in parts:
-                    part = part.strip()
-                    # Recursively evaluate each part (might contain &&)
-                    result = self.evaluate_condition(part)
-                    results.append(result)
-                return any(results)
-            
-            # Handle && (AND) - all parts must be true
-            if '&&' in condition:
-                parts = condition.split('&&')
-                results = []
-                for part in parts:
-                    part = part.strip()
-                    # Recursively evaluate each part
-                    result = self.evaluate_condition(part)
-                    results.append(result)
-                return all(results)
-        
-        # Check for IN operator (no logical operators at this point)
+        if '||' in condition:
+            return self._evaluate_logical(condition, '||', any)
+        if '&&' in condition:
+            return self._evaluate_logical(condition, '&&', all)
+
+        # Check for IN operator
         if ' IN ' in condition.upper():
             return self.in_evaluator.evaluate(condition)
-        
+
         # Check for CONTAINS operator
         if ' CONTAINS ' in condition.upper():
             return self.contains_evaluator.evaluate(condition)
-        
+
         # Check for EMPTY/NOT_EMPTY operators
         if ' EMPTY' in condition.upper() or ' NOT_EMPTY' in condition.upper():
             return self.empty_evaluator.evaluate(condition)
-        
+
         # Simple comparison operator
         parsed = self._parse_comparison(condition)
         if parsed is None:
             self.print_debug(f"No valid operator found in condition: '{condition}'")
             return False
 
-        left_val, op, right_val = parsed
-        op_func = self.COMPARISON_OPS.get(op)
+        left_val, op_str, right_val = parsed
+        op_func = self.COMPARISON_OPS.get(op_str)
         if op_func is None:
-            self.print_debug(f"Unsupported operator: '{op}'")
+            self.print_debug(f"Unsupported operator: '{op_str}'")
             return False
 
         try:
@@ -213,9 +207,9 @@ class TernaryOperator:
                 result = op_func(float(left_val), float(right_val))
             else:
                 result = op_func(left_val, right_val)
-            self.print_debug(f"Result: '{left_val}' {op} '{right_val}' = {result}")
+            self.print_debug(f"Result: '{left_val}' {op_str} '{right_val}' = {result}")
             return bool(result)
-        except Exception as e:
+        except (TypeError, ValueError) as e:
             self.print_debug(f"Error evaluating condition '{condition}': {e}")
             return False
     
@@ -263,6 +257,6 @@ class TernaryOperator:
             self.print_header("Process Completed Successfully")
             return 0
         
-        except Exception as e:
+        except (ValueError, TypeError, IOError, OSError) as e:
             self.print_error(f"Script execution failed: {e}")
             return 1

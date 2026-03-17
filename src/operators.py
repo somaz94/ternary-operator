@@ -4,19 +4,19 @@ Operator evaluators for different condition types.
 
 import os
 import re
-from typing import Optional
+
+from .colors import Colors
 
 
 class OperatorEvaluator:
     """Base class for operator evaluation logic."""
-    
+
     def __init__(self, debug_mode: bool = False):
         self.debug_mode = debug_mode
-    
+
     def print_debug(self, message: str) -> None:
         """Print debug message if debug mode is enabled."""
         if self.debug_mode:
-            from .colors import Colors
             print(f"{Colors.OKCYAN}• Debug: {message}{Colors.ENDC}")
     
     def get_var_value(self, varname: str) -> str:
@@ -71,7 +71,7 @@ class InOperatorEvaluator(OperatorEvaluator):
             
             return result
             
-        except Exception as e:
+        except (ValueError, KeyError, AttributeError) as e:
             self.print_debug(f"Error evaluating IN operator '{condition}': {e}")
             return False
 
@@ -117,7 +117,7 @@ class ContainsOperatorEvaluator(OperatorEvaluator):
             
             return result
             
-        except Exception as e:
+        except (ValueError, KeyError, AttributeError) as e:
             self.print_debug(f"Error evaluating CONTAINS operator '{condition}': {e}")
             return False
 
@@ -171,6 +171,6 @@ class EmptyOperatorEvaluator(OperatorEvaluator):
             
             return result
             
-        except Exception as e:
+        except (ValueError, KeyError, AttributeError) as e:
             self.print_debug(f"Error evaluating EMPTY/NOT_EMPTY operator '{condition}': {e}")
             return False

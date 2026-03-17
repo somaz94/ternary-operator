@@ -60,3 +60,12 @@ class TestConditionParser:
     def test_whitespace_trimming(self):
         result = ConditionParser.parse('  SERVICE == game  ,  ENV == qa  ')
         assert result == ['SERVICE == game', 'ENV == qa']
+
+    def test_unmatched_parentheses_still_parses(self):
+        """Unmatched parentheses should not crash, just parse best-effort."""
+        result = ConditionParser.parse('NOT (SERVICE == game, ENV == qa')
+        assert len(result) >= 1
+
+    def test_nested_parentheses(self):
+        result = ConditionParser.parse('NOT (A == B && (C == D)), E == F')
+        assert result == ['NOT (A == B && (C == D))', 'E == F']

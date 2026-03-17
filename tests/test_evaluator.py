@@ -336,3 +336,27 @@ class TestRun:
         op = TernaryOperator()
         with pytest.raises(SystemExit):
             op.run()
+
+
+class TestRecursionDepthLimit:
+    def setup_method(self):
+        os.environ['INPUT_CONDITIONS'] = ''
+        os.environ['INPUT_TRUE_VALUES'] = ''
+        os.environ['INPUT_FALSE_VALUES'] = ''
+
+    def test_deep_not_nesting(self, monkeypatch):
+        """Deeply nested NOT should hit recursion limit and return False."""
+        monkeypatch.setenv('SERVICE', 'game')
+        op = TernaryOperator()
+        # Build NOT (NOT (NOT ... (SERVICE == game))) deeper than MAX_RECURSION_DEPTH
+        condition = 'SERVICE == game'
+        for _ in range(op.MAX_RECURSION_DEPTH + 5):
+            condition = f'NOT ({condition})'
+        assert op.evaluate_condition(condition) is False
+
+    def test_normal_nesting_works(self, monkeypatch):
+        """Moderate nesting should still work fine."""
+        monkeypatch.setenv('SERVICE', 'game')
+        op = TernaryOperator()
+        # Double NOT should return True
+        assert op.evaluate_condition('NOT (NOT (SERVICE == game))') is True
