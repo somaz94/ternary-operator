@@ -2,15 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased (2026-03-16)
+## [v1.4.1](https://github.com/somaz94/ternary-operator/compare/v1.4.0...v1.4.1) (2026-03-17)
 
 ### Bug Fixes
 
 - apache license -> mit license ([6c853a1](https://github.com/somaz94/ternary-operator/commit/6c853a137491e06db3b0d2fa00dec4a57a9574fa))
 - skip major version tag deletion on first release ([b5c9c1c](https://github.com/somaz94/ternary-operator/commit/b5c9c1c1cfe4405c5e89da4912b196ee22875835))
 
+### Code Refactoring
+
+- improve code quality with method extraction, specific exceptions, and recursion guard ([b5257d9](https://github.com/somaz94/ternary-operator/commit/b5257d95acbd6d78363aa657db793d6ec2bec134))
+
+### Documentation
+
+- update CLAUDE.md with commit guidelines and language ([af5ddbd](https://github.com/somaz94/ternary-operator/commit/af5ddbd9d5543a3035e5ca8988a7026ef4dd8e04))
+- update changelog ([ac6ab47](https://github.com/somaz94/ternary-operator/commit/ac6ab47b735e6a7e8cd6cbdb01485e99badfddb1))
+
 ### Continuous Integration
 
+- use somaz94/contributors-action@v1 for contributors generation ([80097ff](https://github.com/somaz94/ternary-operator/commit/80097ff8f69aa6f784e19ef927cb6312701cf95e))
+- use major-tag-action for version tag updates ([f6441b9](https://github.com/somaz94/ternary-operator/commit/f6441b9bce1d6b0b92108856242df9f223db4a65))
 - migrate changelog generator to go-changelog-action ([d34b3f5](https://github.com/somaz94/ternary-operator/commit/d34b3f5ba52406245c5bc10c70ae2967734889bb))
 - add dependabot auto-merge workflow ([71089e9](https://github.com/somaz94/ternary-operator/commit/71089e9563a8653d9feab97f26f2562eb8b498be))
 - unify changelog-generator with flexible tag pattern ([2893798](https://github.com/somaz94/ternary-operator/commit/289379839dd473b0f66a43df1598a60257ede071))
@@ -18,13 +29,14 @@ All notable changes to this project will be documented in this file.
 
 ### Chores
 
+- update .gitignore and .dockerignore for Python project ([7b2cffa](https://github.com/somaz94/ternary-operator/commit/7b2cffac112b8cf68ca4522aeef9a164c24f0b94))
 - change license from MIT to Apache 2.0 ([450e4f4](https://github.com/somaz94/ternary-operator/commit/450e4f44038cf816c3342a50802d2c8106222176))
 
 ### Contributors
 
-- GitHub Action
-- GitHub Actions
 - somaz
+
+<br/>
 
 ## [v1.4.0](https://github.com/somaz94/ternary-operator/compare/v1.3.2...v1.4.0) (2026-03-10)
 
@@ -73,9 +85,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
-- dependabot[bot]
 - somaz
+
+<br/>
 
 ## [v1.3.2](https://github.com/somaz94/ternary-operator/compare/v1.3.1...v1.3.2) (2025-10-29)
 
@@ -85,8 +97,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
 - somaz
+
+<br/>
 
 ## [v1.3.1](https://github.com/somaz94/ternary-operator/compare/v1.3.0...v1.3.1) (2025-10-29)
 
@@ -100,8 +113,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
 - somaz
+
+<br/>
 
 ## [v1.3.0](https://github.com/somaz94/ternary-operator/compare/v1.2.0...v1.3.0) (2025-10-29)
 
@@ -112,8 +126,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
 - somaz
+
+<br/>
 
 ## [v1.2.0](https://github.com/somaz94/ternary-operator/compare/v1.1.0...v1.2.0) (2025-10-29)
 
@@ -152,9 +167,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
-- dependabot[bot]
 - somaz
+
+<br/>
 
 ## [v1.1.0](https://github.com/somaz94/ternary-operator/compare/v1.0.4...v1.1.0) (2025-02-17)
 
@@ -169,8 +184,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
 - somaz
+
+<br/>
 
 ## [v1.0.4](https://github.com/somaz94/ternary-operator/compare/v1.0.3...v1.0.4) (2025-02-14)
 
@@ -187,8 +203,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
 - somaz
+
+<br/>
 
 ## [v1.0.3](https://github.com/somaz94/ternary-operator/compare/v1.0.2...v1.0.3) (2025-02-07)
 
@@ -198,8 +215,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Actions
 - somaz
+
+<br/>
 
 ## [v1.0.2](https://github.com/somaz94/ternary-operator/compare/v1.0.1...v1.0.2) (2025-02-07)
 
@@ -242,9 +260,9 @@ All notable changes to this project will be documented in this file.
 
 ### Contributors
 
-- GitHub Action
-- dependabot[bot]
 - somaz
+
+<br/>
 
 ## [v1.0.1](https://github.com/somaz94/ternary-operator/compare/v1.0.0...v1.0.1) (2024-06-24)
 
@@ -291,9 +309,13 @@ All notable changes to this project will be documented in this file.
 
 - somaz
 
-## v1.0.0 (2024-06-20)
+<br/>
+
+## [v1.0.0](https://github.com/somaz94/ternary-operator/releases/tag/v1.0.0) (2024-06-20)
 
 ### Contributors
 
 - somaz
+
+<br/>
 
