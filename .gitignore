@@ -1,15 +1,20 @@
-# Logs
-logs
-*.log
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Test / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+/tmp/test_*
 
 # dotenv environment variables file
 .env
@@ -20,11 +25,10 @@ pids
 Thumbs.db
 
 # IDE files
-.idea
-.vscode
+.idea/
+.vscode/
 *.code-workspace
 
-# Test output files
-/tmp/test_*
-*.pyc
-__pycache__/
+# Logs
+logs/
+*.log
