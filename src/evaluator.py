@@ -9,7 +9,10 @@ import sys
 
 from .colors import Colors
 from .parser import ConditionParser
-from .operators import InOperatorEvaluator, ContainsOperatorEvaluator, EmptyOperatorEvaluator
+from .operators import (
+    InOperatorEvaluator, ContainsOperatorEvaluator, StartsEndsWithOperatorEvaluator,
+    MatchesOperatorEvaluator, EmptyOperatorEvaluator,
+)
 
 
 class TernaryOperator:
@@ -32,11 +35,15 @@ class TernaryOperator:
         self.conditions = os.getenv('INPUT_CONDITIONS', '')
         self.true_values = os.getenv('INPUT_TRUE_VALUES', '')
         self.false_values = os.getenv('INPUT_FALSE_VALUES', '')
+        self.default_values = os.getenv('INPUT_DEFAULT_VALUES', '')
+        self.case_sensitive = os.getenv('INPUT_CASE_SENSITIVE', 'true').lower() != 'false'
         self.github_output = os.getenv('GITHUB_OUTPUT', '')
         
         # Initialize operator evaluators
-        self.in_evaluator = InOperatorEvaluator(self.debug_mode)
-        self.contains_evaluator = ContainsOperatorEvaluator(self.debug_mode)
+        self.in_evaluator = InOperatorEvaluator(self.debug_mode, self.case_sensitive)
+        self.contains_evaluator = ContainsOperatorEvaluator(self.debug_mode, self.case_sensitive)
+        self.starts_ends_evaluator = StartsEndsWithOperatorEvaluator(self.debug_mode, self.case_sensitive)
+        self.matches_evaluator = MatchesOperatorEvaluator(self.debug_mode, self.case_sensitive)
         self.empty_evaluator = EmptyOperatorEvaluator(self.debug_mode)
     
     def print_header(self, message: str) -> None:
@@ -181,6 +188,16 @@ class TernaryOperator:
         if ' IN ' in condition.upper():
             return self.in_evaluator.evaluate(condition)
 
+        # Check for STARTS_WITH / ENDS_WITH operators
+        if ' STARTS_WITH ' in condition:
+            return self.starts_ends_evaluator.evaluate(condition)
+        if ' ENDS_WITH ' in condition:
+            return self.starts_ends_evaluator.evaluate(condition)
+
+        # Check for MATCHES operator
+        if ' MATCHES ' in condition:
+            return self.matches_evaluator.evaluate(condition)
+
         # Check for CONTAINS operator
         if ' CONTAINS ' in condition.upper():
             return self.contains_evaluator.evaluate(condition)
@@ -206,6 +223,9 @@ class TernaryOperator:
             if self._is_numeric(left_val) and self._is_numeric(right_val):
                 result = op_func(float(left_val), float(right_val))
             else:
+                if not self.case_sensitive:
+                    left_val = left_val.lower()
+                    right_val = right_val.lower()
                 result = op_func(left_val, right_val)
             self.print_debug(f"Result: '{left_val}' {op_str} '{right_val}' = {result}")
             return bool(result)
@@ -219,7 +239,11 @@ class TernaryOperator:
         conditions_list = ConditionParser.parse(self.conditions)
         true_values_list = [v.strip() for v in self.true_values.split(',') if v.strip()]
         false_values_list = [v.strip() for v in self.false_values.split(',') if v.strip()]
-        
+        default_values_list = (
+            [v.strip() for v in self.default_values.split(',') if v.strip()]
+            if self.default_values else []
+        )
+
         # Validate array lengths match
         if len(conditions_list) != len(true_values_list) or len(conditions_list) != len(false_values_list):
             self.print_error(
@@ -227,21 +251,42 @@ class TernaryOperator:
                 f"true values ({len(true_values_list)}), "
                 f"and false values ({len(false_values_list)}) must match"
             )
-        
+
+        if default_values_list and len(default_values_list) != len(conditions_list):
+            self.print_error(
+                f"Number of default values ({len(default_values_list)}) "
+                f"must match number of conditions ({len(conditions_list)})"
+            )
+
         self.print_debug(f"Processing {len(conditions_list)} conditions")
-        
+
+        results = {}
         for i, condition in enumerate(conditions_list, 1):
             print(f"\nEvaluating Condition {i}: {condition}")
-            
-            # Evaluate the condition
-            if self.evaluate_condition(condition):
-                result = true_values_list[i - 1]
-                self.print_success(f"Condition {i} is TRUE")
-            else:
-                result = false_values_list[i - 1]
-                self.print_debug(f"Condition {i} is FALSE")
-            
+
+            try:
+                # Evaluate the condition
+                if self.evaluate_condition(condition):
+                    result = true_values_list[i - 1]
+                    self.print_success(f"Condition {i} is TRUE")
+                else:
+                    result = false_values_list[i - 1]
+                    self.print_debug(f"Condition {i} is FALSE")
+            except (TypeError, ValueError, KeyError, IndexError):
+                if default_values_list:
+                    result = default_values_list[i - 1]
+                    self.print_debug(f"Condition {i} evaluation error, using default: {result}")
+                else:
+                    result = false_values_list[i - 1]
+                    self.print_debug(f"Condition {i} evaluation error, using false value")
+
+            results[f"output_{i}"] = result
             self.safe_write_output(f"output_{i}", result)
+
+        # Write combined JSON result
+        if results:
+            import json
+            self.safe_write_output("result", json.dumps(results))
     
     def run(self) -> int:
         """Main execution method."""

@@ -11,8 +11,13 @@ from .colors import Colors
 class OperatorEvaluator:
     """Base class for operator evaluation logic."""
 
-    def __init__(self, debug_mode: bool = False):
+    def __init__(self, debug_mode: bool = False, case_sensitive: bool = True):
         self.debug_mode = debug_mode
+        self.case_sensitive = case_sensitive
+
+    def _normalize(self, value: str) -> str:
+        """Normalize value based on case sensitivity setting."""
+        return value if self.case_sensitive else value.lower()
 
     def print_debug(self, message: str) -> None:
         """Print debug message if debug mode is enabled."""
@@ -66,7 +71,7 @@ class InOperatorEvaluator(OperatorEvaluator):
             self.print_debug(f"Checking if {var_name}='{var_value}' IN [{', '.join(allowed_values)}]")
             
             # Check if variable value is in the allowed values list
-            result = var_value in allowed_values
+            result = self._normalize(var_value) in [self._normalize(v) for v in allowed_values]
             self.print_debug(f"IN operator result: {result}")
             
             return result
@@ -111,14 +116,98 @@ class ContainsOperatorEvaluator(OperatorEvaluator):
             
             self.print_debug(f"Checking if '{left_value}' CONTAINS '{right_value}'")
             
-            # Check if left contains right (case-sensitive)
-            result = right_value in left_value
+            # Check if left contains right
+            result = self._normalize(right_value) in self._normalize(left_value)
             self.print_debug(f"CONTAINS operator result: {result}")
             
             return result
             
         except (ValueError, KeyError, AttributeError) as e:
             self.print_debug(f"Error evaluating CONTAINS operator '{condition}': {e}")
+            return False
+
+
+class StartsEndsWithOperatorEvaluator(OperatorEvaluator):
+    """Evaluator for STARTS_WITH and ENDS_WITH operators."""
+
+    def evaluate(self, condition: str) -> bool:
+        """
+        Evaluate STARTS_WITH or ENDS_WITH operator condition.
+
+        Examples:
+            'BRANCH STARTS_WITH feature/' -> checks if BRANCH starts with 'feature/'
+            'FILE ENDS_WITH .yml' -> checks if FILE ends with '.yml'
+        """
+        try:
+            is_starts = 'STARTS_WITH' in condition
+            op_name = 'STARTS_WITH' if is_starts else 'ENDS_WITH'
+
+            parts = re.split(rf'\s+{op_name}\s+', condition, maxsplit=1)
+            if len(parts) != 2:
+                self.print_debug(f"Invalid {op_name} operator syntax: {condition}")
+                return False
+
+            var_name = parts[0].strip()
+            target = parts[1].strip()
+
+            var_value = self.get_var_value(var_name)
+
+            self.print_debug(f"Checking if {var_name}='{var_value}' {op_name} '{target}'")
+
+            left = self._normalize(var_value)
+            right = self._normalize(target)
+
+            result = left.startswith(right) if is_starts else left.endswith(right)
+            self.print_debug(f"{op_name} operator result: {result}")
+
+            return result
+
+        except (ValueError, KeyError, AttributeError) as e:
+            self.print_debug(f"Error evaluating {op_name} operator '{condition}': {e}")
+            return False
+
+
+class MatchesOperatorEvaluator(OperatorEvaluator):
+    """Evaluator for MATCHES operator (regex pattern matching)."""
+
+    def evaluate(self, condition: str) -> bool:
+        """
+        Evaluate MATCHES operator condition using regex.
+
+        Examples:
+            'BRANCH MATCHES ^feature/.*' -> checks if BRANCH matches the regex
+            'TAG MATCHES ^v[0-9]+\\.[0-9]+\\.[0-9]+$' -> checks if TAG is a semver tag
+
+        Args:
+            condition: Condition string with MATCHES operator
+
+        Returns:
+            True if variable value matches the regex pattern, False otherwise
+        """
+        try:
+            parts = re.split(r'\s+MATCHES\s+', condition, maxsplit=1)
+            if len(parts) != 2:
+                self.print_debug(f"Invalid MATCHES operator syntax: {condition}")
+                return False
+
+            var_name = parts[0].strip()
+            pattern = parts[1].strip()
+
+            var_value = self.get_var_value(var_name)
+
+            self.print_debug(f"Checking if {var_name}='{var_value}' MATCHES '{pattern}'")
+
+            flags = 0 if self.case_sensitive else re.IGNORECASE
+            result = bool(re.search(pattern, var_value, flags))
+            self.print_debug(f"MATCHES operator result: {result}")
+
+            return result
+
+        except re.error as e:
+            self.print_debug(f"Invalid regex pattern '{pattern}': {e}")
+            return False
+        except (ValueError, KeyError, AttributeError) as e:
+            self.print_debug(f"Error evaluating MATCHES operator '{condition}': {e}")
             return False
 
 

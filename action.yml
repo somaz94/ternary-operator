@@ -11,11 +11,21 @@ inputs:
   false_values:
     description: 'Comma-separated values if conditions are false (must match number of conditions)'
     required: true
+  default_values:
+    description: 'Comma-separated fallback values when condition evaluation fails (must match number of conditions)'
+    required: false
+    default: ''
+  case_sensitive:
+    description: 'Enable case-sensitive comparison (true/false, default: true)'
+    required: false
+    default: 'true'
   debug_mode:
     description: 'Enable detailed debug logging (true/false)'
     required: false
     default: 'false'
 outputs:
+  result:
+    description: 'JSON object containing all outputs (e.g. {"output_1": "value1", "output_2": "value2"})'
   output_1:
     description: 'Output for the first condition'
   output_2:
@@ -43,6 +53,8 @@ runs:
     - ${{ inputs.conditions }}
     - ${{ inputs.true_values }}
     - ${{ inputs.false_values }}
+    - ${{ inputs.default_values }}
+    - ${{ inputs.case_sensitive }}
     - ${{ inputs.debug_mode }}
 branding:
   icon: 'award'
