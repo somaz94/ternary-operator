@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.5.0](https://github.com/somaz94/ternary-operator/compare/v1.4.1...v1.5.0) (2026-03-18)
+
+### Features
+
+- add new operators, inputs, and result JSON output ([36c21a2](https://github.com/somaz94/ternary-operator/commit/36c21a20b0adf5ed5fe2c543810ceb1fdcdc802c))
+
+### Documentation
+
+- update documentation for new operators, inputs, and outputs ([d27fb21](https://github.com/somaz94/ternary-operator/commit/d27fb21354913ccc444ad401444002f4fdda652c))
+- update CONTRIBUTORS.md ([af6688b](https://github.com/somaz94/ternary-operator/commit/af6688b9d7b0ee1cf4ff4d9ec2d3dc49f08177b0))
+- update changelog ([dc60ff9](https://github.com/somaz94/ternary-operator/commit/dc60ff95fb9bce6e3288a6619d2a287b51248b99))
+
+### Tests
+
+- add tests for new features and improve coverage to 99% ([6ca414e](https://github.com/somaz94/ternary-operator/commit/6ca414ef20a5d2f6e4020f2a1e3764c29e91003b))
+
+### Contributors
+
+- somaz
+
+<br/>
+
 ## [v1.4.1](https://github.com/somaz94/ternary-operator/compare/v1.4.0...v1.4.1) (2026-03-17)
 
 ### Bug Fixes
