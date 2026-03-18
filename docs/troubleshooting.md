@@ -51,10 +51,14 @@ Common issues and solutions for the Ternary Operator Action.
    # Result: FALSE
    ```
    
-   **Solution:**
+   **Solutions:**
    ```yaml
-   # [O] Match exact case
+   # [O] Option 1: Match exact case
    conditions: 'SERVICE == game'
+
+   # [O] Option 2: Use case_sensitive option
+   case_sensitive: false
+   conditions: 'SERVICE == Game'  # Now matches game, Game, GAME
    ```
 
 3. **String vs Number Comparison**
@@ -102,11 +106,16 @@ Common issues and solutions for the Ternary Operator Action.
    # Result: FALSE
    ```
    
-   **Solution:**
+   **Solutions:**
    ```yaml
-   # [O] Match exact case
+   # [O] Option 1: Match exact case
    conditions: 'SERVICE IN Game,Batch'
-   # Or normalize in environment
+
+   # [O] Option 2: Use case_sensitive option
+   case_sensitive: false
+   conditions: 'SERVICE IN game,batch'  # Now matches Game, GAME, etc.
+
+   # [O] Option 3: Normalize in environment
    - run: echo "SERVICE=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
    ```
 

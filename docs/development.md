@@ -59,7 +59,7 @@ python3 --version
 ### Using Makefile (Recommended)
 
 ```bash
-# Run unit tests with coverage (pytest, 89 tests)
+# Run unit tests with coverage (pytest, 135 tests)
 make test
 
 # Run integration tests (subprocess, 42 tests)
@@ -89,9 +89,9 @@ python3 -m pytest tests/ -v \
 ```
 
 **Test files:**
-- `tests/test_evaluator.py` - 52 tests (main evaluator class)
-- `tests/test_operators.py` - 22 tests (IN, CONTAINS, EMPTY operators)
-- `tests/test_parser.py` - 13 tests (condition parser)
+- `tests/test_evaluator.py` - 75 tests (main evaluator class, case sensitivity, defaults, edge cases)
+- `tests/test_operators.py` - 44 tests (IN, CONTAINS, STARTS_WITH/ENDS_WITH, MATCHES, EMPTY operators)
+- `tests/test_parser.py` - 14 tests (condition parser)
 - `tests/test_colors.py` - 2 tests (color codes)
 
 <br/>
@@ -266,16 +266,18 @@ class TernaryOperator:
     - _is_numeric()              # Numeric value detection
 ```
 
-**`src/operators.py`** - Operator evaluation logic (176 lines):
+**`src/operators.py`** - Operator evaluation logic:
 
 ```python
-class OperatorEvaluator:         # Base evaluator
-class InOperatorEvaluator:       # IN operator handler
-class ContainsOperatorEvaluator: # CONTAINS operator handler
-class EmptyOperatorEvaluator:    # EMPTY/NOT_EMPTY handler
+class OperatorEvaluator:                # Base evaluator (with case_sensitive support)
+class InOperatorEvaluator:             # IN operator handler
+class ContainsOperatorEvaluator:       # CONTAINS operator handler
+class StartsEndsWithOperatorEvaluator: # STARTS_WITH/ENDS_WITH handler
+class MatchesOperatorEvaluator:        # MATCHES (regex) handler
+class EmptyOperatorEvaluator:          # EMPTY/NOT_EMPTY handler
 ```
 
-**`src/parser.py`** - Condition parsing (129 lines):
+**`src/parser.py`** - Condition parsing:
 
 ```python
 class ConditionParser:
@@ -283,7 +285,7 @@ class ConditionParser:
                                  # Handles IN operator commas, parentheses
 ```
 
-**`src/colors.py`** - Terminal output formatting (15 lines):
+**`src/colors.py`** - Terminal output formatting:
 
 ```python
 class Colors:
@@ -294,7 +296,7 @@ class Colors:
 - Modular architecture (separation of concerns)
 - Condition parsing with IN operator support
 - Variable substitution (environment variables)
-- Operator support (==, !=, <, >, <=, >=, &&, ||, IN, CONTAINS, NOT, EMPTY, NOT_EMPTY)
+- Operator support (==, !=, <, >, <=, >=, &&, ||, IN, CONTAINS, STARTS_WITH, ENDS_WITH, MATCHES, NOT, EMPTY, NOT_EMPTY)
 - Numeric comparison support
 - Debug output
 
@@ -309,10 +311,13 @@ inputs:              # Action inputs
   conditions:        # Conditions to evaluate
   true_values:       # Values when true
   false_values:      # Values when false
-  debug_mode:        # Enable debug output
+  default_values:    # Fallback values on error (optional)
+  case_sensitive:    # Case-sensitive mode (optional, default: true)
+  debug_mode:        # Enable debug output (optional)
 
 outputs:             # Action outputs
-  output_1..10:      # Result outputs
+  result:            # JSON object with all outputs
+  output_1..10:      # Individual result outputs
 
 runs:                # Docker container config
   using: docker

@@ -301,9 +301,90 @@ STATUS IN pending,running,completed
 
 <br/>
 
+### STARTS_WITH Operator
+
+Checks if a string starts with a given prefix.
+
+**Syntax:**
+```yaml
+VARIABLE STARTS_WITH prefix
+```
+
+**Examples:**
+```yaml
+# Branch name patterns
+BRANCH STARTS_WITH feature/     # feature/new-login → true
+BRANCH STARTS_WITH hotfix/      # feature/login → false
+
+# File paths
+FILE_PATH STARTS_WITH src/      # src/main.py → true
+TAG STARTS_WITH v               # v1.2.3 → true
+```
+
+**Features:**
+- Prefix matching
+- Works with case_sensitive option
+- Clean alternative to regex for simple prefix checks
+
+**Use Cases:**
+- Branch name filtering by prefix
+- File path validation
+- Tag format checking
+
+**Example Workflow:**
+```yaml
+- name: Check Branch Prefix
+  uses: somaz94/ternary-operator@v1
+  id: branch
+  with:
+    conditions: 'BRANCH STARTS_WITH feature/'
+    true_values: 'feature-branch'
+    false_values: 'other-branch'
+  env:
+    BRANCH: ${{ github.ref_name }}
+```
+
+<br/>
+
+---
+
+### ENDS_WITH Operator
+
+Checks if a string ends with a given suffix.
+
+**Syntax:**
+```yaml
+VARIABLE ENDS_WITH suffix
+```
+
+**Examples:**
+```yaml
+# File extension checks
+FILE ENDS_WITH .yml             # config.yml → true
+FILE ENDS_WITH .py              # main.py → true
+
+# Tag patterns
+TAG ENDS_WITH -rc               # v1.0.0-rc → true
+BRANCH ENDS_WITH /main          # release/main → true
+```
+
+**Features:**
+- Suffix matching
+- Works with case_sensitive option
+- Clean alternative to regex for simple suffix checks
+
+**Use Cases:**
+- File extension filtering
+- Tag format validation
+- Branch name suffix checks
+
+<br/>
+
+---
+
 ### CONTAINS Operator
 
-Checks if a string contains a substring (case-sensitive).
+Checks if a string contains a substring (case-sensitive by default, respects `case_sensitive` option).
 
 **Syntax:**
 ```yaml
@@ -339,7 +420,7 @@ TAG_NAME CONTAINS -rc             # v1.2.0-rc1 → true
 - Label checking
 
 **Important:**
-- Case-sensitive: `feature` != `Feature`
+- Case-sensitive by default (respects `case_sensitive` option)
 - Exact substring match required
 - Left side is checked for containing right side
 
@@ -358,6 +439,63 @@ TAG_NAME CONTAINS -rc             # v1.2.0-rc1 → true
 - name: Feature Branch Actions
   if: steps.branch.outputs.output_1 == 'feature-branch'
   run: echo "Running feature branch tests"
+```
+
+<br/>
+
+---
+
+### MATCHES Operator
+
+Checks if a string matches a regular expression pattern.
+
+**Syntax:**
+```yaml
+VARIABLE MATCHES regex_pattern
+```
+
+**Examples:**
+```yaml
+# Semver tag validation
+TAG MATCHES ^v[0-9]+\.[0-9]+\.[0-9]+$     # v1.2.3 → true, latest → false
+
+# Branch naming conventions
+BRANCH MATCHES ^(feature|hotfix|release)/  # feature/login → true
+
+# Commit message format
+COMMIT_MSG MATCHES ^(feat|fix|docs):       # feat: add login → true
+
+# Version range
+VERSION MATCHES ^1\.[5-9]                  # 1.5 → true, 1.3 → false
+```
+
+**Features:**
+- Full Python regex support (`re.search`)
+- Partial matching (no need for `^...$` unless you want full match)
+- Works with `case_sensitive` option (adds `re.IGNORECASE` flag)
+- Invalid regex patterns return false with debug warning
+
+**Use Cases:**
+- Semver tag validation
+- Branch naming convention enforcement
+- Commit message format checking
+- Complex pattern matching beyond CONTAINS
+
+**Example Workflow:**
+```yaml
+- name: Validate Tag Format
+  uses: somaz94/ternary-operator@v1
+  id: tag
+  with:
+    conditions: 'TAG MATCHES ^v[0-9]+\.[0-9]+\.[0-9]+$'
+    true_values: 'valid-semver'
+    false_values: 'invalid-tag'
+  env:
+    TAG: ${{ github.ref_name }}
+
+- name: Release
+  if: steps.tag.outputs.output_1 == 'valid-semver'
+  run: ./release.sh
 ```
 
 <br/>
@@ -568,7 +706,7 @@ When multiple operators are used together, they are evaluated in this order:
 
 1. **NOT operator** (highest priority - evaluated first)
 2. **Comparison operators** (`==`, `!=`, `<`, `>`, `<=`, `>=`)
-3. **String operators** (`CONTAINS`)
+3. **String operators** (`STARTS_WITH`, `ENDS_WITH`, `MATCHES`, `CONTAINS`)
 4. **Validation operators** (`EMPTY`, `NOT_EMPTY`)
 5. **Special operators** (`IN`)
 6. **AND operator** (`&&`)
@@ -710,6 +848,9 @@ FEATURE_FLAG NOT_EMPTY && NOT (ENVIRONMENT == prod)
 | OR | `\|\|` or `-o` | `\|\|` |
 | IN operator | Not available | `IN` |
 | Contains | `[[ $var == *"text"* ]]` | `CONTAINS` |
+| Starts with | `[[ $var == "prefix"* ]]` | `STARTS_WITH` |
+| Ends with | `[[ $var == *"suffix" ]]` | `ENDS_WITH` |
+| Regex match | `[[ $var =~ regex ]]` | `MATCHES` |
 | NOT operator | `!` | `NOT` |
 | Empty check | `-z` | `EMPTY` |
 | Not empty | `-n` | `NOT_EMPTY` |

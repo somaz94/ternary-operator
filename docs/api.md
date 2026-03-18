@@ -120,10 +120,57 @@ false_values: 'skip,skip,skip'
 
 ---
 
+### `default_values`
+
+**Required:** No
+**Type:** String
+**Default:** `''` (empty)
+**Format:** Comma-separated values
+
+Fallback values to use when a condition evaluation fails (e.g., due to an unexpected error). Must match the number of conditions if provided.
+
+#### Example:
+```yaml
+default_values: 'fallback1,fallback2,fallback3'
+```
+
+#### Use Cases:
+- Graceful degradation when variables are missing
+- Providing safe defaults for critical workflows
+- Error-resilient condition evaluation
+
+---
+
+### `case_sensitive`
+
+**Required:** No
+**Type:** Boolean
+**Default:** `true`
+
+Controls whether string comparisons are case-sensitive. When set to `false`, all string comparisons (`==`, `!=`, `IN`, `CONTAINS`, `STARTS_WITH`, `ENDS_WITH`, `MATCHES`) become case-insensitive.
+
+#### Example:
+```yaml
+case_sensitive: false
+```
+
+#### When Disabled (`false`):
+- `SERVICE == Game` matches `game`, `GAME`, `Game`
+- `SERVICE IN Game,Batch` matches `game`, `batch`, etc.
+- `BRANCH CONTAINS Feature` matches `feature`, `FEATURE`, etc.
+- `MATCHES` patterns use `re.IGNORECASE` flag
+
+#### Use Cases:
+- Flexible environment variable matching
+- User input normalization
+- Cross-platform compatibility (case differences between OS)
+
+---
+
 ### `debug_mode`
 
-**Required:** No  
-**Type:** Boolean  
+**Required:** No
+**Type:** Boolean
 **Default:** `false`
 
 Enable detailed debug logging for troubleshooting.
@@ -161,15 +208,39 @@ Success: Condition 1 is TRUE
 
 ## Outputs
 
-The action generates outputs named `output_1` through `output_10`, corresponding to each evaluated condition.
+The action generates outputs named `output_1` through `output_10`, corresponding to each evaluated condition. Additionally, a `result` output provides all results as a JSON object.
+
+<br/>
+
+### `result` Output
+
+**Type:** JSON string
+**Format:** `{"output_1": "value1", "output_2": "value2", ...}`
+
+A combined JSON object containing all evaluated outputs, useful for passing results to downstream jobs or parsing multiple outputs at once.
+
+#### Example:
+```yaml
+- name: Evaluate
+  uses: somaz94/ternary-operator@v1
+  id: check
+  with:
+    conditions: 'SERVICE == game, ENV == prod'
+    true_values: 'yes,deploy'
+    false_values: 'no,skip'
+
+- name: Use JSON Result
+  run: echo '${{ steps.check.outputs.result }}'
+  # Output: {"output_1": "yes", "output_2": "skip"}
+```
 
 <br/>
 
 ### Output Format
 
-**Name Pattern:** `output_N` where N is 1-10  
-**Type:** String  
-**Value:** Either the corresponding `true_value` or `false_value`
+**Name Pattern:** `output_N` where N is 1-10
+**Type:** String
+**Value:** Either the corresponding `true_value`, `false_value`, or `default_value`
 
 <br/>
 
@@ -274,10 +345,11 @@ If you need more than 10 conditions, split them into multiple action calls:
 
 ### Array Length Matching
 
-All three arrays must have the same length:
+All arrays must have the same length:
 - `conditions` count
 - `true_values` count
 - `false_values` count
+- `default_values` count (if provided)
 
 #### Error Example:
 ```yaml

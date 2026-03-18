@@ -12,7 +12,10 @@ A GitHub Action for evaluating conditional expressions and setting dynamic outpu
 ## Features
 
 - **Multiple Conditions**: Evaluate up to 10 conditions in a single step
-- **Rich Operators**: Support for comparison (`==`, `!=`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `NOT`), special (`IN`), string (`CONTAINS`), and validation (`EMPTY`, `NOT_EMPTY`) operators
+- **Rich Operators**: Support for comparison (`==`, `!=`, `<`, `>`, `<=`, `>=`), logical (`&&`, `||`, `NOT`), special (`IN`), string (`CONTAINS`, `STARTS_WITH`, `ENDS_WITH`), regex (`MATCHES`), and validation (`EMPTY`, `NOT_EMPTY`) operators
+- **Case Sensitivity Control**: Optional case-insensitive comparison mode
+- **Default Values**: Fallback values when condition evaluation fails
+- **JSON Result Output**: Combined JSON output for easy multi-condition access
 - **Simple Syntax**: Clean, readable condition expressions
 - **Debug Mode**: Detailed logging for troubleshooting
 - **Zero Dependencies**: Lightweight Docker-based action
@@ -85,7 +88,8 @@ jobs:
 | **Comparison** | `==` `!=` `<` `>` `<=` `>=` | `VERSION >= 1.5` |
 | **Logical** | `&&` `\|\|` `NOT` | `SERVICE == game && ENV == prod` |
 | **Special** | `IN` | `SERVICE IN game,batch,api` |
-| **String** | `CONTAINS` | `BRANCH_NAME CONTAINS feature` |
+| **String** | `CONTAINS` `STARTS_WITH` `ENDS_WITH` | `BRANCH STARTS_WITH feature/` |
+| **Regex** | `MATCHES` | `TAG MATCHES ^v[0-9]+\.[0-9]+$` |
 | **Validation** | `EMPTY` `NOT_EMPTY` | `API_KEY NOT_EMPTY` |
 
 [→ See detailed operator documentation](docs/operators.md)
@@ -165,7 +169,7 @@ jobs:
 Test your changes before pushing to GitHub:
 
 ```bash
-# Run unit tests with pytest (89 tests with coverage)
+# Run unit tests with pytest (135 tests with coverage)
 make test
 
 # Run integration tests (42 test cases)
@@ -189,7 +193,7 @@ python3 tests/test_local.py
 ```
 
 #### Test Coverage:
-- Unit tests: 89 tests (operators, parser, evaluator, colors)
+- Unit tests: 135 tests (operators, parser, evaluator, colors)
 - Integration tests: 42 test cases (end-to-end subprocess tests)
 - Bash tests: 17 core tests
 
@@ -208,6 +212,8 @@ python3 tests/test_local.py
 | `conditions` | Yes | Comma-separated conditions (max 10) | `SERVICE IN game,batch` |
 | `true_values` | Yes | Values when conditions are true | `deploy,skip` |
 | `false_values` | Yes | Values when conditions are false | `skip,deploy` |
+| `default_values` | No | Fallback values on evaluation error | `fallback1,fallback2` |
+| `case_sensitive` | No | Case-sensitive comparison (default: true) | `false` |
 | `debug_mode` | No | Enable debug logging (default: false) | `true` |
 
 <br/>
@@ -215,6 +221,7 @@ python3 tests/test_local.py
 ### Outputs
 
 - `output_1` through `output_10` - Results of evaluated conditions
+- `result` - JSON object containing all outputs (e.g. `{"output_1": "value1", "output_2": "value2"}`)
 
 [→ See complete API reference](docs/api.md)
 

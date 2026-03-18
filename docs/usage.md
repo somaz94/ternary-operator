@@ -8,7 +8,9 @@ Practical examples and patterns for using the Ternary Operator Action.
 - [Quick Start](#quick-start)
 - [Basic Examples](#basic-examples)
 - [String Operator Examples](#string-operator-examples)
+- [Regex and Pattern Examples](#regex-and-pattern-examples)
 - [Validation Operator Examples](#validation-operator-examples)
+- [New Features Examples](#new-features-examples)
 - [Advanced Patterns](#advanced-patterns)
 - [Real-World Scenarios](#real-world-scenarios)
 - [Integration Examples](#integration-examples)
@@ -266,6 +268,67 @@ jobs:
 
 ---
 
+## Regex and Pattern Examples
+
+<br/>
+
+### Example 1: Semver Tag Validation with MATCHES
+
+```yaml
+- name: Validate Tag Format
+  uses: somaz94/ternary-operator@v1
+  id: tag_validate
+  with:
+    conditions: >-
+      TAG MATCHES ^v[0-9]+\.[0-9]+\.[0-9]+$,
+      TAG MATCHES -rc[0-9]*$,
+      TAG MATCHES -beta
+    true_values: 'stable-release,release-candidate,beta-release'
+    false_values: 'invalid-tag,not-rc,not-beta'
+  env:
+    TAG: ${{ github.ref_name }}
+
+- name: Stable Release
+  if: steps.tag_validate.outputs.output_1 == 'stable-release'
+  run: echo "Publishing stable release..."
+```
+
+<br/>
+
+### Example 2: Branch Prefix/Suffix with STARTS_WITH / ENDS_WITH
+
+```yaml
+- name: Check Branch Pattern
+  uses: somaz94/ternary-operator@v1
+  id: branch_pattern
+  with:
+    conditions: >-
+      BRANCH STARTS_WITH feature/,
+      BRANCH STARTS_WITH hotfix/,
+      BRANCH ENDS_WITH /main
+    true_values: 'feature,hotfix,main-target'
+    false_values: 'other,other,other-target'
+  env:
+    BRANCH: ${{ github.ref_name }}
+```
+
+<br/>
+
+### Example 3: Case-Insensitive Matching
+
+```yaml
+- name: Flexible Matching
+  uses: somaz94/ternary-operator@v1
+  id: flex
+  with:
+    conditions: 'SERVICE IN game,batch,api'
+    true_values: 'valid'
+    false_values: 'invalid'
+    case_sensitive: false  # Matches GAME, Game, game, etc.
+```
+
+---
+
 ## Validation Operator Examples
 
 <br/>
@@ -412,6 +475,63 @@ jobs:
     
     echo "Building with flags: $FLAGS"
     npm run build $FLAGS
+```
+
+---
+
+## New Features Examples
+
+<br/>
+
+### Example 1: Default Values for Error Resilience
+
+```yaml
+- name: Resilient Evaluation
+  uses: somaz94/ternary-operator@v1
+  id: resilient
+  with:
+    conditions: 'SERVICE == game, ENV == prod'
+    true_values: 'deploy,production'
+    false_values: 'skip,development'
+    default_values: 'safe-skip,safe-dev'  # Used if evaluation fails
+```
+
+<br/>
+
+### Example 2: Using JSON Result Output
+
+```yaml
+- name: Multi-Check
+  uses: somaz94/ternary-operator@v1
+  id: checks
+  with:
+    conditions: 'SERVICE == game, ENV == prod, VERSION >= 2.0'
+    true_values: 'ok,ok,ok'
+    false_values: 'fail,fail,fail'
+
+- name: Parse JSON Result
+  run: |
+    echo "All results: ${{ steps.checks.outputs.result }}"
+    # Output: {"output_1": "ok", "output_2": "fail", "output_3": "ok"}
+```
+
+<br/>
+
+### Example 3: Combining New Features
+
+```yaml
+- name: Flexible Deploy Check
+  uses: somaz94/ternary-operator@v1
+  id: deploy
+  with:
+    conditions: >-
+      BRANCH STARTS_WITH release/ && TAG MATCHES ^v[0-9]+,
+      SERVICE IN game,api && ENV NOT_EMPTY
+    true_values: 'release-deploy,service-ok'
+    false_values: 'skip-deploy,service-fail'
+    default_values: 'safe-skip,safe-fail'
+    case_sensitive: false
+    debug_mode: true
 ```
 
 ---
