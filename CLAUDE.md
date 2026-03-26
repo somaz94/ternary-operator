@@ -2,10 +2,6 @@
 
 GitHub Action that evaluates dynamic conditions and generates outputs based on ternary logic with support for comparison, logical, IN, CONTAINS, EMPTY, and NOT operators.
 
-- Do not include `Co-Authored-By` lines in commit messages.
-- Do not push to remote. Only commit. The user will push manually.
-- Do not modify git config.
-
 ## Project Structure
 
 ```
@@ -110,6 +106,3 @@ build-and-push-docker ──→ test-action ──→ ci-result
 - **cliff.toml**: Skip `^Merge`, `^Update changelog`, `^Auto commit`
 - **paths-ignore**: `.github/workflows/**`, `**/*.md`, `backup/**`
 - Do NOT commit directly - recommend commit messages only
-
-- Communicate with the user in Korean.
-- All documentation and code comments must be written in English.
