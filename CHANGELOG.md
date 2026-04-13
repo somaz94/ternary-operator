@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased (2026-04-13)
+
+### Documentation
+
+- remove duplicate rules covered by global CLAUDE.md ([5d9d4b7](https://github.com/somaz94/ternary-operator/commit/5d9d4b7148b03ec5cbf279114ca52114f4a65334))
+- add no-push rule to CLAUDE.md ([9c3f53c](https://github.com/somaz94/ternary-operator/commit/9c3f53c459228bdd1b8f439a6c7e400a362526c0))
+
+### Builds
+
+- **deps:** bump actions/github-script from 8 to 9 ([daab561](https://github.com/somaz94/ternary-operator/commit/daab5617cc91d7e691250e0ce6bf9c6fbf8aff35))
+
+### Continuous Integration
+
+- skip auto-generated changelog and contributors commits in release notes ([3b6b44d](https://github.com/somaz94/ternary-operator/commit/3b6b44d119a7213052d0cd06e22b6d6f5ebaae9c))
+- revert to body_path RELEASE.md in release workflow ([0fd7a77](https://github.com/somaz94/ternary-operator/commit/0fd7a772d979d1b89d43c0940d3b4d311dc3b8eb))
+- use generate_release_notes instead of RELEASE.md ([09f65f5](https://github.com/somaz94/ternary-operator/commit/09f65f538bd5185bc0f151d0e206b380d9fab923))
+- migrate gitlab-mirror workflow to multi-git-mirror action ([4e6f7ac](https://github.com/somaz94/ternary-operator/commit/4e6f7acdd9c9da41f768f3f8e2b2e1ebab399839))
+
+### Chores
+
+- remove duplicate rules from CLAUDE.md (moved to global) ([909b99b](https://github.com/somaz94/ternary-operator/commit/909b99b7c88ff99aee435eb71e756a37bd6b9390))
+- add git config protection to CLAUDE.md ([3eeb8ed](https://github.com/somaz94/ternary-operator/commit/3eeb8ed7ddf29cd271ff8e47110723c529a29347))
+
+### Contributors
+
+- somaz
+
+<br/>
+
 ## [v1.5.0](https://github.com/somaz94/ternary-operator/compare/v1.4.1...v1.5.0) (2026-03-18)
 
 ### Features
@@ -11,8 +40,6 @@ All notable changes to this project will be documented in this file.
 ### Documentation
 
 - update documentation for new operators, inputs, and outputs ([d27fb21](https://github.com/somaz94/ternary-operator/commit/d27fb21354913ccc444ad401444002f4fdda652c))
-- update CONTRIBUTORS.md ([af6688b](https://github.com/somaz94/ternary-operator/commit/af6688b9d7b0ee1cf4ff4d9ec2d3dc49f08177b0))
-- update changelog ([dc60ff9](https://github.com/somaz94/ternary-operator/commit/dc60ff95fb9bce6e3288a6619d2a287b51248b99))
 
 ### Tests
 
@@ -38,7 +65,6 @@ All notable changes to this project will be documented in this file.
 ### Documentation
 
 - update CLAUDE.md with commit guidelines and language ([af5ddbd](https://github.com/somaz94/ternary-operator/commit/af5ddbd9d5543a3035e5ca8988a7026ef4dd8e04))
-- update changelog ([ac6ab47](https://github.com/somaz94/ternary-operator/commit/ac6ab47b735e6a7e8cd6cbdb01485e99badfddb1))
 
 ### Continuous Integration
 
