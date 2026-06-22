@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Builds
 
+- **deps:** bump actions/checkout from 6 to 7 ([6aa62a4](https://github.com/somaz94/ternary-operator/commit/6aa62a4d433fddfbacfef277b40e6a1b8801d293))
 - **deps:** bump dependabot/fetch-metadata from 2 to 3 ([06db7a5](https://github.com/somaz94/ternary-operator/commit/06db7a5528c696bcfdeff071cc8040f2aedc5dd2))
 - **deps:** bump softprops/action-gh-release from 2 to 3 ([9525774](https://github.com/somaz94/ternary-operator/commit/95257741a387106cb242496b878cee414dc0e3c7))
 - **deps:** bump actions/github-script from 8 to 9 ([daab561](https://github.com/somaz94/ternary-operator/commit/daab5617cc91d7e691250e0ce6bf9c6fbf8aff35))
