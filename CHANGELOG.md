@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased (2026-04-13)
+## Unreleased (2026-06-22)
 
 ### Documentation
 
@@ -11,11 +11,13 @@ All notable changes to this project will be documented in this file.
 
 ### Builds
 
+- **deps:** bump dependabot/fetch-metadata from 2 to 3 ([06db7a5](https://github.com/somaz94/ternary-operator/commit/06db7a5528c696bcfdeff071cc8040f2aedc5dd2))
 - **deps:** bump softprops/action-gh-release from 2 to 3 ([9525774](https://github.com/somaz94/ternary-operator/commit/95257741a387106cb242496b878cee414dc0e3c7))
 - **deps:** bump actions/github-script from 8 to 9 ([daab561](https://github.com/somaz94/ternary-operator/commit/daab5617cc91d7e691250e0ce6bf9c6fbf8aff35))
 
 ### Continuous Integration
 
+- add concurrency guards to recurring workflows ([c79de7e](https://github.com/somaz94/ternary-operator/commit/c79de7e71f738af02ab71c2204e8277210c2b660))
 - skip auto-generated changelog and contributors commits in release notes ([3b6b44d](https://github.com/somaz94/ternary-operator/commit/3b6b44d119a7213052d0cd06e22b6d6f5ebaae9c))
 - revert to body_path RELEASE.md in release workflow ([0fd7a77](https://github.com/somaz94/ternary-operator/commit/0fd7a772d979d1b89d43c0940d3b4d311dc3b8eb))
 - use generate_release_notes instead of RELEASE.md ([09f65f5](https://github.com/somaz94/ternary-operator/commit/09f65f538bd5185bc0f151d0e206b380d9fab923))
