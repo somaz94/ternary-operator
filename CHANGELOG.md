@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased (2026-06-22)
+## Unreleased (2026-07-27)
 
 ### Documentation
 
@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Builds
 
+- **deps:** bump actions/setup-python from 6 to 7 ([3504bb0](https://github.com/somaz94/ternary-operator/commit/3504bb069be526fead66fb78f5d751dec5f25dea))
 - **deps:** bump actions/checkout from 6 to 7 ([6aa62a4](https://github.com/somaz94/ternary-operator/commit/6aa62a4d433fddfbacfef277b40e6a1b8801d293))
 - **deps:** bump dependabot/fetch-metadata from 2 to 3 ([06db7a5](https://github.com/somaz94/ternary-operator/commit/06db7a5528c696bcfdeff071cc8040f2aedc5dd2))
 - **deps:** bump softprops/action-gh-release from 2 to 3 ([9525774](https://github.com/somaz94/ternary-operator/commit/95257741a387106cb242496b878cee414dc0e3c7))
@@ -18,6 +19,13 @@ All notable changes to this project will be documented in this file.
 
 ### Continuous Integration
 
+- adopt semantic-pr, labels, lock-threads, PR size, and auto-assign reusables ([6f4a710](https://github.com/somaz94/ternary-operator/commit/6f4a7103be533b873b1871a07a20446d3e6733ff))
+- use reusable stale-issues workflow ([8ccea76](https://github.com/somaz94/ternary-operator/commit/8ccea763353a2214fcc33e33d9efe9d0a4ebd175))
+- use reusable issue-greeting workflow ([b6772bb](https://github.com/somaz94/ternary-operator/commit/b6772bb104e324e532b2ccd6ad739ddbabe6c4ad))
+- use reusable dependabot-auto-merge workflow ([a5bf07e](https://github.com/somaz94/ternary-operator/commit/a5bf07eb0ba717f5464ea2ae1d2ffe7a819cda2a))
+- use reusable contributors workflow ([ade0b84](https://github.com/somaz94/ternary-operator/commit/ade0b84f090f7359c76bca3a3ccafd2fbab00824))
+- add ok-to-test workflow stub ([e58f7cf](https://github.com/somaz94/ternary-operator/commit/e58f7cf859deb05dec57f2c39806ae66559aabec))
+- add PR welcome workflow stub ([608425e](https://github.com/somaz94/ternary-operator/commit/608425ee9af319a56ea126283447caa21169eb28))
 - add concurrency guards to recurring workflows ([c79de7e](https://github.com/somaz94/ternary-operator/commit/c79de7e71f738af02ab71c2204e8277210c2b660))
 - skip auto-generated changelog and contributors commits in release notes ([3b6b44d](https://github.com/somaz94/ternary-operator/commit/3b6b44d119a7213052d0cd06e22b6d6f5ebaae9c))
 - revert to body_path RELEASE.md in release workflow ([0fd7a77](https://github.com/somaz94/ternary-operator/commit/0fd7a772d979d1b89d43c0940d3b4d311dc3b8eb))
