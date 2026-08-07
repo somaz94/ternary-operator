@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.6.1](https://github.com/somaz94/ternary-operator/compare/v1.6.0...v1.6.1) (2026-08-07)
+
+### Chores
+
+- bump the action image to v1.6.1 ([067c60d](https://github.com/somaz94/ternary-operator/commit/067c60d4c4a7bea402fa7088132dc7d35831c380))
+
+### Contributors
+
+- somaz
+
+<br/>
+
 ## [v1.6.0](https://github.com/somaz94/ternary-operator/compare/v1.5.0...v1.6.0) (2026-08-07)
 
 ### Performance Improvements
