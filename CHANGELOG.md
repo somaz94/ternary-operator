@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased (2026-07-27)
+## Unreleased (2026-08-07)
+
+### Performance Improvements
+
+- ship a prebuilt multi-arch image instead of building per run ([5702003](https://github.com/somaz94/ternary-operator/commit/5702003322847baa41bad5fbb7cff559d8c687d6))
 
 ### Documentation
 
