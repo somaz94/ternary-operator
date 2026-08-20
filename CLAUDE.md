@@ -76,7 +76,7 @@ make help          # Show all available commands
 |----------|------|---------|
 | `ci.yml` | `Continuous Integration` | push(main), PR, dispatch |
 | `release.yml` | `Create release` | tag push `v*` |
-| `changelog-generator.yml` | `Generate changelog` | after release, PR merge, issue close |
+| `changelog-generator.yml` | `Generate changelog` | after release, PR merge |
 | `use-action.yml` | `Smoke Test (Released Action)` | after release, dispatch |
 | `contributors.yml` | `Generator Contributors` | after changelog, dispatch |
 
