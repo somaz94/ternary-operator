@@ -53,7 +53,7 @@ runs:
   # (~31s). Subtle: this version's image must be published (release.yml
   # workflow_dispatch) before its git tag is pushed, and a runner can pull only
   # the pushed platforms (linux/amd64, linux/arm64).
-  image: docker://ghcr.io/somaz94/ternary-operator:v1.6.1
+  image: docker://ghcr.io/somaz94/ternary-operator:v1.6.2
   args:
     - ${{ inputs.conditions }}
     - ${{ inputs.true_values }}
