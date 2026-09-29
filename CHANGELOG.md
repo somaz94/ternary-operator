@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.6.2](https://github.com/somaz94/ternary-operator/compare/v1.6.1...v1.6.2) (2026-09-29)
+
+### Bug Fixes
+
+- drop the stale version and the unimportable __all__ from src/__init__.py ([fd36e06](https://github.com/somaz94/ternary-operator/commit/fd36e060e3a06b4c1788d2518c5abb766a04490c))
+
+### Continuous Integration
+
+- lint with ruff 0.16 and fix its findings ([f27c65c](https://github.com/somaz94/ternary-operator/commit/f27c65cd6495e11839af7d913f78c7da75b3fd61))
+- drop the buildx install input removed in v4 ([ee08986](https://github.com/somaz94/ternary-operator/commit/ee08986c0e850b6b3337d139779ec14bd0fa16ca))
+- correct stale image-seeding comments ([376827f](https://github.com/somaz94/ternary-operator/commit/376827fb51b71b0b6ad89064031d51404e6694b5))
+- trim redundant comments in gitlab-mirror workflow ([3eef402](https://github.com/somaz94/ternary-operator/commit/3eef402a9bff9650c44e2e187dcfd79fc39dcac7))
+- correct the image-seeding comment in the release workflow ([0d6ec3f](https://github.com/somaz94/ternary-operator/commit/0d6ec3ff136e6c8676e7502e6af58a3df634b3f6))
+- retry mirror pushes on transient remote failures ([7a7c167](https://github.com/somaz94/ternary-operator/commit/7a7c1678b922db7702333c3790dc39a6fbe41adf))
+- drop the dead issue-close trigger from changelog generation ([dcb95fb](https://github.com/somaz94/ternary-operator/commit/dcb95fb14356711790a35c271e51d7a7837ee8ad))
+- skip release-triggered runs on the image-seeding dispatch ([1652fbc](https://github.com/somaz94/ternary-operator/commit/1652fbcf6018ca3006324c849ef8a84c8ff233ef))
+
+### Styles
+
+- apply ruff format ([7b3ba71](https://github.com/somaz94/ternary-operator/commit/7b3ba71dc2a093299452b0e5460adf845ad47d38))
+
+### Chores
+
+- bump the action image to v1.6.2 ([b8f2a7d](https://github.com/somaz94/ternary-operator/commit/b8f2a7d25e9dcd30b4a262ecfdcea0a603debba9))
+
+### Contributors
+
+- somaz
+
+<br/>
+
 ## [v1.6.1](https://github.com/somaz94/ternary-operator/compare/v1.6.0...v1.6.1) (2026-08-07)
 
 ### Chores
