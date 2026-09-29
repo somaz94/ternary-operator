@@ -34,8 +34,8 @@ backup/
 Dockerfile                       # Single-stage (python:3.14-slim)
 action.yml                       # GitHub Action definition (4 inputs, 10 outputs)
 cliff.toml                       # git-cliff config for release notes
-Makefile                         # Development commands (test, coverage, clean)
-requirements-dev.txt             # Dev dependencies (pytest, pytest-cov)
+Makefile                         # Development commands (test, coverage, lint, format, clean)
+requirements-dev.txt             # Dev dependencies (pytest, pytest-cov, ruff)
 .coveragerc                      # Coverage configuration
 CODEOWNERS                       # Repository code owners
 CONTRIBUTORS.md                  # Contributors list (auto-generated)
@@ -49,6 +49,9 @@ make test-local    # Run Python integration tests (42 test cases)
 make test-bash     # Run bash test suite (17 tests)
 make test-all      # Run all tests
 make coverage      # Coverage report
+make lint          # Lint with ruff (make lint-fix to auto-fix)
+make format        # Format with ruff (make format-check to verify)
+make ci            # Lint + format check + unit tests
 make clean         # Remove cache and build artifacts
 make help          # Show all available commands
 ```

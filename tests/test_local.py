@@ -5,10 +5,9 @@ This script provides comprehensive testing before pushing to GitHub
 """
 
 import os
-import sys
 import subprocess
+import sys
 import tempfile
-from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
 
 
@@ -20,10 +19,10 @@ class TestCase:
     conditions: str
     true_values: str
     false_values: str
-    expected_outputs: Dict[str, str]
-    env_vars: Dict[str, str]
+    expected_outputs: dict[str, str]
+    env_vars: dict[str, str]
     should_fail: bool = False
-    expected_error: Optional[str] = None
+    expected_error: str | None = None
 
 
 class Colors:
@@ -91,6 +90,7 @@ class TestRunner:
                 capture_output=True,
                 text=True,
                 timeout=5,
+                check=False,
             )
 
             # Check if it should have failed
@@ -103,7 +103,7 @@ class TestRunner:
                             or test.expected_error in result.stderr
                         ):
                             self.print_result(
-                                test.name, True, f"Correctly failed with expected error"
+                                test.name, True, "Correctly failed with expected error"
                             )
                             return True
                         else:
@@ -164,8 +164,8 @@ class TestRunner:
         except subprocess.TimeoutExpired:
             self.print_result(test.name, False, "Test timed out")
             return False
-        except Exception as e:
-            self.print_result(test.name, False, f"Exception: {str(e)}")
+        except Exception as e:  # noqa: BLE001
+            self.print_result(test.name, False, f"Exception: {e!s}")
             return False
         finally:
             # Cleanup
@@ -193,7 +193,7 @@ class TestRunner:
             return True
 
 
-def create_test_suite() -> List[TestCase]:
+def create_test_suite() -> list[TestCase]:
     """Create the test suite"""
     tests = []
 

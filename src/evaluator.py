@@ -6,16 +6,18 @@ import operator
 import os
 import re
 import sys
+from collections.abc import Callable
+from typing import Any, ClassVar
 
 from .colors import Colors
-from .parser import ConditionParser
 from .operators import (
-    InOperatorEvaluator,
     ContainsOperatorEvaluator,
-    StartsEndsWithOperatorEvaluator,
-    MatchesOperatorEvaluator,
     EmptyOperatorEvaluator,
+    InOperatorEvaluator,
+    MatchesOperatorEvaluator,
+    StartsEndsWithOperatorEvaluator,
 )
+from .parser import ConditionParser
 
 
 class TernaryOperator:
@@ -23,7 +25,7 @@ class TernaryOperator:
 
     MAX_CONDITIONS = 10
     MAX_RECURSION_DEPTH = 50
-    COMPARISON_OPS = {
+    COMPARISON_OPS: ClassVar[dict[str, Callable[[Any, Any], Any]]] = {
         "==": operator.eq,
         "!=": operator.ne,
         "<=": operator.le,
@@ -86,7 +88,7 @@ class TernaryOperator:
             try:
                 with open(self.github_output, "a") as f:
                     f.write(f"{output_line}\n")
-            except IOError as e:
+            except OSError as e:
                 self.print_debug(f"Warning: Could not write to GITHUB_OUTPUT: {e}")
 
     def validate_inputs(self) -> None:
@@ -332,6 +334,6 @@ class TernaryOperator:
             self.print_header("Process Completed Successfully")
             return 0
 
-        except (ValueError, TypeError, IOError, OSError) as e:
+        except (ValueError, TypeError, OSError) as e:
             self.print_error(f"Script execution failed: {e}")
             return 1

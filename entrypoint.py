@@ -5,6 +5,7 @@ Evaluates multiple conditions and sets corresponding outputs.
 """
 
 import sys
+
 from src.evaluator import TernaryOperator
 
 

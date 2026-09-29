@@ -3,7 +3,6 @@ Condition parser for handling complex condition strings.
 """
 
 import re
-from typing import List
 
 COMMA_PLACEHOLDER = "<<<COMMA>>>"
 IN_OPERATOR_PATTERN = re.compile(r"(\w+)\s+IN\s+", re.IGNORECASE)
@@ -54,10 +53,10 @@ class ConditionParser:
         return working_str
 
     @staticmethod
-    def _split_top_level(text: str) -> List[str]:
+    def _split_top_level(text: str) -> list[str]:
         """Split *text* by top-level commas (not inside parentheses)."""
-        conditions: List[str] = []
-        current: List[str] = []
+        conditions: list[str] = []
+        current: list[str] = []
         parenthesis_depth = 0
 
         for char in text:
@@ -83,7 +82,7 @@ class ConditionParser:
         return conditions
 
     @staticmethod
-    def parse(conditions_str: str) -> List[str]:
+    def parse(conditions_str: str) -> list[str]:
         """
         Parse conditions string handling IN operator with commas and all operators.
 

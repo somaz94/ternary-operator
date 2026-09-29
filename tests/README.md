@@ -13,6 +13,9 @@ make test-local    # Run Python integration tests (42 test cases)
 make test-bash     # Run bash test suite (17 tests)
 make test-all      # Run all tests
 make coverage      # Coverage report
+make lint          # Lint with ruff (make lint-fix to auto-fix)
+make format        # Format with ruff (make format-check to verify)
+make ci            # Lint + format check + unit tests
 make clean         # Remove cache and build artifacts
 make help          # Show all available commands
 ```

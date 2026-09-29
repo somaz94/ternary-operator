@@ -1,8 +1,10 @@
 """Tests for src/evaluator.py"""
 
 import os
-from unittest.mock import patch, PropertyMock
+from unittest.mock import patch
+
 import pytest
+
 from src.evaluator import TernaryOperator
 
 
@@ -547,12 +549,14 @@ class TestComparisonEdgeCases:
         monkeypatch.setenv("INPUT_FALSE_VALUES", "")
         op = TernaryOperator()
         # Mock _parse_comparison to return values that cause TypeError in op_func
-        with patch.object(op, "_parse_comparison", return_value=("a", "==", "b")):
-            with patch.dict(
+        with (
+            patch.object(op, "_parse_comparison", return_value=("a", "==", "b")),
+            patch.dict(
                 op.COMPARISON_OPS,
                 {"==": lambda a, b: (_ for _ in ()).throw(TypeError("mock"))},
-            ):
-                assert op.evaluate_condition("A == B") is False
+            ),
+        ):
+            assert op.evaluate_condition("A == B") is False
 
 
 class TestEvaluateConditionsDefaultFallback:
@@ -599,6 +603,8 @@ class TestRunExceptionHandling:
         monkeypatch.setenv("INPUT_TRUE_VALUES", "yes")
         monkeypatch.setenv("INPUT_FALSE_VALUES", "no")
         op = TernaryOperator()
-        with patch.object(op, "validate_inputs", side_effect=ValueError("test error")):
-            with pytest.raises(SystemExit):
-                op.run()
+        with (
+            patch.object(op, "validate_inputs", side_effect=ValueError("test error")),
+            pytest.raises(SystemExit),
+        ):
+            op.run()

@@ -73,6 +73,12 @@ make test-all
 
 # Coverage report
 make coverage
+
+# Lint and check formatting (ruff)
+make check
+
+# Lint + format check + unit tests
+make ci
 ```
 
 <br/>
@@ -185,7 +191,7 @@ ternary-operator/
 ├── action.yml                # GitHub Action metadata
 ├── Dockerfile                # Container definition
 ├── entrypoint.py             # Main entry point
-├── requirements-dev.txt      # Dev dependencies (pytest, pytest-cov)
+├── requirements-dev.txt      # Dev dependencies (pytest, pytest-cov, ruff)
 ├── .coveragerc               # Coverage configuration
 ├── cliff.toml                # git-cliff changelog configuration
 │

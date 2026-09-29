@@ -58,6 +58,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
 
+      - name: Lint
+        run: |
+          ruff check src entrypoint.py tests
+          ruff format --check src entrypoint.py tests
+
       - name: Run unit tests with coverage
         run: |
           python -m pytest tests/ -v \

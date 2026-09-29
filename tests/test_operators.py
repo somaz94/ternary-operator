@@ -1,14 +1,13 @@
 """Tests for src/operators.py"""
 
-import os
 from unittest.mock import patch
-import pytest
+
 from src.operators import (
-    InOperatorEvaluator,
     ContainsOperatorEvaluator,
-    StartsEndsWithOperatorEvaluator,
-    MatchesOperatorEvaluator,
     EmptyOperatorEvaluator,
+    InOperatorEvaluator,
+    MatchesOperatorEvaluator,
+    StartsEndsWithOperatorEvaluator,
 )
 
 

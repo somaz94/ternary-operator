@@ -1,7 +1,7 @@
 """Shared pytest fixtures for ternary-operator tests."""
 
 import os
-import tempfile
+
 import pytest
 
 
