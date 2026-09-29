@@ -23,10 +23,10 @@ class OperatorEvaluator:
         """Print debug message if debug mode is enabled."""
         if self.debug_mode:
             print(f"{Colors.OKCYAN}• Debug: {message}{Colors.ENDC}")
-    
+
     def get_var_value(self, varname: str) -> str:
         """Get environment variable value."""
-        value = os.getenv(varname, '')
+        value = os.getenv(varname, "")
         if not value:
             self.print_debug(f"Warning: Variable {varname} is not set or empty")
         return value
@@ -34,48 +34,52 @@ class OperatorEvaluator:
 
 class InOperatorEvaluator(OperatorEvaluator):
     """Evaluator for IN operator."""
-    
+
     def evaluate(self, condition: str) -> bool:
         """
         Evaluate IN operator condition.
-        
+
         Examples:
             'SERVICE IN game,batch,api' -> checks if SERVICE is one of [game, batch, api]
             'ENV IN dev,qa,stage,prod' -> checks if ENV is one of [dev, qa, stage, prod]
-        
+
         Args:
             condition: Condition string with IN operator
-            
+
         Returns:
             True if variable value is in the list, False otherwise
         """
         try:
             # Split by IN operator
-            parts = condition.split(' IN ')
+            parts = condition.split(" IN ")
             if len(parts) != 2:
                 self.print_debug(f"Invalid IN operator syntax: {condition}")
                 return False
-            
+
             var_name = parts[0].strip()
             values_str = parts[1].strip()
-            
+
             # Get variable value
             var_value = self.get_var_value(var_name)
             if not var_value:
                 self.print_debug(f"Variable {var_name} is not set")
                 return False
-            
+
             # Parse comma-separated values
-            allowed_values = [v.strip() for v in values_str.split(',') if v.strip()]
-            
-            self.print_debug(f"Checking if {var_name}='{var_value}' IN [{', '.join(allowed_values)}]")
-            
+            allowed_values = [v.strip() for v in values_str.split(",") if v.strip()]
+
+            self.print_debug(
+                f"Checking if {var_name}='{var_value}' IN [{', '.join(allowed_values)}]"
+            )
+
             # Check if variable value is in the allowed values list
-            result = self._normalize(var_value) in [self._normalize(v) for v in allowed_values]
+            result = self._normalize(var_value) in [
+                self._normalize(v) for v in allowed_values
+            ]
             self.print_debug(f"IN operator result: {result}")
-            
+
             return result
-            
+
         except (ValueError, KeyError, AttributeError) as e:
             self.print_debug(f"Error evaluating IN operator '{condition}': {e}")
             return False
@@ -83,45 +87,47 @@ class InOperatorEvaluator(OperatorEvaluator):
 
 class ContainsOperatorEvaluator(OperatorEvaluator):
     """Evaluator for CONTAINS operator."""
-    
+
     def evaluate(self, condition: str) -> bool:
         """
         Evaluate CONTAINS operator condition (case-sensitive).
-        
+
         Examples:
             'BRANCH_NAME CONTAINS feature' -> checks if BRANCH_NAME contains 'feature'
             'MESSAGE CONTAINS hotfix' -> checks if MESSAGE contains 'hotfix'
-        
+
         Args:
             condition: Condition string with CONTAINS operator
-            
+
         Returns:
             True if left value contains right value, False otherwise
         """
         try:
             # Split by CONTAINS operator (case-insensitive split)
-            parts = re.split(r'\s+CONTAINS\s+', condition, flags=re.IGNORECASE)
+            parts = re.split(r"\s+CONTAINS\s+", condition, flags=re.IGNORECASE)
             if len(parts) != 2:
                 self.print_debug(f"Invalid CONTAINS operator syntax: {condition}")
                 return False
-            
+
             left_part = parts[0].strip()
             right_part = parts[1].strip()
-            
+
             # Get variable value for left side
             left_value = self.get_var_value(left_part)
-            
+
             # Get variable value for right side, or use as literal
-            right_value = self.get_var_value(right_part) if right_part.isupper() else right_part
-            
+            right_value = (
+                self.get_var_value(right_part) if right_part.isupper() else right_part
+            )
+
             self.print_debug(f"Checking if '{left_value}' CONTAINS '{right_value}'")
-            
+
             # Check if left contains right
             result = self._normalize(right_value) in self._normalize(left_value)
             self.print_debug(f"CONTAINS operator result: {result}")
-            
+
             return result
-            
+
         except (ValueError, KeyError, AttributeError) as e:
             self.print_debug(f"Error evaluating CONTAINS operator '{condition}': {e}")
             return False
@@ -139,10 +145,10 @@ class StartsEndsWithOperatorEvaluator(OperatorEvaluator):
             'FILE ENDS_WITH .yml' -> checks if FILE ends with '.yml'
         """
         try:
-            is_starts = 'STARTS_WITH' in condition
-            op_name = 'STARTS_WITH' if is_starts else 'ENDS_WITH'
+            is_starts = "STARTS_WITH" in condition
+            op_name = "STARTS_WITH" if is_starts else "ENDS_WITH"
 
-            parts = re.split(rf'\s+{op_name}\s+', condition, maxsplit=1)
+            parts = re.split(rf"\s+{op_name}\s+", condition, maxsplit=1)
             if len(parts) != 2:
                 self.print_debug(f"Invalid {op_name} operator syntax: {condition}")
                 return False
@@ -152,7 +158,9 @@ class StartsEndsWithOperatorEvaluator(OperatorEvaluator):
 
             var_value = self.get_var_value(var_name)
 
-            self.print_debug(f"Checking if {var_name}='{var_value}' {op_name} '{target}'")
+            self.print_debug(
+                f"Checking if {var_name}='{var_value}' {op_name} '{target}'"
+            )
 
             left = self._normalize(var_value)
             right = self._normalize(target)
@@ -185,7 +193,7 @@ class MatchesOperatorEvaluator(OperatorEvaluator):
             True if variable value matches the regex pattern, False otherwise
         """
         try:
-            parts = re.split(r'\s+MATCHES\s+', condition, maxsplit=1)
+            parts = re.split(r"\s+MATCHES\s+", condition, maxsplit=1)
             if len(parts) != 2:
                 self.print_debug(f"Invalid MATCHES operator syntax: {condition}")
                 return False
@@ -195,7 +203,9 @@ class MatchesOperatorEvaluator(OperatorEvaluator):
 
             var_value = self.get_var_value(var_name)
 
-            self.print_debug(f"Checking if {var_name}='{var_value}' MATCHES '{pattern}'")
+            self.print_debug(
+                f"Checking if {var_name}='{var_value}' MATCHES '{pattern}'"
+            )
 
             flags = 0 if self.case_sensitive else re.IGNORECASE
             result = bool(re.search(pattern, var_value, flags))
@@ -213,53 +223,61 @@ class MatchesOperatorEvaluator(OperatorEvaluator):
 
 class EmptyOperatorEvaluator(OperatorEvaluator):
     """Evaluator for EMPTY and NOT_EMPTY operators."""
-    
+
     def evaluate(self, condition: str) -> bool:
         """
         Evaluate EMPTY or NOT_EMPTY operator condition.
-        
+
         Examples:
             'VAR EMPTY' -> checks if VAR is empty or not set
             'VAR NOT_EMPTY' -> checks if VAR is not empty
-        
+
         Args:
             condition: Condition string with EMPTY or NOT_EMPTY operator
-            
+
         Returns:
             True if condition is satisfied, False otherwise
         """
         try:
             # Check which operator is used
-            is_not_empty = 'NOT_EMPTY' in condition.upper()
-            
+            is_not_empty = "NOT_EMPTY" in condition.upper()
+
             if is_not_empty:
                 # Split by NOT_EMPTY
-                parts = re.split(r'\s+NOT_EMPTY\s*', condition, flags=re.IGNORECASE)
+                parts = re.split(r"\s+NOT_EMPTY\s*", condition, flags=re.IGNORECASE)
             else:
                 # Split by EMPTY
-                parts = re.split(r'\s+EMPTY\s*', condition, flags=re.IGNORECASE)
-            
+                parts = re.split(r"\s+EMPTY\s*", condition, flags=re.IGNORECASE)
+
             if len(parts) < 1 or not parts[0].strip():
-                self.print_debug(f"Invalid EMPTY/NOT_EMPTY operator syntax: {condition}")
+                self.print_debug(
+                    f"Invalid EMPTY/NOT_EMPTY operator syntax: {condition}"
+                )
                 return False
-            
+
             var_name = parts[0].strip()
-            
+
             # Get variable value
             var_value = self.get_var_value(var_name)
-            
+
             # Check if empty
-            is_empty = not var_value or var_value.strip() == ''
-            
+            is_empty = not var_value or var_value.strip() == ""
+
             if is_not_empty:
                 result = not is_empty
-                self.print_debug(f"Checking if {var_name}='{var_value}' NOT_EMPTY: {result}")
+                self.print_debug(
+                    f"Checking if {var_name}='{var_value}' NOT_EMPTY: {result}"
+                )
             else:
                 result = is_empty
-                self.print_debug(f"Checking if {var_name}='{var_value}' EMPTY: {result}")
-            
+                self.print_debug(
+                    f"Checking if {var_name}='{var_value}' EMPTY: {result}"
+                )
+
             return result
-            
+
         except (ValueError, KeyError, AttributeError) as e:
-            self.print_debug(f"Error evaluating EMPTY/NOT_EMPTY operator '{condition}': {e}")
+            self.print_debug(
+                f"Error evaluating EMPTY/NOT_EMPTY operator '{condition}': {e}"
+            )
             return False

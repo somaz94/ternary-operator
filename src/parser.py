@@ -6,7 +6,7 @@ import re
 from typing import List
 
 COMMA_PLACEHOLDER = "<<<COMMA>>>"
-IN_OPERATOR_PATTERN = re.compile(r'(\w+)\s+IN\s+', re.IGNORECASE)
+IN_OPERATOR_PATTERN = re.compile(r"(\w+)\s+IN\s+", re.IGNORECASE)
 
 
 class ConditionParser:
@@ -27,20 +27,20 @@ class ConditionParser:
             i = start
             while i < len(working_str):
                 # Check for && or ||
-                if i < len(working_str) - 1 and working_str[i:i + 2] in ('&&', '||'):
+                if i < len(working_str) - 1 and working_str[i : i + 2] in ("&&", "||"):
                     end = i
                     break
 
                 # Check for comma followed by a new condition
-                if working_str[i] == ',':
-                    remaining = working_str[i + 1:].lstrip()
+                if working_str[i] == ",":
+                    remaining = working_str[i + 1 :].lstrip()
                     if remaining and (
                         re.match(
-                            r'\w+\s+(?:==|!=|<=|>=|<|>|IN|CONTAINS|EMPTY|NOT_EMPTY)',
+                            r"\w+\s+(?:==|!=|<=|>=|<|>|IN|CONTAINS|EMPTY|NOT_EMPTY)",
                             remaining,
                             re.IGNORECASE,
                         )
-                        or remaining.startswith('NOT ')
+                        or remaining.startswith("NOT ")
                     ):
                         end = i
                         break
@@ -48,7 +48,7 @@ class ConditionParser:
                 i += 1
 
             in_values = working_str[start:end]
-            protected = in_values.replace(',', COMMA_PLACEHOLDER)
+            protected = in_values.replace(",", COMMA_PLACEHOLDER)
             working_str = working_str[:start] + protected + working_str[end:]
 
         return working_str
@@ -61,14 +61,14 @@ class ConditionParser:
         parenthesis_depth = 0
 
         for char in text:
-            if char == '(':
+            if char == "(":
                 parenthesis_depth += 1
                 current.append(char)
-            elif char == ')':
+            elif char == ")":
                 parenthesis_depth -= 1
                 current.append(char)
-            elif char == ',' and parenthesis_depth == 0:
-                cond = ''.join(current).strip()
+            elif char == "," and parenthesis_depth == 0:
+                cond = "".join(current).strip()
                 if cond:
                     conditions.append(cond)
                 current = []
@@ -76,7 +76,7 @@ class ConditionParser:
                 current.append(char)
 
         # Append the last condition
-        cond = ''.join(current).strip()
+        cond = "".join(current).strip()
         if cond:
             conditions.append(cond)
 
@@ -117,6 +117,6 @@ class ConditionParser:
         conditions = ConditionParser._split_top_level(working_str)
 
         # Step 4: restore commas
-        conditions = [c.replace(COMMA_PLACEHOLDER, ',') for c in conditions]
+        conditions = [c.replace(COMMA_PLACEHOLDER, ",") for c in conditions]
 
         return conditions

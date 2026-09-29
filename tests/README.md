@@ -105,14 +105,16 @@ make test-all
 Edit `test_local.py` and add to the `create_test_suite()` function:
 
 ```python
-tests.append(TestCase(
-    name="My custom test",
-    conditions="MY_VAR == expected_value",
-    true_values="success",
-    false_values="failure",
-    expected_outputs={"output_1": "success"},
-    env_vars={"MY_VAR": "expected_value"}
-))
+tests.append(
+    TestCase(
+        name="My custom test",
+        conditions="MY_VAR == expected_value",
+        true_values="success",
+        false_values="failure",
+        expected_outputs={"output_1": "success"},
+        env_vars={"MY_VAR": "expected_value"},
+    )
+)
 ```
 
 ### Bash Tests
